@@ -1,0 +1,97 @@
+<script setup lang="ts">
+import { ref, watch, defineProps, defineExpose, withDefaults } from 'vue'
+
+interface ToastProps {
+  delay?: number
+  maxShowMessage?: number
+}
+
+interface ToastListType {
+  key: number
+  color: string
+  icon: string
+  message: string
+}
+
+const props = withDefaults(defineProps<ToastProps>(), {
+  delay: 300,
+  maxShowMessage: 4
+})
+
+let color = ref<string>('success')
+let icon = ref<string>('check-circle')
+let message = ref<string>('')
+
+let list = ref<ToastListType[]>([])
+let timeout: number[] = []
+let key: number = 0
+
+watch(list, (items) => {
+  if (!items.length) {
+    key = 0
+    timeout = []
+  }
+})
+
+const show = (): void => {
+  list.value.push(<ToastListType>{
+    key,
+    color: color.value,
+    icon: 'fas fa-' + icon.value,
+    message: message.value,
+  })
+
+  // 표시 시간이 지나면 자동으로 메시지 삭제
+  timeout.push(setTimeout(() => {
+    hide(0)
+  }, props.delay))
+
+  key++
+
+  const len: number = list.value.length
+
+  if (len > props.maxShowMessage) {
+    hide(0)
+  }
+}
+
+const hide = (index: number = 0): void => {
+  try {
+    clearTimeout(timeout[list.value[index].key])
+
+    if (list.value.length > 0) {
+      list.value.splice(index, 1)
+    }
+  } catch (e) { }
+}
+
+defineExpose({
+  color,
+  icon,
+  message,
+  show
+})
+</script>
+
+<template>
+  <div id="toast">
+    <transition-group name="toast-view">
+      <div
+        :class="['toast-body', (item.color ? `bg-${item.color}` : '')]"
+        :key="`toast-${item.key}`"
+        @click="hide(i)"
+        v-for="(item, i) in list">
+
+        <!-- <template v-if="item.icon"> -->
+          <!-- <FontAwesomeIcon class="icon" :icon="['fas', item.icon]" /> -->
+        <!-- </template> -->
+
+        <span class="message">{{ item.message }}</span>
+      </div>
+    </transition-group>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+@import './style.scss';
+</style>
