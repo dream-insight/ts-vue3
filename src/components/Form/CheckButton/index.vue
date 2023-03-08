@@ -1,49 +1,39 @@
 <script setup lang="ts">
-import { ref, watch, computed, defineEmits, defineProps, defineExpose, withDefaults } from 'vue'
+import { ref, watch, computed, withDefaults } from 'vue'
+import type { CheckButtonItem } from './types'
+import type { RuleFunction } from '../types'
 
-interface CheckButtonEmits {
-  (e: 'update:modelValue', value: any | any[]): void
-  (e: 'update:clickIndex', value: number): void
-}
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: any | any[]): void
+  (evemt: 'update:clickIndex', value: number): void
+}>()
 
-interface CheckButtonItems {
-  text: string
-  value: string
-}
-
-interface CheckButtonProps {
-  modelValue: any | any[]
-  clickIndex?: number
-  items: CheckButtonItems[]
+const props = withDefaults(defineProps<{
+  items: CheckButtonItem[]
   name: string
+  modelValue?: string | string[]
   // checkbox, radio
   type?: string
   // 전체 버튼 추가
   all?: boolean
   // 최대 체크 가능한 수량
-  maxCheck?: number
-  validate?: Function[]
+  maxCheckLength?: number
+  validate?: RuleFunction[]
   // 강제 에러 출력 - check함수를 수행 하지 않음
   errorMessage?: string
   // button UI 변경
   button?: boolean
-}
-
-const emit = defineEmits<CheckButtonEmits>()
-
-const props = withDefaults(defineProps<CheckButtonProps>(), {
-  clickIndex: -1,
+}>(), {
   type: 'checkbox',
   all: false,
-  maxCheck: 0,
-  validate: (): Function[] => [],
+  maxCheckLength: 0,
+  validate: (): RuleFunction[] => [],
   errorMessage: '',
   button: false,
 })
 
-let list = ref<CheckButtonItems[]>([])
-let val = (props.type === 'checkbox') ? ref<any | any[]>(['']) : ref<string>('')
-let clickIndex = ref<number>(-1)
+let list = ref<CheckButtonItem[]>([])
+let val = (props.type === 'checkbox') ? ref<any[]>(['']) : ref<any>('')
 let isValidate = ref<boolean>(true)
 let checkPass = ref<boolean>(false)
 let message = ref<string>('')
@@ -55,7 +45,7 @@ watch(() => props.modelValue, (v) => {
   }
 )
 
-watch(val, (v) => {
+watch(val, () => {
   resetValidate()
 })
 
@@ -80,21 +70,21 @@ watch(errorTransition, (v) => {
 const successful = computed<boolean>(() => isValidate.value && checkPass.value)
 
 const setIndex = (index: number): void => {
-  emit('update:clickIndex', clickIndex.value)
+  emit('update:clickIndex', index)
   emit('update:modelValue', val.value)
 }
 
-const checkValue = (index: number, v: any | any[]): void => {
+const checkValue = (index: number, v: string | number): void => {
   setIndex(index)
 
   if (props.type === 'checkbox') {
-    let model = ['']
+    let model: string[] = ['']
 
     if (v !== '') {
-      if (props.maxCheck > 0) {
-        val.value.splice(props.maxCheck, 1)
+      if (props.maxCheckLength > 0 && Array.isArray(val.value)) {
+        val.value.splice(props.maxCheckLength, 1)
       } else {
-        if (val.value.indexOf('') > -1) {
+        if (val.value.indexOf('') > -1 && Array.isArray(val.value)) {
           val.value.splice(0, 1)
         }
       }
@@ -118,20 +108,19 @@ const check = (): boolean => {
     // validate check
     if (props.validate.length) {
       for (let i = 0; i < props.validate.length; i++) {
-        let result = ''
+        let result: string | boolean = (props.type === 'checkbox')
+          ? props.validate[i](Array.from(val.value))
+          : props.validate[i](val.value)
 
-        if (props.type == 'checkbox') {
-          result = props.validate[i].call(null, Array.from(val.value))
-        } else {
-          result = props.validate[i].call(null, val.value)
-        }
-
-        if (!result) {
+        if (typeof result !== 'boolean') {
           message.value = result
           isValidate.value = false
+          checkPass.value = false
           errorTransition.value = true
 
           return false
+        } else {
+          message.value = ''
         }
       }
     }
@@ -150,7 +139,7 @@ const resetValidate = (): void => {
 }
 
 const resetForm = (): void => {
-  val.value = (props.type == 'checkbox') ? [''] : ''
+  val.value = (props.type === 'checkbox') ? [''] : ''
 }
 
 if (props.items) {
@@ -173,27 +162,36 @@ defineExpose({
 </script>
 
 <template>
-  <div :class="['check-button', { button }]">
+  <div :class="['check-button', { button, error: message }]">
     <template v-if="button">
-      <label
-        style="{ marginTop: '5px' }"
-        :key="`keyword${i}`" v-for="({ text, value }, i) in list">
-        <input
-          type="checkbox"
-          :name="name"
-          :value="value"
-          @change="checkValue(i, value)"
-          v-model="val"
-        />
-        <span>{{ text }}</span>
-      </label>
+      <div class="check-button-group">
+        <template :key="`keyword${i}`" v-for="({ text, value }, i) in list">
+          <input
+            type="checkbox"
+            class="btn-check"
+            :id="`btnCheck${i}`"
+            :name="name"
+            :value="value"
+            @change="checkValue(i, value)"
+            v-model="val"
+          />
+
+          <label
+            :class="{ last: list.length - 1 === i }"
+            :for="`btnCheck${i}`">
+            {{ text }}
+          </label>
+        </template>
+      </div>
     </template>
     <template v-else>
-      <label
+      <div
+        class="form-check form-check-inline"
         :key="'check-button-' + i"
         v-for="({ text, value }, i) in list">
         <input
           type="radio"
+          class="form-check-input"
           :id="`${name}${i}`"
           :name="name"
           :value="value"
@@ -204,6 +202,7 @@ defineExpose({
 
         <input
           type="checkbox"
+          class="form-check-input"
           :id="`${name}${i}`"
           :name="name"
           :value="value"
@@ -212,16 +211,17 @@ defineExpose({
           v-else
         />
 
-        {{ text }}
-      </label>
+        <label class="form-check-label" :for="`${name}${i}`">
+          {{ text }}
+        </label>
+      </div>
     </template>
 
-    <p
+    <div
       :class="['description', { error: errorTransition }]"
-      v-if="message !== '' || successful">
-      <FontAwesomeIcon :icon="['fas', 'exclamation-circle']" />
+      v-if="message">
       {{ message }}
-    </p>
+    </div>
   </div>
 </template>
 

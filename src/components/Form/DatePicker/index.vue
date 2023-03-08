@@ -1,56 +1,53 @@
 <script setup lang="ts">
-import DateController from './DateController.vue'
-import {
-  ref, reactive, watch, computed, onMounted,
-  defineProps, defineEmits, withDefaults, defineExpose
-} from 'vue'
+import { ref, reactive, watch, computed, withDefaults, onMounted, onUnmounted } from 'vue'
 import type {
-  toggleButtonType,
-  showRange,
-  transitionNameType,
-  timeoutType,
-  dateRenderType,
-  dateStateType,
-  dateOptionType,
-  selectedDateType,
-  timeStateType,
-  dateCellType,
+  ToggleButtonType,
+  ShowRange,
+  TransitionNameType,
+  TimeoutType,
+  DateRenderType,
+  DateStateType,
+  DateOptionType,
+  SelectedDateType,
+  TimeStateType,
+  DateCellType,
 } from './types'
+import type { RuleFunction } from '../types'
 
-interface DatePickerEmits {
-  (e: 'update:modelValue', value: String[] | String): void
-}
+import DateController from './DateController.vue'
 
-interface DatePickerProps {
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: String[] | String): void
+}>()
+const props = withDefaults(defineProps<{
   modelValue: string[] | string
-  validate?: Function[]
+  validate?: RuleFunction[]
+  label?: string
   placeholder?: string[] | string
   range?: boolean
   seperator?: string
   minYear?: number
   maxYear?: number
   block?: boolean
-}
-
-const emit = defineEmits<DatePickerEmits>()
-const props = withDefaults(defineProps<DatePickerProps>(), {
-  validate: (): Function[] => [],
+}>(), {
+  validate: (): RuleFunction[] => [],
   range: false,
+  label: '',
   placeholder: '',
   // 년, 월, 일 사이 구분 표시
-  separator: '-',
+  seperator: '-',
   minYear: 1900,
   maxYear: Number(new Date().getFullYear()) + 10,
-  block: false,
+  block: false
 })
 
-const el = ref<HTMLElement | null>(null)
+const el = ref<HTMLElement>()
 
 let isShow = ref<boolean>(false)
-let picker = ref<HTMLElement | null>(null)
+let picker = ref<HTMLElement>()
 let holderText = ref<string[]>(['', ''])
 let nowChecked = ref<number>(0)
-let toggleDateButton = ref<toggleButtonType[]>([
+let toggleDateButton = ref<ToggleButtonType[]>([
   { text: '오늘', checked: false },
   { text: '어제', checked: false },
   { text: '최근 7일', checked: false },
@@ -59,19 +56,19 @@ let toggleDateButton = ref<toggleButtonType[]>([
   { text: '지난 달', checked: false }
 ])
 
-const show = reactive<showRange>({
+const show = reactive<ShowRange>({
   start: true,
   end: true
 })
 
-const transitionName = reactive<transitionNameType>({
+const transitionName = reactive<TransitionNameType>({
   start: '',
   end: ''
 })
 
-const timeout: timeoutType = {
-  start: undefined,
-  end: undefined
+const timeout: TimeoutType = {
+  start: 0,
+  end: 0
 }
 
 let curYear = ref<number>(2019)
@@ -80,12 +77,12 @@ let curDay = ref<number>(1)
 
 const head: string[] = ['일', '월', '화', '수', '목', '금', '토']
 
-const dateRender = reactive<dateRenderType>({
+const dateRender = reactive<DateRenderType>({
   start: [],
   end: [],
 })
 
-const dateState = reactive<dateStateType>({
+const dateState = reactive<DateStateType>({
   start: {
     year: 2019,
     month: 11,
@@ -98,12 +95,12 @@ const dateState = reactive<dateStateType>({
   }
 })
 
-const opt = reactive<dateOptionType>({
+const opt = reactive<DateOptionType>({
   year: [],
   month: []
 })
 
-const selected = reactive<selectedDateType>({
+const selected = reactive<SelectedDateType>({
   start: {
     date: '',
     day: 0
@@ -114,7 +111,7 @@ const selected = reactive<selectedDateType>({
   },
 })
 
-const timeState = <timeStateType>{
+const timeState: TimeStateType = {
   start: 0,
   end: 0,
 }
@@ -125,15 +122,9 @@ let onError = ref<boolean>(false)
 let errorTransition = ref<boolean>(false)
 let isValidate = ref<boolean>(true)
 
-watch(
-  [
-    () => selected.start.date,
-    () => selected.end.date
-  ],
-  () => {
-    resetError()
-  }
-)
+watch([() => selected.start.date, () => selected.end.date], () => {
+  resetError()
+})
 
 watch(errorTransition, (v) => {
   if (v) {
@@ -153,15 +144,13 @@ watch(() => props.modelValue, (v) => {
 })
 
 watch(() => props.validate, () => {
-  message.value = ''
-  isValidate.value = true
-  errorTransition.value = false
+  resetValidate()
 })
 
+// 시작일 종료일 텍스트 표시 선택된 날짜가 있는 경우 선택된 날짜로 표시
 const startDate = computed<string>(() => {
   let v: string = selected.start.date
 
-  // 시작일 종료일 텍스트 표시 선택된 날짜가 있는 경우 선택된 날짜로 표시
   if (selected.start.day === 0) {
     v = dateFormat(dateState.start.year, dateState.start.month, dateState.start.day)
   }
@@ -191,6 +180,9 @@ const selectedDateView = computed<string>(() => {
   return ''
 })
 
+/**
+ * 각종 변수 초기화
+ */
 const init = (): void => {
   const date: Date = new Date()
 
@@ -211,14 +203,17 @@ const init = (): void => {
   timeState.end = 0
 }
 
+/**
+ * 배치된 위치에 따라 달력이 보여지는 위치와 방향을 변경
+ */
 const toggleCalendar = (): void => {
   // 달력 표시 전 처리
   const bodyRect: DOMRect = document.body.getBoundingClientRect()
   const rect: DOMRect | undefined = el.value?.getBoundingClientRect()
-  const pickerWidth = props.range ? 480 : 230
-  const pickerHeight = props.range ? 454 : 280
+  const pickerWidth: number = props.range ? 480 : 230
+  const pickerHeight: number = props.range ? 454 : 280
 
-  if (rect !== undefined && picker.value !== null) {
+  if (rect && picker.value) {
     // 포지션이 아래쪽으로 치우쳤다면 위로 나오게 변경한다.
     if (window.innerHeight < rect.bottom + pickerHeight) {
       picker.value.style.top = ''
@@ -246,6 +241,11 @@ const toggleCalendar = (): void => {
   }
 }
 
+/**
+ * 달력 랜더링 기초 데이터 생성
+ *
+ * @param flag start, end
+ */
 const makeCanlendar = (flag: string) => {
   // 달력 생성
   const startWeek: number = new Date(dateState[flag].year, dateState[flag].month, 1).getDay()
@@ -260,7 +260,7 @@ const makeCanlendar = (flag: string) => {
     dateRender[flag][i] = []
   }
 
-  let objData: dateCellType = { day: 0, type: '' }
+  let objData: DateCellType = { day: 0, type: '' }
 
   for (let j = 0; j < (6 * 7); j++) {
     if (j >= startWeek && day <= lastDay) {
@@ -302,16 +302,27 @@ const makeCanlendar = (flag: string) => {
   }
 }
 
+/**
+ * 전달의 마지막 날짜 표시
+ *
+ * @param year 연도
+ * @param month 월
+ * @param week 주 0 ~ 6
+ */
 const getBeforeDay = (year: number, month: number, week: number): number => {
-  // 전달의 마지막 날짜 표시
   const day = new Date(year, month, 0).getDate()
-
   return day - week + 1
 }
 
+/**
+ * 월 변경 이벤트 함수
+ *
+ * @param flag start | end
+ * @param increase 증감 값
+ */
 const changeMonth = (flag: string, increase: number): void => {
   // 버튼을 통해 달을 변경
-  let change = false
+  let change: boolean = false
 
   if (increase === 1 || increase === -1) {
     // 월별 이동 (computed 에서 최종 처리)
@@ -362,6 +373,13 @@ const changeMonth = (flag: string, increase: number): void => {
   }
 }
 
+/**
+ * 년도 또는 월 변경
+ *
+ * @param flag start | end
+ * @param target year | month
+ * @param value 년도 또는 월
+ */
 const changeYearMonth = (flag: string, target: string, value: number) => {
   // 년 월 select box 변경 이벤트
   dateState[flag][target] = value
@@ -392,19 +410,15 @@ const pickCaseDate = (flag: number): void => {
     date = new Date(date.getFullYear(), date.getMonth(), 0)
   }
 
-  let year: string = String(date.getFullYear())
-  let month: string = String(date.getMonth() + 1)
-  let day: string = String(date.getDate())
+  let year: string = date.getFullYear().toString()
+  let month: string = (date.getMonth() + 1).toString()
+  let day: string = date.getDate().toString()
 
-  if (month.length === 1) {
-    month = '0' + month
-  }
+  month = (month.length === 1) ? `0${month}` : month
+  day = (day.length === 1) ? `0${day}` : day
 
-  if (day.length === 1) {
-    day = '0' + day
-  }
-
-  let format = `Y${props.separator}m${props.separator}d`
+  const s = props.seperator
+  let format = `Y${s}m${s}d`
 
   switch (flag) {
     case 0:
@@ -425,14 +439,14 @@ const pickCaseDate = (flag: number): void => {
       break
     case 4:
     case 5:
-      selected.start.date = `${year}${props.separator}${month}${props.separator}01`
-      selected.end.date = `${year}${props.separator}${month}${props.separator}${day}`
+      selected.start.date = `${year}${s}${month}${s}01`
+      selected.end.date = `${year}${s}${month}${s}${day}`
       break
   }
 
   // 해당 달력으로 변환
-  let start = selected.start.date.split(props.separator)
-  let end = selected.end.date.split(props.separator)
+  let start: string[] = selected.start.date.split(s)
+  let end: string[] = selected.end.date.split(s)
 
   dateState.start.year = Number(start[0])
   dateState.start.month = Number(start[1]) - 1
@@ -465,14 +479,22 @@ const pickCaseDate = (flag: number): void => {
   updateValue()
 }
 
+/**
+ * 날짜 선택
+ * 달력의 2차원 배열에 맞게 전달 값을 받아 날짜 정보 확인 후 처리
+ *
+ * @param tr 1차 배열 index
+ * @param td 2차 배열 index
+ * @param flag  start | end
+ */
 const selectedDay = (tr: number, td: number, flag: string = 'start'): void => {
   selectedError.value = ''
 
   // 날짜 선택
-  const type = dateRender[flag][tr][td].type
-  const day = dateRender[flag][tr][td].day
+  const type: string = dateRender[flag][tr][td].type
+  const day: number = dateRender[flag][tr][td].day
 
-  if (type === 'current' || type === 'today' || type === 'date-range') {
+  if (['current', 'today', 'date-range'].includes(type)) {
     selected[flag].day = day
 
     if (flag === 'start') {
@@ -505,34 +527,41 @@ const selectedDay = (tr: number, td: number, flag: string = 'start'): void => {
   }
 }
 
+/**
+ * date format string
+ *
+ * @param year
+ * @param month
+ * @param day
+ */
 const dateFormat = (year: number, month: number, day: number): string => {
   let date: string = `${year}-`
 
-  if (month + 1 < 10) {
-    date += `0${(month + 1)}-`
-  } else {
-    date += `${(month + 1)}-`
-  }
-
-  if (day < 10) {
-    date += `0${day}`
-  } else {
-    date += String(day)
-  }
+  date += (month + 1 < 10) ? `0${(month + 1)}-` : `${(month + 1)}-`
+  date += (day < 10) ? `0${day}` : String(day)
 
   return date
 }
 
+/**
+ * 취소 버튼 클릭
+ */
 const cancel = (): void => {
   resetForm()
   isShow.value = false
 }
 
+/**
+ * 적용 버튼 클릭
+ */
 const accept = (): void => {
   updateValue()
   isShow.value = false
 }
 
+/**
+ * model update
+ */
 const updateValue = (): void => {
   // 종료 날짜가 시작 날짜보다 작지 않을 경우 데이터 적용
   if (props.range) {
@@ -549,6 +578,9 @@ const updateValue = (): void => {
   }
 }
 
+/**
+ * 폼 초기화 처리
+ */
 const resetForm = (): void => {
   init()
 
@@ -562,6 +594,18 @@ const resetForm = (): void => {
   }
 }
 
+/**
+ * 유효성 검사 초기화
+ */
+const resetValidate = (): void => {
+  message.value = ''
+  isValidate.value = true
+  errorTransition.value = false
+}
+
+/**
+ * 유효성 에러 처리 초기화
+ */
 const resetError = (): void => {
   message.value = ''
   onError.value = false
@@ -569,18 +613,21 @@ const resetError = (): void => {
   isValidate.value = true
 }
 
+/**
+ * FormValidate 컴포넌트롤 통한 validation check
+ */
 const check = (): boolean => {
   // 데이터 검증
   if (props.validate.length) {
     for (let i = 0; i < props.validate.length; i++) {
-      let result1 = true
-      let result2 = true
+      let result1: string | boolean = true
+      let result2: string | boolean = true
 
       if (props.range) {
-        result1 = props.validate[i].call(null, selected.start.date)
-        result2 = props.validate[i].call(null, selected.end.date)
+        result1 = props.validate[i](selected.start.date)
+        result2 = props.validate[i](selected.end.date)
       } else {
-        result1 = props.validate[i].call(null, selected.start.date)
+        result1 = props.validate[i](selected.start.date)
       }
 
       if (result1 !== true || result2 !== true) {
@@ -607,12 +654,12 @@ Date.prototype.getDateFormat = function(format: string, days: number = 0): strin
     date = new Date(time + (86400 * days * 1000))
   }
 
-  let year: string = String(date.getFullYear())
-  let month: string = String(date.getMonth() + 1)
-  let day: string = String(date.getDate())
-  let dYear: string = String(date.getFullYear())
-  let dMonth: string = String(month)
-  let dDay: string = String(day)
+  let year: string = date.getFullYear().toString()
+  let month: string = (date.getMonth() + 1).toString()
+  let day: string = date.getDate().toString()
+  let dYear: string = date.getFullYear().toString()
+  let dMonth: string = month.toString()
+  let dDay: string = day.toString()
 
   if (month.length === 1) {
     dMonth = `0${month}`
@@ -655,87 +702,110 @@ if (props.modelValue) {
   }
 }
 
-onMounted(() => {
-  if (el.value !== null) {
-    picker.value = el.value.querySelector('#picker')
+const outsideClickEvent = (evt: Event): void => {
+  if (el.value) {
+    if (isShow.value) {
+      const target = evt.target as HTMLElement
+      const classList = target.classList.value
+      const indexOf1 = classList.indexOf('current')
+      const indexOf2 = classList.indexOf('today')
+      const indexOf3 = classList.indexOf('date-range')
+
+      if (indexOf1 === -1 && indexOf2 === -1 && indexOf3 === -1) {
+        isShow.value = el.value.contains(target)
+      }
+    }
   }
+}
 
-  document.addEventListener('click', (evt: Event) => {
-    if (el.value !== null) {
-      if (isShow.value) {
-        const target = evt.target as HTMLElement
-        const classList = target.classList.value
-        const indexOf1 = classList.indexOf('current')
-        const indexOf2 = classList.indexOf('today')
-        const indexOf3 = classList.indexOf('date-range')
 
-        if (indexOf1 === -1 && indexOf2 === -1 && indexOf3 === -1) {
-          isShow.value = el.value.contains(target)
-        }
-      }
+const scrollEvent = (): void => {
+  if (el.value) {
+    const rect: DOMRect = el.value.getBoundingClientRect()
+
+    if (picker.value) {
+      picker.value.style.top = `${(rect.top + rect.height + 5)}px`
     }
-  })
 
-  document.addEventListener('scroll', () => {
-    if (el.value !== null) {
-      const rect: DOMRect = el.value.getBoundingClientRect()
-
-      if (picker.value !== null) {
-        picker.value.style.top = `${(rect.top + rect.height + 5)}px`
-      }
-
-      if (isShow.value) {
-        isShow.value = false
-      }
+    if (isShow.value) {
+      isShow.value = false
     }
-  })
+  }
+}
+
+onMounted(() => {
+  // 달력 외의 영역 클릭시 달력 닫기
+  document.addEventListener('click', outsideClickEvent)
+
+  // 스크롤 시 달력 닫기
+  document.addEventListener('scroll', scrollEvent)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', outsideClickEvent)
+  document.removeEventListener('scroll', scrollEvent)
 })
 
 defineExpose({
   check,
-  resetForm
+  resetForm,
+  resetValidate
 })
 </script>
 
 <template>
-  <div ref="el" :class="['date-picker', { error: onError }]">
+  <div ref="el" :class="['date-picker', { 'with-label': props.label, error: onError, block }]">
     <div class="wrap" @click="toggleCalendar">
-      <div class="picker-date-text">
+      <label :class="{ error: onError }" v-if="props.label">{{ props.label }}</label>
+
+      <div :class="['picker-date-text', { 'is-invalid': message }]">
         <template v-if="range">
-          <input
-            type="text"
-            :placeholder="holderText[0]"
-            :value="modelValue[0]"
-          />
-          <FontAwesomeIcon class="icon-cal" :icon="['fas', 'calendar-alt']" />
-          &nbsp;&nbsp;~&nbsp;&nbsp;
-          <input
-            type="text"
-            :placeholder="holderText[1]"
-            :value="modelValue[1]"
-          />
-          <FontAwesomeIcon class="icon-cal" :icon="['fas', 'calendar-alt']" />
+          <div class="input-group">
+            <input
+              readonly
+              type="text"
+              :class="['form-control', { 'is-invalid': message }]"
+              :placeholder="holderText[0]"
+              :value="modelValue[0]"
+            />
+            <span class="input-group-text">~</span>
+            <input
+              readonly
+              type="text"
+              :class="['form-control', { 'is-invalid': message }]"
+              :placeholder="holderText[1]"
+              :value="modelValue[1]"
+            />
+            <span class="input-group-text">
+              <i class="far fa-calendar"></i>
+            </span>
+          </div>
         </template>
 
         <template v-else>
-          <input
-            type="text"
-            :placeholder="holderText[0]"
-            :value="modelValue"
-          />
-          <FontAwesomeIcon class="icon-cal" :icon="['fas', 'calendar-alt']" />
+          <div class="input-group">
+            <input
+              readonly
+              type="text"
+              :class="['form-control', { 'is-invalid': message }]"
+              :placeholder="holderText[0]"
+              :value="modelValue"
+            />
+            <span class="input-group-text">
+              <i class="far fa-calendar"></i>
+            </span>
+          </div>
         </template>
       </div>
 
-      <p :class="['description', { error: errorTransition }]" v-if="!isValidate">
-        <FontAwesomeIcon class="ml-1" :icon="['fas', 'exclamation-circle']" />
+      <div :class="['invalid-feedback', { error: errorTransition }]" v-if="message">
         {{ message }}
-      </p>
+      </div>
     </div>
 
     <template v-if="range">
-      <transition name="picker-scale">
-        <div id="picker" class="picker-popup" v-show="isShow">
+      <Transition name="picker-scale">
+        <div ref="picker" class="picker-popup" v-show="isShow">
           <div class="search-date">
             <a
               href="#"
@@ -749,7 +819,7 @@ defineExpose({
             <div class="calendar start_calendar">
               <div class="start-end-text">시작일</div>
 
-              <date-controller
+              <DateController
                 :is-show="isShow"
                 :year="dateState.start.year"
                 :month="dateState.start.month"
@@ -761,7 +831,7 @@ defineExpose({
               />
 
               <div class="select-calendar-wrap">
-                <transition :name="transitionName.start">
+                <Transition :name="transitionName.start">
                   <div class="select-calendar" v-show="show.start">
                     <ul class="header">
                       <li
@@ -783,7 +853,7 @@ defineExpose({
                       </li>
                     </ul>
                   </div>
-                </transition>
+                </Transition>
               </div>
             </div>
             <div class="calendar end_calendar">
@@ -801,7 +871,7 @@ defineExpose({
               />
 
               <div class="select-calendar-wrap">
-                <transition :name="transitionName.end">
+                <Transition :name="transitionName.end">
                   <div class="select-calendar" v-show="show.end">
                     <ul class="header">
                       <li
@@ -823,7 +893,7 @@ defineExpose({
                       </li>
                     </ul>
                   </div>
-                </transition>
+                </Transition>
               </div>
             </div>
 
@@ -838,13 +908,12 @@ defineExpose({
             </div>
           </div>
         </div>
-      </transition>
+      </Transition>
     </template>
-
     <!-------------------------------- 날짜 단일 선택 달력 ---------------------------------->
     <template v-else>
-      <transition name="picker-scale">
-        <div id="picker" class="picker-popup single" v-show="isShow">
+      <Transition name="picker-scale">
+        <div ref="picker" class="picker-popup single" v-show="isShow">
           <div class="picker-wrap">
             <div class="calendar-inner">
               <div class="calendar">
@@ -861,7 +930,7 @@ defineExpose({
                 />
 
                 <div class="select-calendar-wrap">
-                  <transition :name="transitionName.start">
+                  <Transition :name="transitionName.start">
                     <div class="select-calendar" v-show="show.start">
                       <ul class="header">
                         <li
@@ -883,13 +952,13 @@ defineExpose({
                         </li>
                       </ul>
                     </div>
-                  </transition>
+                  </Transition>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </transition>
+      </Transition>
     </template>
   </div>
 </template>

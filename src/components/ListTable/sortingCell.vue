@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 
 export interface SortingCellEmits {
-  (e: 'sorting', value: string): void
+  (event: 'sorting', value: string): void
 }
 
 export interface SortingCellProps {

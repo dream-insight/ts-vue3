@@ -1,4 +1,7 @@
 .list-table {
+  width: 100%;
+  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.15);
+
   .columns {
     cursor: pointer;
     display: flex;
@@ -55,6 +58,33 @@
   .icon-scale-enter-active,
   .icon-scale-leave-active {
     transition: transform .2s;
+  }
+
+  thead th {
+    text-align: center;
+    background-color: #052c65;
+    color: #fff;
+    padding: 10px 0;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgb(231, 229, 229);
+
+    &:hover {
+      background-color: rgb(240, 240, 240);
+    }
+  }
+
+  tbody td {
+    padding: 10px 5px;
+    text-align: center;
+
+    &.left {
+      text-align: left;
+    }
+    &.right {
+      text-align: right;
+    }
   }
 }
 

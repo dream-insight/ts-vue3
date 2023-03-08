@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, useSlots, withDefaults } from 'vue'
+import { ref, computed, useSlots, withDefaults } from 'vue'
 
-export interface TooltipProps {
+const slots = useSlots()
+const props = withDefaults(defineProps<{
   message: string | string[]
   left?: boolean
   right?: boolean
   top?: boolean
   bottom?: boolean
   width?: number
-}
-
-const slots = useSlots()
-const props = withDefaults(defineProps<TooltipProps>(), {
+}>(), {
   left: false,
   right: false,
   top: false,
@@ -42,9 +40,9 @@ if (props.top) {
 <template>
   <div class="tooltip-wrap" @mouseenter="onMouse(true)" @mouseleave="onMouse(false)">
     <slot v-if="showIcon"></slot>
-    <FontAwesomeIcon class="icon" :icon="['fas', 'question-circle']" v-else />
+    <i class="icon fas fa-question-circle" v-else></i>
 
-    <transition name="tooltip">
+    <Transition name="tooltip">
       <div
         :class="['message-box', position]"
         :style="[{ width: `${width}px` }]"
@@ -62,7 +60,7 @@ if (props.top) {
           {{ message }}
         </template>
       </div>
-    </transition>
+    </Transition>
   </div>
 </template>
 

@@ -1,53 +1,48 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import store from './store'
+import VueCookies from 'vue-cookies'
 
-import TextField from '@/components/Form/TextField/index.vue'
-import SelectBox from '@/components/Form/SelectBox/index.vue'
-import NumberFormat from '@/components/Form/NumberFormat/index.vue'
+import Modal from '@/components/Modal'
+import Spinner from '@/components/Spinner'
+import Toast from '@/components/Toast'
+
 import CheckButton from '@/components/Form/CheckButton/index.vue'
-import SwitchButton from '@/components/Form/SwitchButton/index.vue'
 import DatePicker from '@/components/Form/DatePicker/index.vue'
-import ValidateWrap from '@/components/Form/ValidateWrap/index.vue'
+import NumberFormat from '@/components/Form/NumberFormat/index.vue'
+import SelectBox from '@/components/Form/SelectBox/index.vue'
+import SwitchButton from '@/components/Form/SwitchButton/index.vue'
+import TextField from '@/components/Form/TextField/index.vue'
 import ValidateForm from '@/components/Form/ValidateForm/index.vue'
+import ValidateWrap from '@/components/Form/ValidateWrap/index.vue'
+import ListTable from '@/components/ListTable/index.vue'
 import Pagination from '@/components/Pagination/index.vue'
 import Tooltip from '@/components/Tooltip/index.vue'
-import ListTable from '@/components/ListTable/index.vue'
+import Tabs from '@/components/Tabs/index.vue'
 
-import Modal from '@/components/Modal/index'
-import Toast from '@/components/Toast/index'
-import Spinner from '@/components/Spinner/index'
+// prototype
+import '@/js/prototype'
 
-// fontawesome
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {
-  faExclamationTriangle, faInfoCircle, faBan, faCheckCircle,
-  faAngleDoubleLeft, faAngleLeft, faAngleRight, faAngleDoubleRight,
-  faQuestionCircle, faExclamationCircle, faArrowDown, faCalendarAlt
-} from '@fortawesome/free-solid-svg-icons'
-
-library.add(
-  faCheckCircle, faInfoCircle, faExclamationTriangle, faBan,
-  faAngleDoubleLeft, faAngleLeft, faAngleRight, faAngleDoubleRight,
-  faQuestionCircle, faExclamationCircle, faArrowDown, faCalendarAlt
-)
+import '@/assets/style/index.scss'
 
 createApp(App)
+  .use(store)
   .use(router)
-  .component('TextField', TextField)
+  .use(VueCookies)
+  .use(Modal)
+  .use(Spinner)
+  .use(Toast)
+  .component('CheckButton', CheckButton)
+  .component('DatePicker', DatePicker)
   .component('NumberFormat', NumberFormat)
   .component('SelectBox', SelectBox)
-  .component('CheckButton', CheckButton)
   .component('SwitchButton', SwitchButton)
-  .component('DatePicker', DatePicker)
+  .component('TextField', TextField)
   .component('ValidateWrap', ValidateWrap)
   .component('ValidateForm', ValidateForm)
+  .component('ListTable', ListTable)
   .component('Pagination', Pagination)
   .component('Tooltip', Tooltip)
-  .component('ListTable', ListTable)
-  .component('FontAwesomeIcon', FontAwesomeIcon)
-  .use(Modal)
-  .use(Toast)
-  .use(Spinner)
+  .component('Tabs', Tabs)
   .mount('#app')

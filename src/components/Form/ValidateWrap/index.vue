@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { ref, watch, defineProps, withDefaults } from 'vue'
+import { ref, watch, withDefaults } from 'vue'
+import type { RuleFunction } from '../types'
 
-interface ValidateWrapProps {
+export interface ValidateWrapProps {
   checkValue: any
-  validate?: Function[]
+  validate?: RuleFunction[]
   errorMessage?: string
 }
 
 const props = withDefaults(defineProps<ValidateWrapProps>(), {
-  validate: (): Function[] => [],
+  validate: (): RuleFunction[] => [],
   errorMessage: '',
 })
 
@@ -28,16 +29,15 @@ let isValidate = ref<boolean>(true)
 let checkPass = ref<boolean>(false)
 let message = ref<string>('')
 
-
 const check = (): boolean => {
   // 임의로 지정된 에러가 없는 경우
   if (props.errorMessage === '') {
     // validate check
     if (props.validate.length) {
       for (let i = 0; i < props.validate.length; i++) {
-        let result = props.validate[i].call(null, props.checkValue)
+        let result = props.validate[i](props.checkValue)
 
-        if (result !== true) {
+        if (typeof result === 'string') {
           message.value = result
           isValidate.value = false
           checkPass.value = false
@@ -64,9 +64,14 @@ const resetForm = (): void => {
   message.value = ''
 }
 
+const resetValidate = (): void => {
+  resetForm()
+}
+
 defineExpose({
   check,
-  resetForm
+  resetForm,
+  resetValidate
 })
 </script>
 
@@ -75,7 +80,6 @@ defineExpose({
     <slot></slot>
 
     <div :class="['error-message']" v-if="message !== ''">
-      <FontAwesomeIcon :icon="['fas', 'exclamation-circle']" />
       {{ message }}
     </div>
   </div>

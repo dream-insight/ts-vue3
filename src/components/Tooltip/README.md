@@ -1,9 +1,10 @@
 # Tooltip component
 
 # 1. 사용방법
+* 해당 컴포넌트에서 사용되는 아이콘은 FontAwesome v5.x 입니다. [링크](https://fontawesome.com/v5/search?o=r&m=free)
 ```javascript
 // main.js
-import Tooltip from '@/components/tooltip'
+import Tooltip from '@/components/Tooltip'
 
 app.component('Tooltip', Tooltip)
 ```
@@ -12,7 +13,7 @@ app.component('Tooltip', Tooltip)
 <script setup>
 import { ref } from 'vue'
 
-let message = ref([
+let message = ref<string[]>([
   '아래에서 나오는 메시지',
   '매시지를 목록으로 전달 가능'
 ])
@@ -41,7 +42,7 @@ let message = ref([
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .wrap {
   padding: 200px;
   text-align: center;
@@ -52,12 +53,12 @@ let message = ref([
 # 2. Prop
 | Name | Type | Default | Require | Description |
 |-------|---- |---------|---------|-------------|
-| message | String, Array | <code>''</code> | *true* | 툴팁 메시지, 배열입력시 리스트 형태로 출력 |
+| message | String, String[] | <code>none</code> | *true* | 툴팁 메시지, 배열입력시 리스트 형태로 출력 |
 | left | Boolean | <code>false</code> | false | 메시지를 왼쪽에 표시 |
 | right | Boolean | <code>false</code> | false | 메시지를 오른쪽에 표시 |
 | top | Boolean | <code>false</code> | false | 메시지를 위쪽에 표시 |
 | bottom | Boolean | <code>true</code> | false | 메시지를 아랫쪽에 표시 |
-| width | Number | <code>300</code> | false | 메시지를 box의 최대 넓이(고정) |
+| width | Number | <code>300</code> | false | 메시지를 box의 최대 넓이(px 단위) |
 
 ## 3. 그 외
 ### Fontawsome 과 함께 사용하여야 icon 표시 가능

@@ -1,0 +1,48 @@
+$error-color: #ff5252;
+
+label.input-label {
+  z-index: 2;
+  top: -8px;
+  left: 10px;
+  padding: 0 6px;
+  font-size: 0.9em;
+  font-weight: 700;
+  background-color: #fff;
+  // text-shadow: 1px 2px #fff;
+  position: absolute;
+
+  &.error {
+    color: $error-color;
+  }
+}
+
+.block {
+  display: block !important;
+}
+
+.invalid-feedback {
+  padding-left: 10px;
+
+  &.error {
+    animation: shaking 0.3s;
+  }
+}
+
+/* error message shaking */
+@keyframes shaking {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(10px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

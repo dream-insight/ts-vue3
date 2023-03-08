@@ -1,0 +1,115 @@
+[
+  {
+    "name": "AD-Maker 설정",
+    "icon": "fas fa-cogs",
+    "active": false,
+    "path": "setting",
+    "child": [
+      {
+        "name": "광고주 회원관리",
+        "path": "client",
+        "active": false
+      },
+      {
+        "name": "전체 메뉴 관리",
+        "path": "menu",
+        "active": false
+
+      },
+      {
+        "name": "카테고리 관리",
+        "path": "category",
+        "active": false
+      }
+    ]
+  },
+  {
+    "name": "초기 데이터",
+    "icon": "fas fa-clipboard",
+    "active": false,
+    "path": "data",
+    "child": [
+      {
+        "name": "최고 관리자",
+        "path": "admin",
+        "active": false
+      },
+      {
+        "name": "권한별 메뉴",
+        "path": "menu",
+        "active": false
+      },
+      {
+        "name": "상담상태",
+        "path": "counselStatus",
+        "active": false
+      },
+      {
+        "name": "DB항목 설정",
+        "path": "inputConfig",
+        "active": false
+      }
+    ]
+  },
+  {
+    "name": "스마트 편집",
+    "icon": "fas fa-code",
+    "active": false,
+    "path": "smart",
+    "child": [
+      {
+        "name": "레이아웃",
+        "path": "layout",
+        "active": false
+      },
+      {
+        "name": "하단정보",
+        "path": "footer",
+        "active": false
+      },
+      {
+        "name": "DB 입력폼",
+        "path": "db",
+        "active": false
+      },
+      {
+        "name": "약관 페이지",
+        "path": "agreement",
+        "active": false
+      },
+      {
+        "name": "HTML",
+        "path": "html",
+        "active": false
+      }
+    ]
+  },
+  {
+    "name": "서버 관리",
+    "icon": "fas fa-server",
+    "active": false,
+    "path": "server",
+    "child": [
+      {
+        "name": "테이블 관리",
+        "path": "tables",
+        "active": false
+      },
+      {
+        "name": "쿼리 실행",
+        "path": "executeQuery",
+        "active": false
+      },
+      {
+        "name": "DB 사용 용량",
+        "path": "capacity",
+        "active": false
+      },
+      {
+        "name": "서버 로그(Apache)",
+        "path": "logs",
+        "active": false
+      }
+    ]
+  }
+]

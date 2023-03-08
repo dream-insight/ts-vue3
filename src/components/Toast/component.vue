@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, defineProps, defineExpose, withDefaults } from 'vue'
-
-interface ToastProps {
-  delay?: number
-  maxShowMessage?: number
-}
+import { ref, watch, withDefaults, onUnmounted } from 'vue'
 
 interface ToastListType {
   key: number
@@ -13,7 +8,11 @@ interface ToastListType {
   message: string
 }
 
-const props = withDefaults(defineProps<ToastProps>(), {
+const props = withDefaults(defineProps<{
+  delay?: number
+  maxShowMessage?: number
+  destroy: Function
+}>(), {
   delay: 300,
   maxShowMessage: 4
 })
@@ -34,15 +33,15 @@ watch(list, (items) => {
 })
 
 const show = (): void => {
-  list.value.push(<ToastListType>{
+  list.value.push({
     key,
     color: color.value,
-    icon: 'fas fa-' + icon.value,
+    icon: icon.value,
     message: message.value,
   })
 
   // 표시 시간이 지나면 자동으로 메시지 삭제
-  timeout.push(setTimeout(() => {
+  timeout.push(setTimeout((): void => {
     hide(0)
   }, props.delay))
 
@@ -65,30 +64,34 @@ const hide = (index: number = 0): void => {
   } catch (e) { }
 }
 
+onUnmounted(() => {
+  props.destroy()
+})
+
 defineExpose({
-  color,
-  icon,
+  show,
   message,
-  show
+  icon,
+  color
 })
 </script>
 
 <template>
   <div id="toast">
-    <transition-group name="toast-view">
+    <TransitionGroup name="toast-view">
       <div
-        :class="['toast-body', (item.color ? `bg-${item.color}` : '')]"
+        :class="['toast-body', (item.color != '' ? `bg-${item.color}` : '')]"
         :key="`toast-${item.key}`"
         @click="hide(i)"
         v-for="(item, i) in list">
 
-        <!-- <template v-if="item.icon"> -->
-          <!-- <FontAwesomeIcon class="icon" :icon="['fas', item.icon]" /> -->
-        <!-- </template> -->
+        <template v-if="item.icon">
+          <i :class="`icon fas fa-${item.icon}`"></i>
+        </template>
 
         <span class="message">{{ item.message }}</span>
       </div>
-    </transition-group>
+    </TransitionGroup>
   </div>
 </template>
 

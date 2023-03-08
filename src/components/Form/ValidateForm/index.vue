@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import { ref, defineExpose } from 'vue'
+import { h, Fragment, ref, useSlots, computed } from 'vue'
+import type { ComputedRef } from 'vue'
 
-const frm = ref<HTMLFormElement | null>(null)
+const frm = ref<HTMLFormElement>()
+const slots = useSlots()
 
-let checkState: boolean = true
+let checkState: boolean
 let firstEl: HTMLElement
+
+const RenderSlotItems: ComputedRef = computed(() => h(Fragment, slots.default ? slots.default() : []))
 
 const validate = (): boolean => {
   checkState = true
 
-  if (frm.value) {
-    traverse(frm.value.__vnode)
+  /**
+   * Ref를 통한 하위 객체(slot 내용) 탐색에서 __vnode 프로퍼티를 참조하는데
+   * 해당 프로퍼티는 빌드에서 제거되는 문제 발생 (서비스에서 활용할 수 없음)
+   * 해당 문제를 해결하기 위해 useSlots 핼퍼를 이용해 computed로 다시 랜더링 하는부분에서
+   * __vnode 와 같은 역할을 할 수 있는 것을 확인하여 코드 변경
+   */
+  explore(RenderSlotItems.value)
 
-    // 검수에 통과하지 못한 가장 첫번째 폼에 포커스
-    if (firstEl) {
-      firstEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+  // 검수에 통과하지 못한 가장 첫번째 폼에 포커스
+  if (firstEl) {
+    firstEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   return checkState
@@ -23,11 +31,17 @@ const validate = (): boolean => {
 
 const resetForm = (): void => {
   if (frm.value) {
-    traverse(frm.value.__vnode, 'reset')
+    explore(RenderSlotItems.value, 'reset')
   }
 }
 
-const traverse = (el: any, flag: string = 'dom'): void => {
+const resetValidate = (): void => {
+  if (frm.value) {
+    explore(RenderSlotItems.value, 'resetValidate')
+  }
+}
+
+const explore = (el: any, flag: string = 'dom'): void => {
   if (Array.isArray(el.children)) {
     const len: number = el.children.length
 
@@ -37,12 +51,12 @@ const traverse = (el: any, flag: string = 'dom'): void => {
       // vue node 전체(chilren)을 탐색 하여 chidren이 또 있는 경우 재귀한다.
       for (let i = 0; i < len; i++) {
         if (vueNodes[i].component) {
-          traverse(vueNodes[i].component.subTree, flag)
+          explore(vueNodes[i].component.subTree, flag)
         }
 
         if (vueNodes[i].children) {
           if (vueNodes[i].children?.length) {
-            traverse(vueNodes[i], flag)
+            explore(vueNodes[i], flag)
           }
         } else {
           componentCheck(vueNodes[i], flag)
@@ -50,34 +64,35 @@ const traverse = (el: any, flag: string = 'dom'): void => {
       }
     }
   } else if (!!el.component) {
-    if (el.component.subTree !== undefined) {
-      traverse(el.component.subTree, flag)
+    if (el.component.subTree) {
+      explore(el.component.subTree, flag)
     }
   }
 }
 
 const componentCheck = (el: any, flag: string): void => {
-  const vueDom = [
+  const vueDom: string[] = [
     'TextField', 'NumberFormat', 'SelectBox',
     'SwitchButton', 'CheckButton', 'DatePicker', 'ValidateWrap'
   ]
 
   // 컴포넌트인지 체크 후 필요한 처리를 한다.
-  if (typeof el.type === 'object') {
-    // npm install 된 컴포넌트는 __file property 없기 때문에 통과
-    if (el.type.hasOwnProperty('name') ) {
-      let tagName = el.type.name
+  if (el.type instanceof Object) {
+    if ('name' in el.type) {
+      let tagName: string = el.type.name
 
       if (vueDom.includes(tagName)) {
-        if (flag == 'reset') {
+        if (flag === 'reset') {
           el.component.exposed.resetForm()
+        } else if (flag === 'resetValidate') {
+          el.component.exposed.resetValidate()
         } else {
           if (!el.component.exposed.check() && checkState) {
             checkState = false
 
             // 가장 처음 검수에 통과 하지 못한 폼 저장 (라인 포커스)
             if (!firstEl) {
-              firstEl = el.el
+              firstEl = el.el as HTMLElement
             }
           }
         }
@@ -87,6 +102,7 @@ const componentCheck = (el: any, flag: string): void => {
 }
 
 defineExpose({
+  resetValidate,
   resetForm,
   validate
 })
@@ -94,7 +110,7 @@ defineExpose({
 
 <template>
   <form ref="frm" @submit.prevent>
-    <slot></slot>
+    <RenderSlotItems />
   </form>
 </template>
 

@@ -1,11 +1,11 @@
-import { h, render }  from 'vue'
+import { h, render, isVNode }  from 'vue'
 import type { App, VNode } from 'vue'
 import modalComponent from './component.vue'
 import type { Modal, ModalStyleOptions, ModalOptions } from './types'
 
 export default {
   install(app: App, options?: ModalStyleOptions) {
-    const body: HTMLElement | null = document.querySelector('body')
+    const body = document.querySelector('body') as HTMLBodyElement
 
     let VNode: VNode | null = null
 
@@ -13,44 +13,43 @@ export default {
     let noScrollStyleClass: string = '.no-scroll'
 
     if (options) {
-      if (options.hasOwnProperty('modalStyleClass')) {
+      if ('modalStyleClass' in options) {
         modalStyleClass = options.modalStyleClass
       }
 
-      if (options.hasOwnProperty('noScrollStyleClass')) {
+      if ('noScrollStyleClass' in options) {
         noScrollStyleClass = options.noScrollStyleClass
       }
     }
 
     const destroy = (): void => {
-      if (body !== null) {
-        render(null, body)
-        VNode = null
-      }
+      render(null, body)
+      VNode = null
     }
 
     const setMessage = (opt: ModalOptions | string, type: string): void => {
-      const props = <ModalOptions>{
+      const props: ModalOptions = {
+        message: '',
         type,
         title: (type === 'alert') ? '알림' : '확인',
       }
 
       if (opt instanceof Object) {
-        if (opt.hasOwnProperty('title')) {
+        if ('title' in opt) {
           props.title = opt.title
         }
 
-        if (opt.hasOwnProperty('width')) {
+        if ('width' in opt) {
           if (!isNaN(Number(opt.width))) {
             props.width = Number(opt.width)
           }
         }
 
-        if (opt.hasOwnProperty('btnOkayText')) {
+        if ('btnOkayText' in opt) {
           props.btnOkayText = opt.btnOkayText
         }
 
-        if (opt.hasOwnProperty('btnCancelText')) {
+        if ('btnCancelText' in opt) {
           props.btnCancelText = opt.btnCancelText
         }
 
@@ -62,13 +61,13 @@ export default {
           props.cancel = opt.cancel
         }
 
-        if (opt.hasOwnProperty('modalStyleClass')) {
+        if ('modalStyleClass' in opt) {
           props.modalStyleClass = opt.modalStyleClass
         } else {
           props.modalStyleClass = modalStyleClass
         }
 
-        if (opt.hasOwnProperty('noScrollStyleClass')) {
+        if ('noScrollStyleClass' in opt) {
           props.noScrollStyleClass = opt.noScrollStyleClass
         } else {
           props.noScrollStyleClass = noScrollStyleClass
@@ -83,20 +82,17 @@ export default {
 
       props.destroy = destroy
 
-      if (VNode === null) {
+      if (!isVNode(VNode)) {
         VNode = h(modalComponent, props)
-
-        if (body !== null) {
-          render(VNode, body)
-        }
+        render(VNode, body)
       }
     }
 
-    const alert = (params: ModalOptions): void => {
+    const alert = (params: ModalOptions | string): void => {
       setMessage(params, 'alert')
     }
 
-    const confirm = (params: ModalOptions): void => {
+    const confirm = (params: ModalOptions | string): void => {
       setMessage(params, 'confirm')
     }
 

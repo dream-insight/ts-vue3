@@ -1,57 +1,55 @@
-export interface toggleButtonType {
+export interface ToggleButtonType {
   text: string
   checked: boolean
 }
 
-export interface showRange {
+export interface ShowRange {
   [index: string]: boolean
 }
 
-export interface transitionNameType {
+export interface TransitionNameType {
   [index: string]: string
 }
 
-export interface timeoutType {
-  [index: string]: ReturnType<typeof setTimeout> | undefined
+export interface TimeoutType {
+  [index: string]: number
 }
 
-export interface dateCellType {
+export interface DateCellType {
   day: number
   type: string
 }
 
-export interface dateRenderType {
-  [index: string]: Array<dateCellType[]>
+export interface DateRenderType {
+  [index: string]: Array<DateCellType[]>
 }
 
-interface dateStateValueType {
+interface DateStateValueType {
   [index: string]: number
 }
 
-export interface dateStateType {
-  [index: string]: dateStateValueType
+export interface DateStateType {
+  [index: string]: DateStateValueType
 }
 
-export interface dateOptionType {
+export interface DateOptionType {
   year: number[]
   month: number[]
 }
 
-interface selectedDateValueType {
+export interface SelectedDateValueType {
   date: string
   day: number
 }
 
-export interface selectedDateType {
-  [index: string]: selectedDateValueType
+export interface SelectedDateType {
+  [index: string]: SelectedDateValueType
 }
 
-export interface timeStateType {
+export interface TimeStateType {
   start: number
   end: number
 }
-
-export {}
 
 declare global {
   interface Date {

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, computed, defineProps, defineEmits, defineExpose, withDefaults } from 'vue'
+import { ref, watch, computed, withDefaults } from 'vue'
 
-interface SwitchButtonEmits {
-  (e: 'update:modelValue', value: string | boolean): void
-}
-
-interface SwitchButtonProps {
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: string | boolean): void
+}>()
+const props = withDefaults(defineProps<{
   modelValue: string | boolean
   small?: boolean
   // [0 => false label, 1 => true label]
@@ -14,16 +13,15 @@ interface SwitchButtonProps {
   validate?: string | boolean
   trueValue?: string | boolean
   falseValue?: string | boolean
-}
-
-const emit = defineEmits<SwitchButtonEmits>()
-const props = withDefaults(defineProps<SwitchButtonProps>(), {
+  readonly?: boolean
+}>(), {
   small: false,
   label: (): string[] => ['미설정', '설정'],
   // form check validate
   validate: false,
   trueValue: true,
   falseValue: false,
+  readonly: false,
 })
 
 let onError = ref<boolean>(false)
@@ -52,7 +50,9 @@ const check = (): boolean => {
       resetForm()
       return true
     } else {
-      message.value = (typeof props.validate == 'string') ? props.validate : `${props.label[1]}을(를) 선택해주세요.`
+      message.value = (typeof props.validate == 'string')
+        ? props.validate
+        : `${props.label[1]}을(를) 선택해주세요.`
       onError.value = true
       isValidate.value = false
       errorTransition.value = true
@@ -65,6 +65,10 @@ const check = (): boolean => {
 }
 
 const resetForm = (): void => {
+  resetValidate()
+}
+
+const resetValidate = (): void => {
   message.value = ''
   onError.value = false
   isValidate.value = true
@@ -77,6 +81,7 @@ const updateValue = (evt: Event): void => {
 }
 
 defineExpose({
+  resetValidate,
   check,
   resetForm
 })
@@ -88,6 +93,7 @@ defineExpose({
       :class="['switch', { small, error: onError }]">
       <input
         type="checkbox"
+        :readonly="readonly"
         :checked="modelValue == trueValue"
         @change="updateValue"
       />
@@ -95,12 +101,11 @@ defineExpose({
       {{ labelText }}
     </label>
 
-    <p
+    <div
       :class="['description', { error: errorTransition }]"
-      v-if="!isValidate">
-      <FontAwesomeIcon :icon="['fas', 'exclamation-circle']" />
+      v-if="message">
       {{ message }}
-    </p>
+    </div>
   </div>
 </template>
 
@@ -108,7 +113,5 @@ defineExpose({
 @import './style.scss';
 </style>
 <script lang="ts">
-export default {
-  name: 'SwitchButton'
-}
+export default { name: 'SwitchButton' }
 </script>

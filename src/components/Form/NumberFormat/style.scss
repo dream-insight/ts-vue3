@@ -1,54 +1,25 @@
+@import '../common.scss';
+
 .input-wrap {
   display: inline-block;
+  position: relative;
+
+  &.with-label {
+    margin-top: 0.3em;
+  }
 
   input {
     width: 100%;
     text-align: right;
-  }
+    padding-top: 10px;
+    padding-bottom: 10px;
 
-  &.error input,
-  &.error textarea {
-    border: 2px solid #ff5252;
-  }
-
-  &.error .description {
-    color: #ff5252;
-  }
-
-  .description {
-    font-size: 12px !important;
-    font-weight: normal;
-    padding: 0 !important;
-    margin-bottom: 0 !important;
-    border: 0 !important;
-    color: #ff5252;
-    text-align: left !important;
-
-    &.error {
-      animation: shaking 0.2s;
+    &::placeholder {
+      text-align: left !important;
     }
   }
-}
 
-.block {
-  display: block !important;
-}
-
-/* error message shaking */
-@keyframes shaking {
-  0% {
-    transform: translateX(10px);
-  }
-  25% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(10px);
-  }
-  75% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(10px);
+  &.error input {
+    border: 1px solid $error-color;
   }
 }

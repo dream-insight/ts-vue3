@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUpdate, defineProps, defineExpose, withDefaults } from 'vue'
+import { ref } from 'vue'
 
 export interface SpinnerProps {
   limitTime?: number
@@ -11,64 +11,60 @@ const props = withDefaults(defineProps<SpinnerProps>(), {
 })
 
 let timeout: number = 0
-let delay = ref<number>(0)
+let delay = ref<number>(0.5)
 let progress = ref<number>(0)
 let isShow = ref<boolean>(false)
-let isOpen = ref<boolean>(false)
 let message = ref<string>('Loading...')
 
-watch(progress, (after) => {
-  if (after <= 0) {
-    delay.value = 0
-    isShow.value = false
-  } else if (after > 0) {
-    isShow.value = true
-  }
-})
-
- const destroy = (): void => {
-  isOpen.value = false
-  props.destroy.call(null)
+const destroy = (): void => {
+  props.destroy()
 }
 
- const waiting = (): Promise<null> => {
-  return new Promise<null>((resolve: Function): void => {
+const waiting = (): Promise<void> => {
+  return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(null)
+      resolve()
     }, delay.value * 1000)
   })
 }
 
- const show = async (msg: string) => {
+const setProgress = async (flag: string): Promise<void> => {
+  if (flag === '+') {
+    progress.value++
+  } else {
+    progress.value--
+  }
+
+  await waiting()
+
+  if (progress.value) {
+    isShow.value = true
+
+    // 스피너가 닫히지 않고 limitTime 이상 유지 될 경우 강제로 콘솔 메시지를 표시한다.
+    clearTimeout(timeout)
+
+    timeout = setTimeout(() => {
+      console.warn('스피너가 닫지히 않습니다. 처리되고 있는 내역을 확인해주세요.')
+      progress.value = 0
+      isShow.value = false
+    }, props.limitTime * 1000)
+  } else {
+    progress.value = 0
+    isShow.value = false
+  }
+}
+
+const show = (msg: string): void => {
   if (msg !== '') {
     message.value = msg
   }
 
-  clearTimeout(timeout)
-
-  await waiting()
-
-  isOpen.value = true
-  progress.value++
-
-  // hide 호출이 없을 경우 최대 지속 시간 이후 사라지도록
-  timeout = setTimeout((): void => {
-    progress.value = 0
-  }, props.limitTime * 1000)
+  setProgress('+')
 }
 
-const hide = async () => {
-  await waiting()
-
-  if (progress.value) {
-    clearTimeout(timeout)
-    progress.value--
-  }
+const hide = (): void => {
+  setProgress('-')
 }
-
-onBeforeUpdate(() => {
-  isOpen.value = true
-})
 
 defineExpose({
   show,
@@ -78,18 +74,19 @@ defineExpose({
 </script>
 
 <template>
-  <transition appear name="fade">
-    <div class="spinner-box" v-show="isOpen">
-      <transition appear name="scale" @after-leave="destroy">
+  <Transition appear name="fade">
+    <div class="spinner-box" v-show="isShow">
+      <Transition appear name="scale" @after-leave="destroy">
         <div class="box" v-show="isShow">
-          <div class="spinner">
-            <img src="./spinner.png" />
+          <div class="spinner-border text-white" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
+
           <p>{{ message }}</p>
         </div>
-      </transition>
+      </Transition>
     </div>
-  </transition>
+  </Transition>
 </template>
 
 <style lang="scss" scoped>

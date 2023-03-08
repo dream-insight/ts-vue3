@@ -1,6 +1,7 @@
 export interface ToastOptions {
   maxShowMessage?: number
-  delay?: number
+  delay?: number,
+  destroy: Function
 }
 
 export interface MessageOptions {
@@ -9,6 +10,7 @@ export interface MessageOptions {
   color?: string
 }
 
-export interface Toast {
-  (params: MessageOptions | string): void
+export type Toast = {
+  (params: string): void
+  (params: MessageOptions): void
 }

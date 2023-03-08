@@ -1,3 +1,5 @@
+@import '../common.scss';
+
 .date-picker {
   position: relative;
   display: inline-block;
@@ -8,6 +10,10 @@
   -ms-user-select: none;
   user-select: none;
 
+  &.with-label {
+    margin-top: 0.3em;
+  }
+
   .icon-cal {
     font-size: 20px;
     color: rgb(121, 121, 121);
@@ -15,7 +21,17 @@
   }
 
   &.error input[type=text] {
-    border: 2px solid #ff5252;
+    border: 1px solid #ff5252;
+  }
+
+  input[type=text] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .input-group-text {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
   }
 
   .picker-popup {
@@ -247,6 +263,21 @@
   &.show .picker-date-text:after {
     transform: rotate(-180deg);
     transition: all 0.5s;
+  }
+
+  .wrap label {
+    z-index: 10;
+    top: -8px;
+    left: 10px;
+    padding: 0 6px;
+    font-size: 0.9em;
+    font-weight: 700;
+    background-color: #fff;
+    position: absolute;
+
+    &.error {
+      color: $error-color;
+    }
   }
 
   .picker-date-text {

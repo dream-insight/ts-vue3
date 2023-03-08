@@ -1,0 +1,42 @@
+/* common util */
+.no-scroll {
+  overflow: hidden;
+}
+
+.block {
+  display: block !important;
+}
+
+.dark {
+  color: #fff !important;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider {
+  display: block;
+  height: 1px;
+  background-color: #e2e2e2;
+  margin: 10px 0;
+}
+
+.input-with-btn {
+  display: flex;
+  align-items: flex-start;
+
+  .input-wrap {
+    flex: 1;
+  }
+
+  .btn {
+    height: 44px;
+    margin-left: 4px;
+    margin-top: 0.3em;
+    display: flex;
+    align-items: center;
+  }
+}

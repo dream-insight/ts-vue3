@@ -1,57 +1,168 @@
+@import '../common.scss';
+
 .select-box {
   display: inline-block;
   vertical-align: top;
+  position: relative;
 
-  select.size {
-    min-width: 100% !important;
+  &.with-label {
+    margin-top: 0.3em;
   }
 
-  &.block {
-    display: block !important;
+  .form-control {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 3em;
   }
 
-  &.error select {
-    border: 2px solid #ff5252;
-  }
+  .control-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  &.error .description {
-    color: #ff5252;
-  }
+    .text {
+      flex: 1;
+      line-height: 1.5;
+      display: flex;
+      flex-wrap: wrap;
 
-  .description {
-    font-size: 12px !important;
-    font-weight: normal;
-    padding: 0 !important;
-    margin-bottom: 0 !important;
-    border: 0 !important;
-    color: #ff5252;
-    text-align: left !important;
+      &.ph {
+        color: #636363;
+        font-weight: 400;
+      }
 
-    &.error {
-      animation: shaking 0.2s;
+      span {
+        display: flex;
+        align-items: center;
+        background-color: #717171;
+        padding: 3px 7px;
+        color: #fff;
+        font-size: 0.7em;
+        font-weight: 400;
+        border-radius: 5px;
+        margin-bottom: -5px;
+
+        & + span {
+          margin-left: 3px;
+        }
+
+        .check-mark {
+          display: inline-block;
+          transform-origin: center;
+
+          .mark-wrap {
+            width: 10px;
+            height: 10px;
+            margin-left: 3px;
+            transform: rotate(45deg);
+            cursor: pointer;
+
+            .line {
+              position: absolute;
+              border: 1px solid rgb(255, 199, 199);
+              transform-origin: center;
+
+              &.pipe {
+                left: calc(50% - 1px);
+                height: 10px;
+              }
+
+              &.dash {
+                top: calc(50% - 1px);
+                width: 10px;
+              }
+            }
+          }
+        }
+      }
     }
+
+    .arrow {
+      width: 25px;
+      text-align: center;
+      transition: transform 0.3s;
+
+      &.rotate {
+        transform: rotate(180deg);
+      }
+
+      i {
+        font-size: 1.2em;
+        cursor: pointer;
+      }
+    }
+
+    .option-list {
+      position: absolute;
+      z-index: 30;
+      left: 0.5em;
+      width: calc(100% - 1em - 30px);
+      background-color: #fff;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-radius: 0.3em;
+      overflow: hidden;
+      box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.3);
+      padding: 5px;
+      max-height: 50vh;
+      overflow-y: auto;
+
+      &.show-top {
+        top: 0.9em;
+        transform-origin: top;
+      }
+
+      &.show-bottom {
+        bottom: 0.9em;
+        transform-origin: bottom;
+      }
+
+      li {
+        padding: 13px;
+        transition: background-color 0.3s ease;
+        border-radius: 5px;
+        box-sizing: border-box;
+
+        & + li {
+          margin-top: 3px;
+        }
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        &.selected {
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+
+      }
+    }
+  }
+
+  &.error input {
+    border: 1px solid $error-color;
   }
 }
 
-/* error message shaking */
-@keyframes shaking {
-  0% {
-    transform: translateX(10px);
-  }
+.options-view-enter-from,
+.options-view-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.options-view-enter-active,
+.options-view-leave-active {
+  transition: all 0.3s ease;
+}
 
-  25% {
-    transform: translateX(0);
-  }
-
-  50% {
-    transform: translateX(10px);
-  }
-
-  75% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(10px);
-  }
+.options-view-bottom-enter-from,
+.options-view-bottom-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.options-view-bottom-enter-active,
+.options-view-bottom-leave-active {
+  transition: all 0.3s ease;
 }

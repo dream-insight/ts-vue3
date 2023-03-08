@@ -3,49 +3,22 @@
  * 해당 컴포넌트는 정렬기능을 활성화 시킨 상태에서
  * 라인당 추가되는 하위 데이터에 대한 변화를 감지 하지 못합니다.
 */
-import { ref, watch, defineProps, defineEmits, withDefaults } from 'vue'
+import { ref, watch, withDefaults } from 'vue'
+import type { TableHeader, TableItems, TableFooter, SortingChangeData } from './types'
 
 export interface TableEmits {
-  (e: 'checked', value: boolean): void
-  (e: 'sort-change', value: SortingChangeData): void
-}
-
-// 목록 최상단 라벨링 Array:[{text: String, width: Number, sort: Boolean, target: String(sort target)}] *
-export interface TableHeader {
-  text: string
-  width?: number | string
-  align?: string
-  sort?: boolean
-  target?: string
-  order?: string
-  colspan?: number
-  rowspan?: number
-}
-
-export interface TableFooter {
-  [index: string]: any
-}
-
-// 테이블 목록 Array:[] *
-export interface TableItems {
-  [index: string]: any
-}
-
-export interface SortingChangeData {
-  data: TableItems[]
-  target: string
-  order: string
+  (event: 'checked', value: boolean): void
+  (event: 'sort-change', value: SortingChangeData): void
 }
 
 export interface TableProps {
-  header: TableHeader[] | Array<TableHeader[]>
-  footer?: TableFooter
   items: TableItems[]
+  header: TableHeader[] | TableHeader[][]
+  footer?: TableFooter
   // 목록이 없을 경우 표시할 텍스트 String:''
   emptyText?: string
   // 설정시 라인 색상이 적용 되지 않음
   noHoverBg?: boolean
-  width?: string
   // 리스트 체크 여부 Boolean:false
   checkAll?: boolean
   multiHeader?: number
@@ -57,7 +30,6 @@ const props = withDefaults(defineProps<TableProps>(), {
   footer: (): TableFooter => ({}),
   emptyText: '데이터가 없습니다.',
   noHoverBg: false,
-  width: '',
   checkAll: false,
   multiHeader: 0,
 })
@@ -68,7 +40,7 @@ let dataList = ref<TableItems[]>([])
 let target = ref<string | undefined>('')
 let order = ref<string>('')
 
-const listTableCheck = ref<HTMLInputElement | null>(null)
+const listTableCheck = ref<HTMLInputElement>()
 
 watch(() => props.header, () => setHeader())
 watch(() => props.items, (data) => {
@@ -86,28 +58,26 @@ const setHeader = (): void => {
   if (props.header.length) {
     // 정렬이 지정되어 있는 경우 해당 컬럼을 정렬해준다.
     if (props.multiHeader) {
-      (<Array<TableHeader[]>>props.header).forEach((head, i) => {
+      props.header.forEach((head, i) => {
         tableHeader.value.push([])
 
-        if (Array.isArray(head)) {
-          tableHeader.value[i] = (<TableHeader[]>head).map((item) => {
-            if (item.order) {
-              order.value = item.order
-              target.value = item.target
-            }
+        tableHeader.value[i] = (<TableHeader[]>head).map((item: TableHeader): TableHeader => {
+          if (item.order) {
+            order.value = item.order
+            target.value = item.target
+          }
 
-            return {
-              text: item.text,
-              width: item.width,
-              sort: item.sort ? true : false,
-              target: item.target,
-              colspan: !!item.colspan ? item.colspan : 0,
-              rowspan: !!item.rowspan ? item.rowspan : 0,
-              order: item.order,
-              align: !item.align ? 'center' : item.align
-            }
-          })
-        }
+          return {
+            text: item.text,
+            width: item.width,
+            sort: item.sort ? true : false,
+            target: item.target,
+            colspan: !!item.colspan ? item.colspan : 0,
+            rowspan: !!item.rowspan ? item.rowspan : 0,
+            order: item.order,
+            align: !item.align ? 'center' : item.align
+          }
+        })
       })
     } else {
       tableHeader.value = (<TableHeader[]>props.header).map((item) => {
@@ -180,8 +150,8 @@ const sorting = (): void => {
       }
     }
 
-    if (props.multiHeader) {
-      tableHeader.value.forEach(main => {
+    if (props.multiHeader > 0) {
+      tableHeader.value.forEach((main) => {
         (<TableHeader[]>main).forEach(item => {
           if (item.target === target.value) {
             item.order = order.value
@@ -323,3 +293,7 @@ if (props.items.length && target.value) {
     </tfoot>
   </table>
 </template>
+
+<style lang="scss">
+@import './style.scss';
+</style>

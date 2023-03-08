@@ -1,26 +1,22 @@
 <script setup lang="ts">
-import { ref, watch, defineEmits, defineProps, withDefaults } from 'vue'
-
-interface PaginationEmits {
-  (e: 'update:modelValue', value: string | number): void
-}
-
-interface PaginationProps {
-  modelValue: number;
-  size?: number;       // 한 페이지 당 데이터 수량
-  block?: number;      // 표시 할 페이지 번호 개수
-  total?: number;      // 데이터의 총 수량
-  addClass?: string;
-  inline?: boolean;
-}
+import { ref, watch } from 'vue'
 
 interface PaginationItem {
   num: number;
   isOn: boolean;
 }
 
-const emit = defineEmits<PaginationEmits>()
-const props = withDefaults(defineProps<PaginationProps>(), {
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: string | number): void
+}>()
+const props = withDefaults(defineProps<{
+  modelValue: number;
+  size?: number;       // 한 페이지 당 데이터 수량
+  block?: number;      // 표시 할 페이지 번호 개수
+  total?: number;      // 데이터의 총 수량
+  addClass?: string;
+  inline?: boolean;
+}>(), {
   size: 20,
   block: 10,
   total: 0,
@@ -80,7 +76,6 @@ const updateValue = (v: number): void => {
   if (v !== nowPage.value) {
     nowPage.value = v
     emit('update:modelValue', v)
-
     makePageList()
   }
 }
@@ -95,16 +90,16 @@ makePageList()
 
 <template>
   <!-- bootstrap pagination -->
-  <nav :class="['page navigation', { inline }]">
+  <div :class="['Page navigation', { inline }]">
     <ul class="pagination">
       <li class="page-item">
         <a class="page-link" href="#" @click.prevent="updateValue(1)">
-          <FontAwesomeIcon :icon="['fas', 'angle-double-left']" />
+          <i class="fas fa-angles-left"></i>
         </a>
       </li>
       <li class="page-item">
         <a class="page-link" href="#" @click.prevent="updateValue(prev)">
-          <FontAwesomeIcon :icon="['fas', 'angle-left']" />
+          <i class="fas fa-angle-left"></i>
         </a>
       </li>
 
@@ -117,23 +112,21 @@ makePageList()
 
       <li class="page-item">
         <a class="page-link" href="#" @click.prevent="updateValue(next)">
-          <FontAwesomeIcon :icon="['fas', 'angle-right']" />
+          <i class="fas fa-angle-right"></i>
         </a>
       </li>
       <li class="page-item">
         <a class="page-link" href="#" @click.prevent="updateValue(maxPage)">
-          <FontAwesomeIcon :icon="['fas', 'angle-double-right']" />
+          <i class="fas fa-angles-right"></i>
         </a>
       </li>
     </ul>
-  </nav>
+  </div>
 </template>
 
 <style scoped lang="scss">
 @import './style.scss';
 </style>
 <script lang="ts">
-export default {
-  name: 'Pagination'
-}
+export default { name: 'Pagination' }
 </script>

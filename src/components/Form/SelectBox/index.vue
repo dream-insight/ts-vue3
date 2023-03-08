@@ -1,37 +1,44 @@
 <script setup lang="ts">
-import { ref, watch, computed, defineProps, defineEmits, defineExpose, withDefaults } from 'vue'
+import { ref, watch, watchEffect, computed, withDefaults, onMounted, StyleValue } from 'vue'
 import type { SelectBoxItem } from './types'
+import type { RuleFunction } from '../types'
 
-interface SelectBoxEmits {
-  (e: 'update:modelValue', value: string): void,
-  (e: 'update:selectedIndex', index: number): void
-}
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: any): void,
+  (event: 'update:selectedIndex', index: number): void
+}>()
 
-interface SelectBoxProps {
-  modelValue: string;
-  selectedIndex?: number;
-  options: SelectBoxItem[];
-  placeholder?: string;
-  block?: boolean;
-  validate?: Function[];
-  errorMessage?: string;
-  width?: string | number;
-}
-
-const emit = defineEmits<SelectBoxEmits>()
-
-const props = withDefaults(defineProps<SelectBoxProps>(), {
+const props = withDefaults(defineProps<{
+  modelValue: any
+  selectedIndex?: number
+  options: SelectBoxItem[]
+  label?: string
+  placeholder?: string
+  block?: boolean
+  validate?: RuleFunction[]
+  errorMessage?: string
+  width?: string | number
+  multiple?: boolean
+}>(), {
   block: false,
+  label: '',
+  placeholder: '',
   selectedIndex: -1,
   errorMessage: '',
-  validate: (): Function[] => [],
+  validate: (): RuleFunction[] => [],
+  multiple: false
 })
 
-let val = ref<string>('')
 let isValidate = ref<boolean>(true)
 let message = ref<string>('')
 let errorTransition = ref<boolean>(false)
-let selectBox = ref<HTMLSelectElement | null>(null)
+let showOption = ref<boolean>(false)
+let showBottom = ref<boolean>(false)
+
+let selectedText = ref<any>(props.multiple ? [] : '')
+let selectedValue = ref<any>(props.multiple ? [] : '')
+
+const SelectBox = ref<HTMLSelectElement>()
 
 const styleWidth = computed<string>(() => {
   if (props.width) {
@@ -47,8 +54,10 @@ const styleWidth = computed<string>(() => {
   return ''
 })
 
+const wrapStyle = computed<StyleValue>(() => ({ 'with-label': props.label, error: !isValidate.value, block: props.block }))
+
 watch(() => props.errorMessage, (v) => {
-  if (v !== '') {
+  if (v) {
     isValidate.value = false
     message.value = props.errorMessage
   }
@@ -63,42 +72,52 @@ watch(errorTransition, (v) => {
 })
 
 watch(() => props.validate, () => {
-  message.value = ''
-  isValidate.value = true
-  errorTransition.value = false
+  resetValidate()
 })
 
-const getText = (): string => {
-  return props.options[props.selectedIndex].text
-}
+watchEffect(() => {
+  selectedValue.value = props.modelValue
 
-const updateValue = (evt: Event): void => {
-  let e = evt.target as HTMLSelectElement
-  emit('update:modelValue', e.value)
-  emit('update:selectedIndex', e.selectedIndex)
+  if (props.multiple) {
+    selectedText.value = []
+  }
+
+  props.options.forEach((item) => {
+    if (props.multiple) {
+      if (props.modelValue.includes(item.value)) {
+        selectedText.value.push(item.text)
+      }
+    } else {
+      if (props.modelValue === item.value) {
+        selectedText.value = item.text
+      }
+    }
+  })
+})
+
+const updateValue = (v: any, index: number): void => {
+  emit('update:modelValue', v)
+  emit('update:selectedIndex', index)
   check()
 }
 
+/**
+ * 유효성 검사
+ */
 const check = (): boolean => {
   // 폼을 검수하여 값을 반환
   // 임의로 지정된 에러가 없는 경우
-  if (!props.errorMessage) {
-    // validate check
-    if (props.validate.length) {
-      const e = selectBox.value
+  // validate check
+  if (!props.errorMessage && props.validate.length) {
+    for (let i = 0; i < props.validate.length; i++) {
+      let result: string | boolean = props.validate[i](selectedValue.value)
 
-      if (e) {
-        for (let i = 0; i < props.validate.length; i++) {
-          let result = props.validate[i].call(null, e.value)
+      if (typeof result === 'string') {
+        message.value = result
+        isValidate.value = false
+        errorTransition.value = true
 
-          if (result !== true) {
-            message.value = result
-            isValidate.value = false
-            errorTransition.value = true
-
-            return false
-          }
-        }
+        return false
       }
     }
   }
@@ -109,68 +128,198 @@ const check = (): boolean => {
   return true
 }
 
+/**
+ * 폼 value 초기화
+ */
 const resetForm = (): void => {
-  if (!props.placeholder) {
-    val.value = props.options[0].value
+  if (props.multiple) {
+    selectedText.value = []
+    selectedValue.value = []
   } else {
-    val.value = ''
+    selectedText.value = ''
+    selectedValue.value = ''
   }
 
-  emit('update:modelValue', val.value)
+  emit('update:modelValue', '')
 }
 
-if (props.modelValue !== '') {
-  val.value = props.modelValue
-} else {
-  if (props.placeholder === '') {
-    // placeholder가 없는 경우 옵션의 첫번째 값을 기본으로 잡아줌
-    emit('update:modelValue', props.options[0].value)
+/**
+ * 유효성 검사 초기화
+ */
+const resetValidate = (): void => {
+  message.value = ''
+  isValidate.value = true
+  errorTransition.value = false
+}
+
+/**
+ * options 항목 선택 이벤트
+ *
+ * @param index
+ */
+const selectOption = (index: number): void => {
+  const { text, value }: SelectBoxItem = props.options[index]
+
+  if (props.multiple) {
+    const indexOf: number = selectedValue.value.indexOf(value)
+
+    if (indexOf > -1) {
+      // 이미 선택된 값이라면 값 제거
+      selectedValue.value.splice(indexOf, 1)
+      selectedText.value.splice(indexOf, 1)
+    } else {
+      selectedValue.value.push(value)
+      selectedText.value.push(text)
+    }
+  } else {
+    selectedValue.value = value
+    selectedText.value = text
+  }
+
+  updateValue(selectedValue.value, index)
+
+  if (!props.multiple) {
+    showOption.value = false
   }
 }
+
+/**
+ * 이미 선택된 옵션인지 판별
+ *
+ * @param index
+ */
+const isOptionSelected = (index: number): boolean => {
+  const { value }: SelectBoxItem = props.options[index]
+
+  if (props.multiple) {
+    return selectedValue.value.includes(value)
+  } else {
+    return props.modelValue === value
+  }
+}
+
+const removeSelected = (index: number): void => {
+  if (props.multiple) {
+    selectedText.value.splice(index, 1)
+    selectedValue.value.splice(index, 1)
+  }
+
+  updateValue(selectedValue.value, -1)
+}
+
+/**
+ * 옵션 목록 표시
+ */
+const toggleOption = (): void => {
+  showBottom.value = false
+
+  const windowHeight: number = window.innerHeight
+  const rect = SelectBox.value?.getBoundingClientRect() as DOMRect
+
+  if (windowHeight / 2 < rect.top) {
+    showBottom.value = true
+  }
+
+  showOption.value = !showOption.value
+}
+
+/**
+ * 본 객체 외의 부분을 클릭할 경우 옵션 목록 숨김
+ *
+ * @param evt
+ */
+const outSideClickEvent = (evt: MouseEvent): void => {
+  const target = evt.target as HTMLBodyElement
+
+  if (showOption.value) {
+    if (!SelectBox.value?.contains(target)) {
+      showOption.value = false
+    }
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', outSideClickEvent)
+})
 
 defineExpose({
-  getText,
   check,
-  resetForm
+  resetForm,
+  resetValidate
 })
 </script>
 
 <template>
   <div
     :style="{ width: styleWidth }"
-    :class="['select-box', 'ml-1', { error: !isValidate, block }]">
-    <select
-      ref="selectBox"
-      @change="updateValue">
-      <option
-        value=""
-        :selected="modelValue == ''"
-        v-if="placeholder">
-        {{ placeholder }}
-      </option>
-      <option
-        :value="item.value"
-        :selected="modelValue == item.value"
-        :key="'select-' + i"
-        v-for="(item, i) in options">
-        {{ item.text }}
-      </option>
-    </select>
+    :class="['select-box', wrapStyle]">
 
-    <p
-      :class="['description', { error: errorTransition }]"
-      v-if="!isValidate">
-      <FontAwesomeIcon :icon="['fas', 'exclamation-circle']" />
+    <label
+      :class="['input-label', { error: !isValidate }]"
+      v-if="props.label">
+      {{ props.label }}
+    </label>
+
+    <div
+      ref="SelectBox"
+      :class="['control-wrap form-control', { 'is-invalid': message }]"
+      @click="toggleOption">
+      <template v-if="props.multiple">
+        <div class="text" v-if="selectedText.length">
+          <span
+            :key="`selectedItem${i}`"
+            v-for="(txt, i) in selectedText">
+            {{ txt }}
+
+            <div class="check-mark" @click.stop="removeSelected(i)">
+              <div class="mark-wrap">
+                <div class="line pipe"></div>
+                <div class="line dash"></div>
+              </div>
+            </div>
+          </span>
+        </div>
+        <div class="text ph" v-else>
+          {{ props.placeholder }}
+        </div>
+      </template>
+      <template v-else>
+        <div class="text" v-if="selectedText">
+          {{ selectedText }}
+        </div>
+        <div class="text ph" v-else>
+          {{ props.placeholder }}
+        </div>
+      </template>
+
+      <div :class="['arrow', { rotate: showOption }]">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+
+      <Transition :name="showBottom ? 'options-view-bottom': 'options-view'">
+        <ul :class="['option-list', showBottom ? 'show-bottom' : 'show-top' ]" v-show="showOption">
+          <li
+            :key="`select-${i}`"
+            :class="{ selected: isOptionSelected(i) }"
+            @click.stop="selectOption(i)"
+            v-for="(item, i) in options">
+            {{ item.text }}
+          </li>
+        </ul>
+      </Transition>
+    </div>
+
+    <div
+      :class="['invalid-feedback', { error: errorTransition }]"
+      v-if="message">
       {{ message }}
-    </p>
+    </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @import './style.scss';
 </style>
 <script lang="ts">
-export default {
-  name: 'SelectBox'
-}
+export default { name: 'SelectBox' }
 </script>

@@ -1,36 +1,31 @@
 <script setup lang="ts">
-import { ref, watch, computed, defineProps, onMounted, defineEmits, defineExpose, withDefaults } from 'vue'
+import { ref, watch, computed, onMounted, withDefaults } from 'vue'
+import type { RuleFunction } from '../types'
 
-interface NumberFormatEmits {
-  (e: 'update:modelValue', value: number): void
-}
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: number): void
+}>()
 
-interface NumberFormatProps {
-  modelValue: number | string;
-  placeholder?: string;
-  // 폼 검증
-  validate?: Function[];
-  // 강제 에러 출력 - check함수를 수행 하지 않음
-  errorMessage?: string;
-  disabled?: boolean;
-  block?: boolean;
-  width?: string;
-  autofocus?: boolean;
-  tabIndex?: number | string;
-  maxLength?: string | number;
-  readonly?: boolean;
-}
-
-const emit = defineEmits<NumberFormatEmits>()
-
-const props = withDefaults(defineProps<NumberFormatProps>(), {
+const props = withDefaults(defineProps<{
+  modelValue: number | string
+  label?: string
+  placeholder?: string
+  validate?: RuleFunction[]
+  errorMessage?: string
+  disabled?: boolean
+  block?: boolean
+  width?: string
+  autofocus?: boolean
+  maxLength?: string | number
+  readonly?: boolean
+}>(), {
+  label: '',
   placeholder: '',
-  validate: (): Function[] => [],
+  validate: (): RuleFunction[] => [],
   errorMessage: '',
   disabled: false,
   block: false,
   autofocus: false,
-  tabIndex: 0,
   maxLength: '',
   readonly: false,
 })
@@ -40,8 +35,7 @@ let checkPass = ref<boolean>(false)
 let message = ref<string>('')
 let errorTransition = ref<boolean>(false)
 
-const input = ref<HTMLInputElement | null>(null)
-
+const Input = ref<HTMLInputElement>()
 
 watch(() => props.errorMessage, (v) => {
   // 임의로 지정된 에러가 있는 경우 에러 아이콘 표기
@@ -71,16 +65,14 @@ watch(() => props.modelValue, (v) => {
     isValidate.value = true
     errorTransition.value = false
 
-    if (input.value !== null) {
-      input.value.value = format(v)
+    if (Input.value) {
+      Input.value.value = format(v)
     }
   }
 })
 
 watch(() => props.validate, () => {
-  message.value = ''
-  isValidate.value = true
-  errorTransition.value = false
+  resetValidate()
 })
 
 const successful = computed<boolean>(() => isValidate.value && checkPass.value)
@@ -88,16 +80,15 @@ const successful = computed<boolean>(() => isValidate.value && checkPass.value)
 /**
  * 입력 폼이 focus, blur 됐을때 해당 값을 체크 하여 값을 비우거나 0으로 채워 준다.
  *
- *
  * @param { Event } evt
  */
 const zeroCheck = (evt: Event) => {
-  if (input.value !== null) {
-    if (evt.type === 'focus' && input.value.value === '0') {
-      input.value.value = ''
+  if (Input.value) {
+    if (evt.type === 'focus' && Input.value.value === '0') {
+      Input.value.value = ''
       emit('update:modelValue', 0)
-    } else if (evt.type === 'blur' && !input.value.value.length) {
-      input.value.value = '0'
+    } else if (evt.type === 'blur' && !Input.value.value.length) {
+      Input.value.value = '0'
       emit('update:modelValue', 0)
       check()
     }
@@ -107,16 +98,14 @@ const zeroCheck = (evt: Event) => {
 /**
  * 전달된 값을 천단위로 콤마(,)를 생성하여 반환
  *
- * @param { String } v
- * @return { String } format number string
+ * @param v
+ * @return format number string
  */
 const format = (v: number | string): string => {
-  if (v.toString() === '-') {
-    return v.toString()
+  if (v === '-') {
+    return v
   } else {
-    const value = Number(v)
-    console.log('format =========> ', v)
-    return new Intl.NumberFormat().format(value)
+    return new Intl.NumberFormat().format(Number(v))
   }
 }
 
@@ -129,19 +118,20 @@ const updateValue = (evt: Event): void => {
   if (value) {
     e.value = format(value)
     emit('update:modelValue', isNaN(Number(value)) ? 0 : Number(value))
+  } else {
+    e.value = ''
   }
 }
 
 const check = (): boolean => {
   // 임의로 지정된 에러가 없는 경우
-  if (props.errorMessage === '') {
+  if (!props.errorMessage) {
     // validate check
     if (props.validate.length) {
+      for (let i: number = 0; i < props.validate.length; i++) {
+        let result: string | boolean = props.validate[i](props.modelValue)
 
-      for (let i = 0; i < props.validate.length; i++) {
-        let result = props.validate[i].call(null, props.modelValue)
-
-        if (result !== true) {
+        if (typeof result !== 'boolean') {
           message.value = result
           isValidate.value = false
           checkPass.value = false
@@ -165,62 +155,70 @@ const check = (): boolean => {
 }
 
 const resetForm = (): void => {
-  if (input.value !== null) {
-    input.value.value = '0'
+  if (Input.value) {
+    Input.value.value = '0'
   }
 
   emit('update:modelValue', 0)
 }
 
+const resetValidate = (): void => {
+  message.value = ''
+  isValidate.value = true
+  errorTransition.value = false
+}
+
 onMounted(() => {
-  if (props.autofocus) {
-    input.value?.focus()
+  if (props.autofocus && Input.value) {
+    Input.value.focus()
   }
 
-  if (props.modelValue !== '' && input.value !== null) {
-    input.value.value = format(props.modelValue)
+  if (props.modelValue && Input.value) {
+    Input.value.value = format(props.modelValue)
   }
 })
 
 defineExpose({
   check,
-  resetForm
+  resetForm,
+  resetValidate
 })
 </script>
 
 <template>
   <div
-    :class="['input-wrap', {error: !isValidate, success: successful, block }]"
-    :style="{width: width ? width : ''}">
+    :class="['input-wrap', { 'with-label': props.label, error: !isValidate, success: successful, block: props.block }]"
+    :style="{ width: width ?? '' }">
+
+    <label :class="['input-label', { error: !isValidate }]" v-if="props.label">
+      {{ props.label }}
+    </label>
 
     <input
-      ref="input"
+      ref="Input"
       type="text"
+      :class="['form-control', { 'is-invalid': message }]"
       :style="{ width: width ? width + 'px' : '' }"
-      :placeholder="placeholder"
-      :tabindex="tabIndex"
-      :disabled="disabled"
-      :readonly="readonly"
-      :maxlength="maxLength"
+      :placeholder="props.placeholder"
+      :disabled="props.disabled"
+      :readonly="props.readonly"
+      :maxlength="props.maxLength"
       @focus="zeroCheck"
       @blur="zeroCheck"
       @input="updateValue"
     />
 
-    <p
-      :class="['description', { error: errorTransition }]"
-      v-if="message !== ''">
-      <FontAwesomeIcon :icon="['fas', 'exclamation-circle']" />
+    <div
+      :class="['invalid-feedback', { error: errorTransition }]"
+      v-if="message">
       {{ message }}
-    </p>
+    </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @import './style.scss';
 </style>
 <script lang="ts">
-export default {
-  name: 'NumberFormat'
-}
+export default { name: 'NumberFormat' }
 </script>

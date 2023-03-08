@@ -1,65 +1,76 @@
-import { h, render } from 'vue'
+import { h, render, isVNode, Fragment } from 'vue'
 import type { App, VNode } from 'vue'
 import ToastComponent from './component.vue'
 import type { Toast, ToastOptions, MessageOptions } from './types'
 
 export default {
   install: (app: App, options?: ToastOptions) => {
-    const body = document.querySelector('body') as HTMLBodyElement
     let VNode: VNode | null = null
-    const props = <ToastOptions>{
+    const body = document.querySelector('body') as HTMLBodyElement
+
+    const props: ToastOptions = {
       maxShowMessage: 4,
-      delay: 3000
+      delay: 3000,
+      destroy: (): void => {
+        render(null, body)
+        VNode = null
+      }
+    }
+
+    const init = () => {
+      if (!isVNode(VNode)) {
+        VNode = h(ToastComponent, props)
+        render(VNode, body)
+      }
     }
 
     if (options) {
-      if (options.hasOwnProperty('maxShowMessage')) {
+      if ('maxShowMessage' in options) {
         props.maxShowMessage = options.maxShowMessage
       }
 
-      if (options.hasOwnProperty('delay')) {
+      if ('delay' in options) {
         props.delay = options.delay
       }
     }
 
-    const iconCase = <{
-      [index: string]: string
-    }>{
+    const iconCase = <{ [index: string]: string }>{
       success: 'check-circle',
-      warning: 'exclamation-triangle',
-      info: 'info-circle',
-      error: 'ban'
+      warning: 'triangle-exclamation',
+      info: 'circle-info',
+      error: 'bomb'
     }
 
     const setMessage = (opt: MessageOptions | string): void => {
-      if (VNode === null) {
-        VNode = h(ToastComponent, props)
-        render(VNode, body)
-      }
+      init()
 
-      if (VNode.component?.exposed) {
-        if (opt instanceof Object) {
-          if (opt.hasOwnProperty('message')) {
-            VNode.component.exposed.message.value = opt.message
+      if (VNode) {
+        if (VNode.component?.exposed) {
+          const exposed = VNode.component.exposed
+
+          if (opt instanceof Object) {
+            if ('message' in opt) {
+              exposed.message.value = opt.message
+            } else {
+              console.error('toast message is not set')
+              return
+            }
+
+            if ('color' in opt && opt.color !== undefined) {
+              exposed.icon.value = iconCase[opt.color]
+              exposed.color.value = opt.color
+            }
+          } else if (typeof opt === 'string') {
+            exposed.message.value = opt
+            exposed.color.value = 'success'
+            exposed.icon.value = iconCase.success
           } else {
             console.error('toast message is not set')
             return
           }
 
-          if (opt.hasOwnProperty('color') && opt.color !== undefined) {
-            VNode.component.exposed.icon.value = iconCase[opt.color]
-            VNode.component.exposed.color.value = opt.color
-          }
-        } else if (typeof opt === 'string') {
-          VNode.component.exposed.message.value = opt
-          VNode.component.exposed.color.value = 'success'
-          VNode.component.exposed.icon.value = iconCase.success
-        } else {
-          console.error('toast message is not set')
-          return
+          exposed.show()
         }
-
-        VNode.component.exposed.show()
       }
     }
 
@@ -67,7 +78,7 @@ export default {
       setMessage(params)
     }
 
-    app.config.globalProperties.$toast = objectToast
+    // app.config.globalProperties.$toast = objectToast
     app.provide('Toast', objectToast)
   }
 }

@@ -1,12 +1,14 @@
 # Spinner component plugin
 
 # 1. 사용방법
+* 해당 스피너는 Bootstrap v5.2 기반으로 작성 되어있습니다. [Bootstrap](https://getbootstrap.kr/docs/5.2/components/spinners/)
 ```javascript
 // main.js
-import Spinner from '@/components/spinner'
+import Spinner from '@/components/Spinner'
+import type { SpinnerProps } '@/components/Spinner'
 
 // optional config
-const options = {
+const options: SpinnerProps = {
   limitTimeout: 10,
   delay: 0,
 }
@@ -15,15 +17,16 @@ app.use(Spinner, options)
 ```
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue'
+import type { Spinner } from '@/components/Spinner/types'
 
-const Spinner = inject('Spinner')
+const Spinner = inject('Spinner') as Spinner
 
-let timer = ref(0)
-let message = ref('버튼을 클릭해서 스피너를 확인 하세요.')
+let timer = ref<number>(0)
+let message = ref<string>('버튼을 클릭해서 스피너를 확인 하세요.')
 
-function setTimer(time) {
+const setTimer = (time: number): void => {
   timer.value = time
 
   const interval = setInterval(() => {
@@ -37,16 +40,13 @@ function setTimer(time) {
   }, 1000)
 }
 
-async function show(flag = 0) {
+const show = async (flag: number = 0): void => {
   message.value = ''
 
-  if (flag == 0) {
-    setTimer(10)
+  if (flag === 0) {
     Spinner.show()
   } else {
-    setTimer(8)
-    await Spinner.delay(3).show()
-    Spinner.delay(5).hide()
+    Spinner.timeout(5).delay(3).show()
   }
 }
 </script>
@@ -56,7 +56,6 @@ async function show(flag = 0) {
   <p v-else>{{ timer }}초 이후 스피너가 닫힙니다.</p>
   <button type="button" @click="show()">10초 보기</button>
   <button type="button" @click="show(1)">3초 후에 5초 보기</button>
-  <button type="button" @click="show(2)">스피너 보기 (3초 2초 딜레이 후 사라짐)</button>
 </template>
 
 <style lang="scss" scoped>
@@ -65,43 +64,37 @@ button + button { margin-left: 5px; }
 ```
 
 # 2. options
-```javascript
-{
-  limitTimeout: 10,
-  delay: 0,
-}
-```
 | Name | Type | Default | Require | Description |
 |-------|---- |---------|---------|-------------|
 | limitTime | Number | <code>10</code> | false | 스피너가 보여진 이후 <code>hide()</code> 메서드 호출이 없을 경우 표시되는 최대 시간(초 단위) |
-| delay | Number | <code>0</code> | false | <code>show(), delay()</code> 실행시 지연 시간 설정 (초 단위) |
+| delay | Number | <code>0</code> | false | <code>show()</code> 실행시 지연 시간 설정 (초 단위) |
 
 # 3. API methods
-### <code>show(?msg)</code>
+### <code>show(msg?: string)</code>
 * 스피너 레이아웃을 표시합니다.
 ```javascript
-spinner.show()
+Spinner.show()
 // or
-spinner.show('please wait...')
+Spinner.show('please wait...')
 ```
 
 ### <code>hide()</code>
 * 스피너 레이아웃을 즉시 숨깁니다.
 ```javascript
-spinner.hide()
+Spinner.hide()
 ```
 
-### <code>delay(number)</code>
+### <code>delay(time: number)</code>
 * 메서드 실행을 딜레이 시켜 줍니다. (Promise)
 ```javascript
-await spinner.delay(2).show() // 2초 후 스피너 표시
-await spinner.delay(10).hide() // 스피너가 표시 중이라면 10초 후 숨김
+await Spinner.delay(2).show() // 2초 후 스피너 표시
+await Spinner.delay(10).hide() // 스피너가 표시 중이라면 10초 후 숨김
 ```
 
-### <code>timeout(number)</code>
+### <code>timeout(time: number)</code>
 * limitTimeout 설정을 변경 합니다.
 ```javascript
-await spinner.timeout(5).show() // 5초 후 스피너가 표시 중이라면 숨김
+await Spinner.timeout(5).show() // 5초 후 스피너가 표시 중이라면 숨김
 ```
 
 ---

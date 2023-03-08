@@ -1,45 +1,42 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted, defineProps, defineEmits, defineExpose, withDefaults } from 'vue'
+import { ref, watch, computed, onMounted, withDefaults } from 'vue'
 import type { PatternCase, PatternCaseValue } from './types'
+import type { RuleFunction } from '../types';
 
-// defineEmits, defineProps interface import 오류로 본 파일에 작성
-interface TextFieldEmits {
+const emit = defineEmits<{
   (event: 'update:modelValue', value: string): void
-}
+}>()
 
-interface TextFieldProps {
+const props = withDefaults(defineProps<{
   modelValue: string
+  type?: string
   rows?: number | string
+  label?: string
   placeholder?: string
   height?: string | number
   width?: string | number
   block?: boolean
-  validate?: Function[]
+  validate?: RuleFunction[]
   blurValidate?: boolean
   pattern?: string
   errorMessage?: string
   maxLength?: number | string
   multiline?: boolean
   disabled?: boolean
-  textRight?: boolean
-  tabIndex?: number | string
   readonly?: boolean
   autofocus?: boolean
-}
-
-const emit = defineEmits<TextFieldEmits>()
-
-const props = withDefaults(defineProps<TextFieldProps>(), {
+}>(), {
   rows: 5,
+  type: 'text',
+  label: '',
   placeholder: '',
   block: false,
-  validate: (): Function[] => [],
+  validate: (): RuleFunction[] => [],
   blurValidate: true,
   pattern: '',
   errorMessage: '',
   multiline: false,
   disabled: false,
-  textRight: false,
   readonly: false,
   autofocus: false,
 })
@@ -49,12 +46,12 @@ let checkPass = ref<boolean>(false)
 let message = ref<string>('')
 let errorTransition = ref<boolean>(false)
 
-const textarea = ref<HTMLTextAreaElement | null>(null)
-const input = ref<HTMLInputElement | null>(null)
+const Textarea = ref<HTMLTextAreaElement>()
+const Input = ref<HTMLInputElement>()
 
 watch(() => props.errorMessage, (v) => {
   // 임의로 지정된 에러가 있는 경우 에러 아이콘 표기
-  if (v != '') {
+  if (v) {
     message.value = v
     isValidate.value = false
     checkPass.value = false
@@ -78,9 +75,7 @@ watch(errorTransition, (v) => {
 watch(() => props.modelValue, (v) => {
   // 외부에서 model이 업데이트 되도 유효성 검사
   if (v != '') {
-    message.value = ''
-    isValidate.value = true
-    errorTransition.value = false
+    resetValidate()
   }
 })
 
@@ -109,6 +104,7 @@ const updateValue = (evt: Event): void => {
   const target = evt.target as HTMLInputElement
   emit('update:modelValue', target.value.trim())
 }
+
 
 const getPattern = (): PatternCaseValue | null => {
   const patternCase: PatternCase = {
@@ -158,7 +154,7 @@ const getPattern = (): PatternCaseValue | null => {
     },
   }
 
-  return (patternCase.hasOwnProperty(props.pattern))
+  return (props.pattern in patternCase)
     ? patternCase[props.pattern]
     : null
 }
@@ -167,7 +163,7 @@ const check = (): boolean => {
   // 임의로 지정된 에러가 없는 경우
   if (props.errorMessage === '') {
     // pattern check
-    if (props.pattern !== '') {
+    if (props.pattern) {
       const pt: PatternCaseValue | null = getPattern()
 
       if (pt !== null) {
@@ -186,8 +182,8 @@ const check = (): boolean => {
 
     // validate check
     if (props.validate.length) {
-      for (let i = 0; i < props.validate.length; i++) {
-        let result: string | boolean = props.validate[i].call(null, props.modelValue)
+      for (let i: number = 0; i < props.validate.length; i++) {
+        let result: string | boolean = props.validate[i](props.modelValue)
 
         if (typeof result === 'string') {
           message.value = result
@@ -223,11 +219,19 @@ const resetForm = (): void => {
   emit('update:modelValue', '')
 }
 
+const resetValidate = (): void => {
+  message.value = ''
+  isValidate.value = true
+  errorTransition.value = false
+}
+
 const focus = (): void => {
-  if (props.autofocus && props.multiline) {
-    textarea.value?.focus()
-  } else if (props.autofocus && !props.multiline) {
-    input.value?.focus()
+  if (props.autofocus) {
+    if (props.multiline) {
+      Textarea.value?.focus()
+    } else {
+      Input.value?.focus()
+    }
   }
 }
 
@@ -236,25 +240,31 @@ onMounted(() => {
 })
 
 defineExpose({
+  focus,
   check,
-  resetForm
+  resetForm,
+  resetValidate
 })
 </script>
 
 <template>
   <div
-    :class="['input-wrap', { error: !isValidate, success: successful, block }]"
+    :class="['input-wrap', { 'with-label': props.label, error: !isValidate, success: successful, block: props.block }]"
     :style="{ width: styleWidth }"
     @focus="focus">
+
+    <label :class="['input-label', { error: !isValidate }]" v-if="props.label">
+      {{ props.label }}
+    </label>
+
     <textarea
       ref="textarea"
-      :class="['block', { block: block }]"
+      :class="['form-control', { 'is-invalid': message }]"
       :style="[{ height: height ? `${height}px` : '' }]"
       :rows="rows"
       :placeholder="placeholder"
       :value="modelValue"
       :readonly="readonly"
-      :tabindex="tabIndex"
       :disabled="disabled"
       @blur="blurCheck"
       @input="updateValue"
@@ -263,33 +273,30 @@ defineExpose({
 
     <input
       ref="input"
-      type="text"
-      :class="['block', { block: block }, { 'text-right': textRight }]"
+      :type="type"
+      :class="['form-control', { 'is-invalid': message }]"
       :style="[{ width: width ? `${width}px` : '' }]"
       :placeholder="placeholder"
       :value="modelValue"
-      :tabindex="tabIndex"
       :disabled="disabled"
       :readonly="readonly"
       :maxlength="maxLength"
       @blur="blurCheck"
       @input="updateValue"
-      v-else />
+      v-else
+    />
 
-    <p
-      :class="['description', { error: errorTransition }]"
-      v-if="message !== ''">
-      <FontAwesomeIcon :icon="['fas', 'exclamation-circle']" v-if="!successful" />
+    <div
+      :class="['invalid-feedback', { error: errorTransition }]"
+      v-if="message">
       {{ message }}
-    </p>
+    </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @import './style.scss';
 </style>
 <script lang="ts">
-export default {
-  name: 'TextField'
-}
+export default { name: 'TextField' }
 </script>

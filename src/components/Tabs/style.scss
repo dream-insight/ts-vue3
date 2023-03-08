@@ -1,0 +1,81 @@
+$base-color: #052c65;
+
+.tabs {
+  width: 100%;
+
+  .tab-item-wrap {
+    .tab-items {
+      display: flex;
+
+      li {
+        transition: background-color 0.2s;
+        border: 0;
+        flex-grow: 1;
+        text-align: center;
+        padding: 12px 0;
+        border-radius: 10px 10px 0 0;
+        color: $base-color;
+        background-color: rgba($base-color, 0.2);
+        cursor: pointer;
+
+        &.active {
+          background-color: $base-color;
+          color: #fff;
+        }
+        &:hover:not(.active) {
+          background-color: rgba($base-color, 0.5);
+        }
+      }
+    }
+  }
+
+  .tab-contents {
+    height: max-content;
+    width: 100%;
+    position: relative;
+
+    &> * {
+      width: 100%;
+    }
+
+    &.in-box {
+      padding: 10px;
+      border-width: 0 1px 1px 1px;
+      border-style: solid;
+      border-color: $base-color;
+      border-radius: 0 0 5px 5px
+    }
+  }
+}
+
+.tab-slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-20%)
+}
+.tab-slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(20%)
+}
+
+.tab-slide-left-leave-active,
+.tab-slide-left-enter-active {
+  position: absolute;
+  top: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.tab-slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(20%)
+}
+.tab-slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-20%)
+}
+
+.tab-slide-right-leave-active,
+.tab-slide-right-enter-active {
+  position: absolute;
+  top: 0;
+  transition: all 0.3s ease-in-out;
+}

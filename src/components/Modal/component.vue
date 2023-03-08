@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, defineProps, defineExpose } from 'vue'
+import { ref, onMounted } from 'vue'
 
 // vue 3 typescript bug
 export interface ModalOptions {
@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<ModalOptions>(), {
 })
 
 let isShow = ref<boolean>(true)
-let btnOkay = ref<HTMLAnchorElement | null>(null)
+let btnOkay = ref<HTMLAnchorElement>()
 
 const hide = (): void => {
   let modalCheck: NodeList = document.body.querySelectorAll('.modal-bg')
@@ -37,24 +37,28 @@ const hide = (): void => {
 
 const close = (): void => {
   if (props.destroy instanceof Function) {
-    props.destroy.call(null)
+    props.destroy()
   }
 }
 
-const clickOkay = (): void => {
+const clickOkay = (): boolean => {
   if (props.okay instanceof Function) {
-    props.okay.call(null)
+    props.okay()
   }
 
   hide()
+
+  return true
 }
 
-const clickCancel = () => {
+const clickCancel = (): boolean => {
   if (props.cancel instanceof Function) {
-    props.cancel.call(null)
+    props.cancel()
   }
 
   hide()
+
+  return false
 }
 
 const keyupEvent = (evt: KeyboardEvent): void => {
