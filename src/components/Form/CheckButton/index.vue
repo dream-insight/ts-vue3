@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed, withDefaults } from 'vue'
 import type { CheckButtonItem } from './types'
-import type { RuleFunction } from '../types'
+import type { RuleFunc } from '../types'
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: any | any[]): void
@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<{
   all?: boolean
   // 최대 체크 가능한 수량
   maxCheckLength?: number
-  validate?: RuleFunction[]
+  validate?: RuleFunc[]
   // 강제 에러 출력 - check함수를 수행 하지 않음
   errorMessage?: string
   // button UI 변경
@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<{
   type: 'checkbox',
   all: false,
   maxCheckLength: 0,
-  validate: (): RuleFunction[] => [],
+  validate: (): RuleFunc[] => [],
   errorMessage: '',
   button: false,
 })

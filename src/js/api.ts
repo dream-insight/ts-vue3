@@ -66,13 +66,12 @@ import { spinner } from '@/components/Spinner/index'
 const Spinner = new spinner()
 
 class api implements API {
-  protected http: AxiosInstance
-  protected SpinnerTimeout: number
-  protected message: string
-  protected reportUrl: string
+  private http: AxiosInstance
+  private SpinnerTimeout: number = 10 * 10000
+  private message: string
+  private reportUrl: string
 
   constructor() {
-    this.SpinnerTimeout = 10 * 10000
     this.message = 'Loading...'
     this.reportUrl = process.env.VUE_APP_REPORT_API_URL
 

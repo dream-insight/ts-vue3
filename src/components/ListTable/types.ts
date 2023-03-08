@@ -10,14 +10,14 @@ export interface TableHeader {
   rowspan?: number
 }
 
-export interface TableFooter {
-  [index: string]: any
+interface KeyIndex<T> {
+  [index: string]: T
 }
 
+export interface TableFooter extends KeyIndex<any> {}
+
 // 테이블 목록 Array:[] *
-export interface TableItems {
-  [index: string]: any
-}
+export interface TableItems extends KeyIndex<any> {}
 
 export interface SortingChangeData {
   data: TableItems[]

@@ -122,55 +122,31 @@ onUpdated(() => {
 > 파일, 폴더명 역시 동일하게 취급합니다.
 * 필히 한 단어 이상의 유의미한 단어로 조합하고, 의미가 불분명한 줄임 단어를 사용하지 않습니다.
 > 개발시 많이 사용되는 btn, chk, bln, lbl 등등의 줄임단어는 사용하여도 무방합니다.
-* typescript의 예약어를 변수나 함수, class명으로 사용 하지 않습니다.
+* JS의 예약어를 변수나 함수, class명으로 사용 하지 않습니다.
 > 단, plugin, component를 참조하여 호출 하는 경우는 허용 합니다.
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-import UserData from '../common/userData'
 
-let apple = ref<string>('')
-</script>
-```
-
-### 2.2. 파일명
-* 기능에 대한 정의를 기술하듯 작성합니다.
-```typescript
-/* 카테고리를 3단으로 선택할 수 있는 컴포넌트 */
-// Bad
-3depthCate.vue      // 파일명 역시 숫자로 시작하여서는 안됩니다.
-ctgry3Depth.vue     // 어떤 사람은 ctgry이 무엇인지 모를 수도 있습니다
-
-// Good
-categorySelector.vue
-
-/* 체크 버튼 자동으로 생성해주는 컴포넌트 */
-// it's okay
-chkBtn.vue
-
-// Good
-checkButton.vue
-```
-
-### 2.3. 모듈 export, import
+### 2.2. 모듈 export, import
 * <code>export default</code> 된 모듈은 명확한 의미부여하여 명명 해주세요.
 * 구조화 된 모듈은 명명된 이름을 그대로 사용하고 as를 통한 재명명은 하지 않도록 합니다.
 ```typescript
+// module/category
 export { getCategory }
 
 // Bad
-import { getCategory as category } from './module'
+import { getCategory as category } from './module/category'
 
 // Good
-import { getCategory } from './module'
+import { getCategory } from './module/category'
 
-export default codeLibrary
+
+// module/lib.ts
+export default codeLib
 
 // Bad
-import library from './module'
+import library from './module/lib'
 
 // Good
-import codeLib from './module'
+import codeLib from './module/lib'
 ```
 
 :arrow_up: [목차](#목차)
@@ -2181,9 +2157,8 @@ interface Func {
   (text: string, value?: number): string
 }
 
-// it's okay
-// 되도록 interface로 선언하여 사용합니다.
-type Func = (text: string, value?: number) => string
+// 별칭을 사용한 선언도 가능하지만 별칭의 본질에 맞게 사용을 지양합니다.
+// type Func = (text: string, value?: number) => string
 
 const func: Func = (text, value) => {
   return `${text}, ${value}`
@@ -2277,7 +2252,7 @@ const obj: Option = {
 > 물론, <code>obj: KeyIndex</code>와 같은 방식으로도 사용가능합니다. 하지만 필수 속성에 대한 보장은 받을 수 없습니다.
 
 ### 3.4. 제네릭
-* Vue에서 제공되는 제네릭 함수의 경우 type을 import 하지 않아도 되기 때문에 아래와 같이 사용합니다.
+* Vue에서 제공되는 제네릭 함수의 경우 type을 import 배제 하기 위해 아래와 같이 사용합니다.
 ```typescript
 // Bad
 import { ref, computed } from 'vue'
@@ -2292,11 +2267,12 @@ import { ref, computed } from 'vue'
 let name = ref<string>('드림인사이트')
 const status = computed<boolean>(() => bar === foo)
 ```
+
 * DOM 또는 Component 참조 선언시에는 정확한 타입을 지정해주세요.
 ```typescript
 // Bad
 const div = ref<HTMLElement>()
-const input = ref<HTMLInputElement>()
+const input = ref<HTMLElement>()
 
 // Good
 const div = ref<HTMLDivElement>()
@@ -2311,8 +2287,8 @@ const Toast = inject('Toast') as Toast
 ---
 
 ## 4. Props, Emits 정의
-* <code>Props, Emit</code>의 <code>interface</code> 정의시 유의 해야할 점이 있습니다.
-* 일반적으로 type 정의 코드를 분리하여 <code>export</code> 하는 방식으로 많이 사용됩니다.
+* <code>Props, Emits</code>의 <code>interface</code> 정의시 유의 해야할 점이 있습니다.
+* 일반적으로 type 정의된 내용을 파일로 분리하여 <code>export</code> 하는 방식으로 많이 사용됩니다.
 ```typescript
 // types.ts
 export interface Props {
@@ -2336,10 +2312,12 @@ const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
                           ^^^^^ 오류 발생
 ```
+
 * 하지만 위와 같이 사용하게 되면 Typescript 오류가 발생합니다.
 > vuejs.org에서 말하는 이유는 다음과 같습니다.<br>
 *이는 Vue 구성 요소가 분리되어 컴파일되고 컴파일러가 소스 유형을 분석하기 위해 가져온 파일을 탐색하지 않기 때문입니다.<br> 이 제한은 향후 릴리스에서 제거될 수 있습니다.*
-* 위와 같은 이유로 Props, Emits 정의는 아래 와 같이 사용하세요.
+
+* 위와 같은 이유로 Props, Emits 정의는 아래 와 같이 적용해야 합니다.
 ```typescript
 import { ref } from 'vue'
 
@@ -2357,8 +2335,7 @@ export interface Emits {
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
-// or
-
+// export가 필요 없는 경우
 const props = defineProps<{
   text: string
   title?: string
@@ -2369,7 +2346,58 @@ const emits = defineEmits<{
   (event: 'refresh'): void
 }>()
 ```
+---
 
+## 5. ENUM
+* 많은 사람들이 현제 Typescript의 ENUM은 여러 문제가 있고 성능상 좋지 않다고 평가 합니다.
+
+### 5.1. Original Enum
+```typescript
+enum Direction {
+  UP = 0,
+  LEFT,
+  RIGHT,
+  DOWN
+}
+
+const where: Direction = Direction.RIGHT   // 2
+
+enum Direction {
+  U = 'UP',
+  L = 'LEFT',
+  R = 'RIGHT',
+  D = 'DOWN'
+}
+
+const where: Direction = Direction.R     // RIGHT
+```
+* 일반적으로 사용 가능한 <code>enum</code>은 위와 같이지만 사용하지 않도록 합니다.
+* 해당 문제에 대해서는 이 [링크](https://engineering.linecorp.com/ko/blog/typescript-enum-tree-shaking/)를 참조하세요.
+
+### 5.2. Union Type (Enum 대체)
+```typescript
+const direction = {
+  UP: 0,
+  LEFT: 1,
+  RIGHT: 2,
+  DOWN: 3
+} as const
+
+type Direction = typeof direction[keyof typeof direction]
+
+const where: Direction = direction.RIGHT   // 2
+
+const Direction = {
+  U: 'UP',
+  L: 'LEFT',
+  R: 'RIGHT',
+  D: 'DOWN'
+} as const
+
+type Direction = typeof direction[keyof typeof direction]
+
+const where: Direction = direction.R     // RIGHT
+```
 
 ---
 ### UPDATE HISTORY

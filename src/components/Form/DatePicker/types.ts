@@ -1,36 +1,26 @@
+import type { KeyIndex } from '../types'
+
 export interface ToggleButtonType {
   text: string
   checked: boolean
 }
 
-export interface ShowRange {
-  [index: string]: boolean
-}
+export interface ShowRange extends KeyIndex<boolean> {}
 
-export interface TransitionNameType {
-  [index: string]: string
-}
+export interface TransitionNameType extends KeyIndex<string> {}
 
-export interface TimeoutType {
-  [index: string]: number
-}
+export interface TimeoutType extends KeyIndex<number> {}
 
 export interface DateCellType {
   day: number
   type: string
 }
 
-export interface DateRenderType {
-  [index: string]: Array<DateCellType[]>
-}
+export interface DateRenderType extends KeyIndex<DateCellType[][]> {}
 
-interface DateStateValueType {
-  [index: string]: number
-}
+export interface DateStateValueType extends KeyIndex<number> {}
 
-export interface DateStateType {
-  [index: string]: DateStateValueType
-}
+export interface DateStateType extends KeyIndex<DateStateValueType> {}
 
 export interface DateOptionType {
   year: number[]
@@ -42,9 +32,7 @@ export interface SelectedDateValueType {
   day: number
 }
 
-export interface SelectedDateType {
-  [index: string]: SelectedDateValueType
-}
+export interface SelectedDateType extends KeyIndex<SelectedDateValueType> {}
 
 export interface TimeStateType {
   start: number

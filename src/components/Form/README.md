@@ -15,10 +15,10 @@
 
 ```vue
 <script setup lang="ts">
-export type RuleFunction = (v: any) => string | boolean
+export type RuleFunc = (v: any) => string | boolean
 
 export interface Rules {
-  [index: string]: RuleFunction[]
+  [index: string]: RuleFunc[]
 }
 
 export interface OptionItem {
@@ -122,7 +122,7 @@ import { ref } from 'vue'
 let text = ref<string>('')
 let area = ref<string>('')
 
-const rule: RuleFunction[] = [v => !!v || '필수 입력 항목입니다.']
+const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 </script>
 
 <template>
@@ -195,7 +195,7 @@ const rule: RuleFunction[] = [v => !!v || '필수 입력 항목입니다.']
 import { ref } from 'vue'
 
 let number = ref<number>(0)
-const rule: RuleFunction[] = [v => !!v || '필수 입력 항목입니다.']
+const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 </script>
 
 <template>
@@ -241,7 +241,7 @@ let select = ref<string>('')
 
 const opt = ref<OptionItem[]>([])
 
-const rule: RuleFunction[] = [v => !!v || '필수 선택 항목입니다.']
+const rule: RuleFunc[] = [v => !!v || '필수 선택 항목입니다.']
 
 for (let value = 1; value <= 10; value++) {
   opt.push({ text: `선택 - ${value}`, value })

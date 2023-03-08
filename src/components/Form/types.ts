@@ -1,8 +1,14 @@
-export type RuleFunction = (v: any) => string | boolean
+export interface KeyIndex<T> {
+  [index: string]: T
+}
+
+export interface RuleFunc {
+  (v: any): string | boolean
+}
 
 // validate rule type
 export interface Rules {
-  [index: string]: RuleFunction[]
+  [index: string]: RuleFunc[]
 }
 
 // selectbox, checkbox 사용 옵션

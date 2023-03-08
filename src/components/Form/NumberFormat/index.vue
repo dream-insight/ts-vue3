@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, withDefaults } from 'vue'
-import type { RuleFunction } from '../types'
+import type { RuleFunc } from '../types'
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: number): void
@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
   modelValue: number | string
   label?: string
   placeholder?: string
-  validate?: RuleFunction[]
+  validate?: RuleFunc[]
   errorMessage?: string
   disabled?: boolean
   block?: boolean
@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   label: '',
   placeholder: '',
-  validate: (): RuleFunction[] => [],
+  validate: (): RuleFunc[] => [],
   errorMessage: '',
   disabled: false,
   block: false,

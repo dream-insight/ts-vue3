@@ -1,8 +1,8 @@
+import { KeyIndex } from '../types'
+
 export interface PatternCaseValue {
-  pattern: RegExp;
-  message: string;
+  pattern: RegExp
+  message: string
 }
 
-export interface PatternCase {
-  [index: string]: PatternCaseValue;
-}
+export interface PatternCase extends KeyIndex<PatternCaseValue> {}

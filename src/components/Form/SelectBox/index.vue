@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect, computed, withDefaults, onMounted, StyleValue } from 'vue'
 import type { SelectBoxItem } from './types'
-import type { RuleFunction } from '../types'
+import type { RuleFunc } from '../types'
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: any): void,
@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<{
   label?: string
   placeholder?: string
   block?: boolean
-  validate?: RuleFunction[]
+  validate?: RuleFunc[]
   errorMessage?: string
   width?: string | number
   multiple?: boolean
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
   placeholder: '',
   selectedIndex: -1,
   errorMessage: '',
-  validate: (): RuleFunction[] => [],
+  validate: (): RuleFunc[] => [],
   multiple: false
 })
 

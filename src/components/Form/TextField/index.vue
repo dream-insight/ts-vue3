@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, withDefaults } from 'vue'
 import type { PatternCase, PatternCaseValue } from './types'
-import type { RuleFunction } from '../types';
+import type { RuleFunc } from '../types';
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string): void
@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<{
   height?: string | number
   width?: string | number
   block?: boolean
-  validate?: RuleFunction[]
+  validate?: RuleFunc[]
   blurValidate?: boolean
   pattern?: string
   errorMessage?: string
@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<{
   label: '',
   placeholder: '',
   block: false,
-  validate: (): RuleFunction[] => [],
+  validate: (): RuleFunc[] => [],
   blurValidate: true,
   pattern: '',
   errorMessage: '',

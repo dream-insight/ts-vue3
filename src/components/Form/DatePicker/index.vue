@@ -12,7 +12,7 @@ import type {
   TimeStateType,
   DateCellType,
 } from './types'
-import type { RuleFunction } from '../types'
+import type { RuleFunc } from '../types'
 
 import DateController from './DateController.vue'
 
@@ -21,7 +21,7 @@ const emit = defineEmits<{
 }>()
 const props = withDefaults(defineProps<{
   modelValue: string[] | string
-  validate?: RuleFunction[]
+  validate?: RuleFunc[]
   label?: string
   placeholder?: string[] | string
   range?: boolean
@@ -30,7 +30,7 @@ const props = withDefaults(defineProps<{
   maxYear?: number
   block?: boolean
 }>(), {
-  validate: (): RuleFunction[] => [],
+  validate: (): RuleFunc[] => [],
   range: false,
   label: '',
   placeholder: '',

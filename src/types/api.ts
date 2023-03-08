@@ -1,6 +1,6 @@
 // API 전송시 interface 후미 구분으로 GET, POST 구분
 // Params => get method, Post => post method
-import { StringIndex } from './common'
+import { KeyIndex } from './common'
 
 export const enumYN = {
   Y: 'Y',
@@ -60,7 +60,7 @@ export interface PublicCode {
 }
 
 export interface PublicCodeName {
-  [index: string]: StringIndex<string>
+  [index: string]: KeyIndex<string>
 }
 
 export interface PublicCodeSet {
@@ -72,9 +72,7 @@ export interface PublicCodeResult {
   codes: PublicCodeSet
 }
 
-export interface FormDataItem {
-  [index: string]: any
-}
+export interface FormDataItem extends KeyIndex<any> {}
 
 export interface OnlyResult {
   result: Result

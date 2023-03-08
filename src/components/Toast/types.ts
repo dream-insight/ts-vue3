@@ -11,6 +11,5 @@ export interface MessageOptions {
 }
 
 export type Toast = {
-  (params: string): void
-  (params: MessageOptions): void
+  (params: string | MessageOptions): void
 }

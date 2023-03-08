@@ -2,8 +2,8 @@
 import { ref, watch } from 'vue'
 
 interface PaginationItem {
-  num: number;
-  isOn: boolean;
+  num: number
+  isOn: boolean
 }
 
 const emit = defineEmits<{

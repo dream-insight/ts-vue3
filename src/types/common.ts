@@ -1,8 +1,6 @@
 // string 또는 number object
-export interface StringIndex<T> {
+export interface KeyIndex<T> {
   [index: string]: T
 }
 
-export interface RegExpCase {
-  [index: string]: RegExp
-}
+export interface RegExpCase extends KeyIndex<RegExp> {}

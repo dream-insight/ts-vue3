@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, watch, withDefaults } from 'vue'
-import type { RuleFunction } from '../types'
+import type { RuleFunc } from '../types'
 
 export interface ValidateWrapProps {
   checkValue: any
-  validate?: RuleFunction[]
+  validate?: RuleFunc[]
   errorMessage?: string
 }
 
 const props = withDefaults(defineProps<ValidateWrapProps>(), {
-  validate: (): RuleFunction[] => [],
+  validate: (): RuleFunc[] => [],
   errorMessage: '',
 })
 
