@@ -32,6 +32,11 @@
 
 ## TypeScript 목차
 
+1. [명명 방식](#1-명명-방식)
+2. [import](#2-import)
+3. [유형별 정의 방식](#3-유형별-정의-방식)
+4. [Props, Emits 정의](#4-Props,-Emits-정의)
+5. [ENUM](#5-ENUM)
 
 * [Vue3.x Component & Plugin 모음](https://github.com/dream-insight/vue3/tree/main/src)
 
@@ -52,7 +57,6 @@ import ComponentB from './componentB'
 import { ref, watch, computed, onMounted, onUpdated } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-
 import type { OptionItem } from '@/types'
 
 // vue에서 제공 되는 각종 APIs 정의
@@ -2099,7 +2103,6 @@ import type { RouteRecord } from 'vue-router'
 ```
 
 ---
-
 ## 3. 유형별 정의 방식
 
 ### 3.1. 변수 및 배열
@@ -2265,7 +2268,6 @@ const Toast = inject('Toast') as Toast
 ```
 
 ---
-
 ## 4. Props, Emits 정의
 * <code>Props, Emits</code>의 <code>interface</code> 정의시 유의 해야할 점이 있습니다.
 * 일반적으로 type 정의된 내용을 파일로 분리하여 <code>export</code> 하는 방식으로 많이 사용됩니다.
