@@ -4,7 +4,6 @@
 
 * [ES6](https://www.w3schools.com/js/js_es6.asp)
 * [Vue 3.x](https://v3.vuejs.org/)
-* [SCSS](https://sass-lang.com/)
 * [작성 참조 - AirBnB](https://github.com/tipjs/typescript-style-guide)
 ---
 
@@ -38,7 +37,9 @@
 4. [Props, Emits 정의](#4-Props,-Emits-정의)
 5. [ENUM](#5-ENUM)
 
-* [Vue3.x Component & Plugin 모음](https://github.com/dream-insight/vue3/tree/main/src)
+
+## Component & Plugin
+* [Component & Plugin 모음](https://github.com/dream-insight/ts-vue3/tree/main/src/components)
 
 ---
 
@@ -2091,6 +2092,8 @@ type DateString = string
 type ItemGroup = 'text' | 'value' | 'empty'
 ```
 
+:arrow_up: [목차](#TypeScript-목차)
+
 ---
 
 ## 2. import
@@ -2102,7 +2105,10 @@ import { route } from 'vue-router'
 import type { RouteRecord } from 'vue-router'
 ```
 
+:arrow_up: [목차](#TypeScript-목차)
+
 ---
+
 ## 3. 유형별 정의 방식
 
 ### 3.1. 변수 및 배열
@@ -2182,7 +2188,7 @@ class person implements Person {
 const clsPerson: Person = new person()
 ```
 
-* 만약 초기 값이 필요 없고, 엑세스 중간에 속성값을 지정해야 하는 경우가 생길수도 있습니다.
+* 초기 값이 필요 없고, 엑세스 중간에 속성값을 지정해야 하는 경우가 생길수도 있습니다.
 ```typescript
 interface Option {
   text: string
@@ -2267,7 +2273,10 @@ import type { Toast } from '@/components/Toast/types'
 const Toast = inject('Toast') as Toast
 ```
 
+:arrow_up: [목차](#TypeScript-목차)
+
 ---
+
 ## 4. Props, Emits 정의
 * <code>Props, Emits</code>의 <code>interface</code> 정의시 유의 해야할 점이 있습니다.
 * 일반적으로 type 정의된 내용을 파일로 분리하여 <code>export</code> 하는 방식으로 많이 사용됩니다.
@@ -2328,6 +2337,9 @@ const emits = defineEmits<{
   (event: 'refresh'): void
 }>()
 ```
+
+:arrow_up: [목차](#TypeScript-목차)
+
 ---
 
 ## 5. ENUM
@@ -2380,6 +2392,8 @@ type Direction = typeof direction[keyof typeof direction]
 
 const where: Direction = direction.R     // RIGHT
 ```
+
+:arrow_up: [목차](#TypeScript-목차)
 
 ---
 ### UPDATE HISTORY

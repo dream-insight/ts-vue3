@@ -10,7 +10,7 @@ app.component('Tooltip', Tooltip)
 ```
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 let message = ref<string[]>([

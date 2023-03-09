@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
-import Navgation from '@/views/common/nav.vue'
 import type { Rules, OptionItem } from '@/components/Form/types'
 import type { Modal, ModalOptions } from '@/components/Modal/types'
-import type { Toast } from '@/components/Toast/types'
+import type { ColorCase, Toast } from '@/components/Toast/types'
 import type { Spinner } from '@/components/Spinner/types'
 import type { ValidateForm } from '@/components/Form/ValidateForm/types'
 
@@ -69,7 +68,7 @@ const modalAlert = (flag?: string): void => {
   }
 }
 
-const showToast = (color?: string): void => {
+const showToast = (color?: ColorCase): void => {
   if (color === 'success') {
     Toast('이런 메시지가 보인다!')
   } else {
@@ -99,6 +98,7 @@ const checkForm = () => {
           <div class="col">
             <div class="input-with-btn">
               <TextField
+                type="url"
                 label="텍스트 입력"
                 placeholder="이곳에 텍스트를 입력해주세요."
                 :validate="rule.input"

@@ -1,5 +1,20 @@
 import type { KeyIndex } from '../types'
 
+export const transitionCase = {
+  left: 'trans-left',
+  right: 'trans-right',
+  down: 'trans-down'
+} as const
+
+export type TransitionCase = typeof transitionCase[keyof typeof transitionCase]
+
+export const transitionFlag = {
+  start: 'start',
+  end: 'end'
+} as const
+
+export type TransitionFlag = typeof transitionFlag[keyof typeof transitionFlag]
+
 export interface ToggleButtonType {
   text: string
   checked: boolean
@@ -7,7 +22,10 @@ export interface ToggleButtonType {
 
 export interface ShowRange extends KeyIndex<boolean> {}
 
-export interface TransitionNameType extends KeyIndex<string> {}
+export interface TransitionNameType {
+  start: TransitionCase
+  end: TransitionCase
+}
 
 export interface TimeoutType extends KeyIndex<number> {}
 
@@ -37,10 +55,4 @@ export interface SelectedDateType extends KeyIndex<SelectedDateValueType> {}
 export interface TimeStateType {
   start: number
   end: number
-}
-
-declare global {
-  interface Date {
-    getDateFormat(format: string, days: number): string
-  }
 }

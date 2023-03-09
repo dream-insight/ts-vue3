@@ -11,6 +11,7 @@ import type {
   SelectedDateType,
   TimeStateType,
   DateCellType,
+TransitionFlag,
 } from './types'
 import type { RuleFunc } from '../types'
 
@@ -62,8 +63,8 @@ const show = reactive<ShowRange>({
 })
 
 const transitionName = reactive<TransitionNameType>({
-  start: '',
-  end: ''
+  start: 'trans-down',
+  end: 'trans-down'
 })
 
 const timeout: TimeoutType = {
@@ -146,6 +147,46 @@ watch(() => props.modelValue, (v) => {
 watch(() => props.validate, () => {
   resetValidate()
 })
+
+/**
+ * 지정된 포멧에 맞춰서 날짜를 문자열로 변환하여 반환
+ * days의 차이에 때라 d 기준 날짜를 가감하여 변환
+ *
+ * @param d 날짜 객체
+ * @param format 변경할 포멧
+ * @param days 날짜 가감
+ */
+ const getDateFormat = (d: Date, format: string, days?: number): string => {
+  let date = d
+
+  if (days) {
+    const time = date.getTime()
+    date = new Date(time + (86400 * days * 1000))
+  }
+
+  let year: string = date.getFullYear().toString()
+  let month: string = (date.getMonth() + 1).toString()
+  let day: string = date.getDate().toString()
+  let dYear: string = date.getFullYear().toString()
+  let dMonth: string = month.toString()
+  let dDay: string = day.toString()
+
+  if (month.length === 1) {
+    dMonth = `0${month}`
+  }
+
+  if (day.length === 1) {
+    dDay = `0${day}`
+  }
+
+  return format
+    .replace('Y', dYear)
+    .replace('m', dMonth)
+    .replace('d', dDay)
+    .replace('y', year)
+    .replace('n', month)
+    .replace('j', day)
+}
 
 // 시작일 종료일 텍스트 표시 선택된 날짜가 있는 경우 선택된 날짜로 표시
 const startDate = computed<string>(() => {
@@ -320,7 +361,7 @@ const getBeforeDay = (year: number, month: number, week: number): number => {
  * @param flag start | end
  * @param increase 증감 값
  */
-const changeMonth = (flag: string, increase: number): void => {
+const changeMonth = (flag: TransitionFlag, increase: number): void => {
   // 버튼을 통해 달을 변경
   let change: boolean = false
 
@@ -380,7 +421,7 @@ const changeMonth = (flag: string, increase: number): void => {
  * @param target year | month
  * @param value 년도 또는 월
  */
-const changeYearMonth = (flag: string, target: string, value: number) => {
+const changeYearMonth = (flag: TransitionFlag, target: string, value: number) => {
   // 년 월 select box 변경 이벤트
   dateState[flag][target] = value
 
@@ -422,20 +463,20 @@ const pickCaseDate = (flag: number): void => {
 
   switch (flag) {
     case 0:
-      selected.start.date = date.getDateFormat(format, 0)
-      selected.endd.date = date.getDateFormat(format, 0)
+      selected.start.date = getDateFormat(date, format, 0)
+      selected.endd.date = getDateFormat(date, format, 0)
       break
     case 1:
-      selected.start.date = date.getDateFormat(format, -1)
-      selected.end.date = date.getDateFormat(format, -1)
+      selected.start.date = getDateFormat(date, format, -1)
+      selected.end.date = getDateFormat(date, format, -1)
       break
     case 2:
-      selected.start.date = date.getDateFormat(format, -6)
-      selected.end.date = date.getDateFormat(format, 0)
+      selected.start.date = getDateFormat(date, format, -6)
+      selected.end.date = getDateFormat(date, format, 0)
       break
     case 3:
-      selected.start.date = date.getDateFormat(format, -29)
-      selected.end.date = date.getDateFormat(format, 0)
+      selected.start.date = getDateFormat(date, format, -29)
+      selected.end.date = getDateFormat(date, format, 0)
       break
     case 4:
     case 5:
@@ -644,38 +685,6 @@ const check = (): boolean => {
   }
 
   return true
-}
-
-Date.prototype.getDateFormat = function(format: string, days: number = 0): string {
-  let date = this
-
-  if (days !== 0) {
-    const time = date.getTime()
-    date = new Date(time + (86400 * days * 1000))
-  }
-
-  let year: string = date.getFullYear().toString()
-  let month: string = (date.getMonth() + 1).toString()
-  let day: string = date.getDate().toString()
-  let dYear: string = date.getFullYear().toString()
-  let dMonth: string = month.toString()
-  let dDay: string = day.toString()
-
-  if (month.length === 1) {
-    dMonth = `0${month}`
-  }
-
-  if (day.length === 1) {
-    dDay = `0${day}`
-  }
-
-  return format
-    .replace('Y', dYear)
-    .replace('m', dMonth)
-    .replace('d', dDay)
-    .replace('y', year)
-    .replace('n', month)
-    .replace('j', day)
 }
 
 init()

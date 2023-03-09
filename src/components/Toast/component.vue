@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, withDefaults, onUnmounted } from 'vue'
+import type { IconCase } from './types'
 
 interface ToastListType {
   key: number
@@ -18,7 +19,7 @@ const props = withDefaults(defineProps<{
 })
 
 let color = ref<string>('success')
-let icon = ref<string>('check-circle')
+let icon = ref<IconCase>('check-circle')
 let message = ref<string>('')
 
 let list = ref<ToastListType[]>([])

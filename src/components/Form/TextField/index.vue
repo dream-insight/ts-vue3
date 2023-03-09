@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, withDefaults } from 'vue'
-import type { PatternCase, PatternCaseValue } from './types'
+import type { PatternCase, PatternCaseValue, TextFieldType } from './types'
 import type { RuleFunc } from '../types';
 
 const emit = defineEmits<{
@@ -9,7 +9,7 @@ const emit = defineEmits<{
 
 const props = withDefaults(defineProps<{
   modelValue: string
-  type?: string
+  type?: TextFieldType
   rows?: number | string
   label?: string
   placeholder?: string

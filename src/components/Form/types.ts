@@ -14,7 +14,7 @@ export interface Rules {
 // selectbox, checkbox 사용 옵션
 export interface OptionItem {
   text: string
-  value: any
+  value: number | string
 }
 
 export interface OptionItemGroup {

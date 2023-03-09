@@ -1,7 +1,8 @@
-import { h, render, isVNode, Fragment } from 'vue'
+import { h, render, isVNode } from 'vue'
 import type { App, VNode } from 'vue'
 import ToastComponent from './component.vue'
-import type { Toast, ToastOptions, MessageOptions } from './types'
+import { iconCase } from './types'
+import type { Toast, ToastOptions, MessageOptions, IconCase, ColorCase } from './types'
 
 export default {
   install: (app: App, options?: ToastOptions) => {
@@ -34,19 +35,12 @@ export default {
       }
     }
 
-    const iconCase = <{ [index: string]: string }>{
-      success: 'check-circle',
-      warning: 'triangle-exclamation',
-      info: 'circle-info',
-      error: 'bomb'
-    }
-
     const setMessage = (opt: MessageOptions | string): void => {
       init()
 
       if (VNode) {
         if (VNode.component?.exposed) {
-          const exposed = VNode.component.exposed
+          const { exposed } = VNode.component
 
           if (opt instanceof Object) {
             if ('message' in opt) {
@@ -56,7 +50,7 @@ export default {
               return
             }
 
-            if ('color' in opt && opt.color !== undefined) {
+            if (opt.color) {
               exposed.icon.value = iconCase[opt.color]
               exposed.color.value = opt.color
             }

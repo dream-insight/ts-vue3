@@ -9,7 +9,7 @@ app.component('Pagination', Pagination)
 ```
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 let total = ref<number>(16723)

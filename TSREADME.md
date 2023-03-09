@@ -84,7 +84,7 @@ const click = (evt: Event) => {
 * <code>Plugin</code> 작성시 아래와 같이 작성된 컴포넌트를 <code>h()</code> 함수를 사용하여 랜더링 할 경우 문제가 발생한다.
 > 오류 코드
 ```vue
-<script setup>
+<script setup lang="ts">
 // Message.vue
 import { ref } from 'vue'
 
@@ -161,7 +161,7 @@ if (Toast) {
 * 하지만 위와 같은 경우 Toast 플러그인 호출 전에 Toast 인스턴스에 대한 존재 여부를 확인 하거나 옵셔널 체이닝(?.)으로 접근해야 한다.
 * 이러한 귀찮은 코드를 피하기 위해 간단히 as 키워드를 이용하여 다운 캐스팅하여 코드를 줄일 수 있다.
 ```vue
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue'
 import type { Toast } from '@/components/Toast/types'
 

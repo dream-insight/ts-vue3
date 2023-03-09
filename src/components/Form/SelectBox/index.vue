@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect, computed, withDefaults, onMounted, StyleValue } from 'vue'
-import type { SelectBoxItem } from './types'
+import type { SelectBoxModel, SelectBoxItem } from './types'
 import type { RuleFunc } from '../types'
 
 const emit = defineEmits<{
@@ -9,7 +9,7 @@ const emit = defineEmits<{
 }>()
 
 const props = withDefaults(defineProps<{
-  modelValue: any
+  modelValue: SelectBoxModel
   selectedIndex?: number
   options: SelectBoxItem[]
   label?: string
@@ -83,8 +83,8 @@ watchEffect(() => {
   }
 
   props.options.forEach((item) => {
-    if (props.multiple) {
-      if (props.modelValue.includes(item.value)) {
+    if (props.multiple && props.modelValue instanceof Array) {
+      if (props.modelValue.includes(item.value as never)) {
         selectedText.value.push(item.text)
       }
     } else {
@@ -95,7 +95,7 @@ watchEffect(() => {
   })
 })
 
-const updateValue = (v: any, index: number): void => {
+const updateValue = (v: SelectBoxModel, index: number): void => {
   emit('update:modelValue', v)
   emit('update:selectedIndex', index)
   check()

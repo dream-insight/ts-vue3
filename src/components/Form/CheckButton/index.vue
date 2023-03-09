@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, withDefaults } from 'vue'
-import type { CheckButtonItem } from './types'
+import type { CheckButtonItem, CheckButtonType } from './types'
 import type { RuleFunc } from '../types'
 
 const emit = defineEmits<{
@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<{
   name: string
   modelValue?: string | string[]
   // checkbox, radio
-  type?: string
+  type?: CheckButtonType
   // 전체 버튼 추가
   all?: boolean
   // 최대 체크 가능한 수량
