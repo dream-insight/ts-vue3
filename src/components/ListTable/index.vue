@@ -14,7 +14,7 @@ export interface TableEmits {
 export interface TableProps {
   items: TableItems[]
   header: TableHeader[] | TableHeader[][]
-  footer?: TableFooter
+  footer?: TableFooter[]
   // 목록이 없을 경우 표시할 텍스트 String:''
   emptyText?: string
   // 설정시 라인 색상이 적용 되지 않음
@@ -27,7 +27,7 @@ export interface TableProps {
 const emit = defineEmits<TableEmits>()
 const props = withDefaults(defineProps<TableProps>(), {
   header: (): TableHeader[] => [],
-  footer: (): TableFooter => ({}),
+  footer: (): TableFooter[] => [],
   emptyText: '데이터가 없습니다.',
   noHoverBg: false,
   checkAll: false,
@@ -272,7 +272,6 @@ if (props.items.length && target.value) {
           <th
             :colspan="item.colspan"
             :class="item.align"
-            :width="item.width"
             :key="`foot${i}`"
             v-if="item.tag == 'th'">
             {{ item.value }}
@@ -280,7 +279,6 @@ if (props.items.length && target.value) {
           <td
             :colspan="item.colspan"
             :class="item.align"
-            :width="item.width"
             :key="`foot-${i}`"
             v-else>
             <b>{{ item.value }}</b>

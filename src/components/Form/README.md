@@ -10,7 +10,9 @@
 6. [DatePicker](#6-datepicker)
 7. [ValidateWrap](#7-validatewrap)
 8. [ValidateForm](#8-validateform)
-* [공통 Types](#공통-types)
+9. [공통 Types](#공통-types)
+
+* [컴포넌트 Index로 돌아가기](../)
 ---
 
 ## 1. CheckButton

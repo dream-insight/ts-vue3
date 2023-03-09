@@ -73,18 +73,23 @@
     &:hover {
       background-color: rgb(240, 240, 240);
     }
+
+    td {
+      padding: 10px 5px;
+      text-align: center;
+    }
   }
 
-  tbody td {
-    padding: 10px 5px;
+  .center {
     text-align: center;
+  }
 
-    &.left {
-      text-align: left;
-    }
-    &.right {
-      text-align: right;
-    }
+  .left {
+    text-align: left;
+  }
+
+  .right {
+    text-align: right;
   }
 }
 

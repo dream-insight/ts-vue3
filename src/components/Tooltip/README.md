@@ -1,14 +1,24 @@
 # Tooltip component
 
+# 항목
+
+1. [사용방법](#1-사용방법)
+2. [Props](#2-props)
+3. [그 외](#3-그-외)
+
+---
+
 # 1. 사용방법
 * 해당 컴포넌트에서 사용되는 아이콘은 FontAwesome v5.x 입니다. [링크](https://fontawesome.com/v5/search?o=r&m=free)
-```javascript
-// main.js
+
+## 1.1. 전역 선언
+```typescript
 import Tooltip from '@/components/Tooltip'
 
 app.component('Tooltip', Tooltip)
 ```
 
+## 1.2.
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
@@ -50,23 +60,29 @@ let message = ref<string[]>([
 </style>
 ```
 
-# 2. Prop
-| Name | Type | Default | Require | Description |
-|-------|---- |---------|---------|-------------|
-| message | String, String[] | <code>none</code> | *true* | 툴팁 메시지, 배열입력시 리스트 형태로 출력 |
-| left | Boolean | <code>false</code> | false | 메시지를 왼쪽에 표시 |
-| right | Boolean | <code>false</code> | false | 메시지를 오른쪽에 표시 |
-| top | Boolean | <code>false</code> | false | 메시지를 위쪽에 표시 |
-| bottom | Boolean | <code>true</code> | false | 메시지를 아랫쪽에 표시 |
-| width | Number | <code>300</code> | false | 메시지를 box의 최대 넓이(px 단위) |
+:arrow_up: [항목](#항목)
+
+---
+
+# 2. Props
+| Name | Type | Default | Description |
+|-------|---- |---------|-------------|
+| message | string, string[] | <code>none</code> | 툴팁 메시지, 배열입력시 리스트 형태로 출력 |
+| left? | boolean | <code>false</code> | 메시지를 왼쪽에 표시 |
+| right? | boolean | <code>false</code> | 메시지를 오른쪽에 표시 |
+| top? | boolean | <code>false</code> | 메시지를 위쪽에 표시 |
+| bottom? | boolean | <code>true</code> | 메시지를 아랫쪽에 표시 |
+| width? | number | <code>300</code> | 메시지를 box의 최대 넓이(px 단위) |
 
 ## 3. 그 외
 ### Fontawsome 과 함께 사용하여야 icon 표시 가능
-```vue
-<style>
+```css
 @import url("https://use.fontawesome.com/releases/v5.4.2/css/all.css");
-</style>
 ```
 > Fontawesome component는 표시 안되는 오류로 인해 사용 불가(추후 수정 가능)
 
-:arrow_left: [컴포넌트 목록으로이동](https://github.com/dream-insight/vue3/tree/main/src)
+:arrow_up: [항목](#항목)
+
+---
+
+:arrow_left: [컴포넌트 목록으로이동](https://github.com/dream-insight/ts-vue3/components)

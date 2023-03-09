@@ -10,14 +10,22 @@ export interface TableHeader {
   rowspan?: number
 }
 
-interface KeyIndex<T> {
-  [index: string]: T
+interface KeyIndex {
+  [index: string]: any
 }
 
-export interface TableFooter extends KeyIndex<any> {}
+type FootAlign = 'center' | 'left' | 'right'
+type FootItemTag = 'td' | 'th'
+
+export interface TableFooter {
+  colspan?: number
+  align?: FootAlign
+  tag?: string
+  value: FootItemTag
+}
 
 // 테이블 목록 Array:[] *
-export interface TableItems extends KeyIndex<any> {}
+export interface TableItems extends KeyIndex {}
 
 export interface SortingChangeData {
   data: TableItems[]
