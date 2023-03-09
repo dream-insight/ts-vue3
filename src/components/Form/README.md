@@ -2,15 +2,15 @@
  validateForm Component와 호환 가능한 폼을 통해 간편히 유효성 검사를 실행하기 위해 만들어진 컴포넌트 모음입니다.<br>
  CSS 변경시에는 컴포넌트 내부 CSS를 복사, 제거 후 형식에 맞춰서 작성하세요.
 
-1. [CheckButton](#1-CheckButton)
-2. [TextField](#2-TextField)
-3. [NumberFormat](#3-NumberFormat)
-4. [SelectBox](#4-SelectBox)
-5. [SwitchButton](#5-SwitchButton)
-6. [DatePicker](#6-DatePicker)
-7. [ValidateWrap](#7-ValidateWrap)
-8. [ValidateForm](#8-ValidateForm)
-
+1. [CheckButton](#1-checkbutton)
+2. [TextField](#2-textfield)
+3. [NumberFormat](#3-numberformat)
+4. [SelectBox](#4-selectbox)
+5. [SwitchButton](#5-switchbutton)
+6. [DatePicker](#6-datepicker)
+7. [ValidateWrap](#7-validatewrap)
+8. [ValidateForm](#8-validateform)
+* [공통 Types](#공통-types)
 ---
 
 ## 1. CheckButton
@@ -111,7 +111,7 @@ export interface CheckButtonItem {
 }
 ```
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -208,7 +208,7 @@ export interface PatternCase extends KeyIndex<PatternCaseValue> {}
 ```
 
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -255,7 +255,7 @@ const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 | maxLength? | string, number | <code>none</code> | 최대 입력 가능한 문자 수 |
 | readonly? | boolean | <code>false</code> | 폼 입력 불가 처리 |
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -321,7 +321,7 @@ export interface SelectBoxItem {
 }
 ```
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -370,7 +370,7 @@ let label = ref<string[]>(['동의 안함', '동의'])
 | falseValue? | string | <code>''</code> | 버튼을 OFF 상태의 값을 지정합니다. |
 | readonly? | boolean | <code>false</code> | 버튼 수정 불가 옵션 |
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -516,7 +516,7 @@ export interface TimeStateType {
 }
 ```
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -564,7 +564,7 @@ function fileSelected(evt: Event) {
 | validate | [RuleFunc[]](#2-rulefunc) | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열 입력 |
 | errorMessage? | string | <code>''</code> | 강제로 오류 메시지를 표시 |
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -579,7 +579,7 @@ function fileSelected(evt: Event) {
 #### <code>boolean {RefName}.value?.validate()</code>
 * 유효성 검사를 실행 합니다.
 
-:arrow_up: [목차](#-Form-validation-Components)
+:arrow_up: [목차](#form-validation-components)
 
 ---
 
@@ -621,8 +621,11 @@ export interface OptionItemGroup {
 }
 ```
 
+:arrow_up: [목차](#form-validation-components)
 
+---
 
 ### UPDATE HISTORY
 
-* Vue 3 Components with Typescript : 2023.02.20 김종윤 수석
+* Vue 3 Components with Typescript : 2023.02.20 김종윤 수석매니저
+* Type Section 추가 및 Option List Table 변경 : 2023.03.09 김종윤 수석매니저
