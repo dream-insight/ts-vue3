@@ -86,7 +86,7 @@ for (let value: number = 1; value <= 10; value++) {
 | clickIndex? | number | <code>-1</code> | v-model:clickIndex - 클릭된 button의 index |
 | type? | [CheckButtonType](#131-CheckButtonType) | <code>checkbox</code> | checkbox 또는 radio 선택 |
 | name | string | <code>''</code> | input name 애드립뷰트 값을 설정 |
-| items |  [CheckButtonItem[]](#132-CheckButtonItem) | <code>[]</code> | 항목을 만들 배열 데이터 <br> [{ text: '', value: '' }] |
+| items |  [CheckButtonItem[]](#132-CheckButtonItem) | <code>[]</code> | 항목을 만들 배열 데이터 |
 | all? | Boolean | <code>false</code> | '전체' 항목을 추가 해주는 옵션 |
 | maxCheckLength? | Number | <code>0</code> | 0이상의 값 부여시, 체크된 항목의 수량이 maxCheck 만큼으로 재한 |
 | validate? | Function[] | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열여 입력 |
@@ -299,9 +299,9 @@ for (let value = 1; value <= 10; value++) {
 |-------|---- |---------|-------------|
 | modelValue? | SelectBoxModel | <code>''</code> | v-model |
 | selectedIndex? | number | <code>-1</code> | v-model:selectedIndex - 선택된 option의 index 값 |
-| options | [SelectBoxItem[]](#432-selectboxitem) | <code>[]</code> | option 필드를 생성할 데이터<br>[{ text: '', value: '' }] |
+| options | [SelectBoxItem[]](#432-selectboxitem) | <code>[]</code> | 선택 가능한 옵션 목록 |
 | label? | string | <code>''</code>| label 문자 표시 |
-| placeholder? | string | <code>''</code> | options 첫 번째 배열에 [{ text: placeholder, value: '' }] 추가 |
+| placeholder? | string | <code>''</code> | 폼의 placeholder 표시 |
 | block? | boolean | <code>false</code> | display: block 표시 |
 | validate? | [RuleFunc[]](#2-rulefunc) | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열 입력 |
 | errorMessage? | string | <code>''</code> | 강제로 오류 메시지를 표시 |
@@ -389,6 +389,7 @@ let dateRange = ref<string[]>(['', ''])
 
 const rules: Rules = {
   date: [v => !!v || '날짜를 선택해주세요.']
+  dateRnage: [v => !!v || '기간을 선택해주세.']
 }
 </script>
 
@@ -399,7 +400,7 @@ const rules: Rules = {
   </p>
   <p>
     <h5>range date picker</h5>
-    <DatePicker range :validate="rules.date" v-model="dateRange" />
+    <DatePicker range :validate="rules.dateRange" v-model="dateRange" />
   </p>
 </template>
 ```

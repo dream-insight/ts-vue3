@@ -460,7 +460,7 @@ const getText = (target): string => obj[target]
 ```
 
 ### 5.4. 객체 복사
-* 객체를 따로 복사하여 사용할 때에는 아래의 사항에 유의 하세요.
+* 객체를 복사하여 사용할 때에는 아래의 사항에 유의 하세요.
 ```vue
 <script setup lang="ts">
 import { reactive } from 'vue'
@@ -666,6 +666,7 @@ const banana: boolean | string = (str !== 'apple') && 'banana'  // false
 const apple: boolean | string = (str !== 'apple') || 'banana'   // 'banana'
 const banana: boolean | string = (str === 'apple') || false     // true
 
+// 3항 연산
 const apple: boolean = (str !== 'apple') ? true : false         // false
 ```
 
@@ -1039,7 +1040,7 @@ const makeDOM = (data: object = {}): string => {
 
 const tags: string = makeDOM(data)
 ```
-> 재귀 함수를 사용할 경우 무한 루프에 대한 부담은 줄어 들지만, 스택오버플로우(Stack Overflow)할 수 있습니다.<br>
+> 재귀 함수를 사용할 경우 무한 루프에 대한 부담은 줄어 들지만, 스택오버플로우(Stack Overflow)가 발생할 수 있습니다.<br>
 
 :arrow_up: [목차](#목차)
 

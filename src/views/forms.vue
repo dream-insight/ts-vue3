@@ -88,11 +88,6 @@ const form = ref<ValidateForm>()
 const checkForm = () => {
   form.value?.validate()
 }
-
-const e = (event: Event): void => {
-  const target = event.target as HTMLInputElement
-  const files = target.files as FileList
-}
 </script>
 
 <template>
