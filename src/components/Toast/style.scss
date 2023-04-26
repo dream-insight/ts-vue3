@@ -1,0 +1,90 @@
+@import '@/assets/style/const.scss';
+
+$success: map-get($theme-colors, 'success');
+$warning: map-get($theme-colors, 'warning');
+$info: map-get($theme-colors, 'info');
+$danger: map-get($theme-colors, 'danger');
+
+#toast {
+  position: fixed;
+  bottom: 0;
+  z-index: 100000;
+  width: 100%;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toast-body {
+  margin: 5px 0;
+  height: 55px;
+  padding: 0 25px 0 15px;
+  min-width: 400px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  box-shadow: $box-shadow;
+
+  &.bg-success {
+    border-left: 6px solid darken($success, 5);
+  }
+
+  &.bg-info {
+    border-left: 6px solid darken($info, 5);
+  }
+
+  &.bg-warning {
+    border-left: 6px solid darken($warning, 5);
+  }
+
+  &.bg-danger {
+    border-left: 6px solid darken($danger, 5);
+  }
+
+  .icon {
+    display: block;
+    margin-right: 10px;
+    font-size: 1.7em;
+  }
+
+  .message {
+    font-size: 14px;
+  }
+}
+
+.bg-success {
+  background-color: $success;
+  color: #fff;
+}
+
+.bg-info {
+  background-color: $info;
+  color: #fff;
+}
+
+.bg-warning {
+  background-color: $warning;
+  color: #fff;
+}
+
+.bg-danger {
+  background-color: $danger;
+  color: #fff;
+}
+
+.toast-view-enter-from {
+  margin-bottom: -60px;
+  opacity: 0;
+}
+.toast-view-leave-to {
+  transform: scale(0);
+  opacity: 0;
+}
+.toast-view-enter-active,
+.toast-view-leave-active {
+  transition: all 0.2s ease-out;
+}

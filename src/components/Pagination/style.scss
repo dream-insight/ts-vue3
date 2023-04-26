@@ -1,0 +1,43 @@
+.Page {
+  display: inline-block !important;
+}
+
+// .navigation {
+//   .pagination {
+//     list-style: none;
+//     display: flex;
+
+//     .page-item a {
+//       font-size: 13px;
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       text-decoration: none;
+//       width: 30px;
+//       height: 30px;
+//       border-width: 1px 0 1px 1px;
+//       border-color: #000;
+//       border-style: solid;
+//       text-align: center;
+//       color: #000;
+
+//       &:hover {
+//         background-color: #00000055;
+//         color: #fff;
+//       }
+//     }
+
+//     .page-item.active a {
+//       background-color: #000;
+//       color: #fff;
+//     }
+
+//     .page-item:last-child a {
+//       border-right: 1px solid #000;
+//     }
+
+//     .page-item.active .page-link {
+//       z-index: 0 !important;
+//     }
+//   }
+// }

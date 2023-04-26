@@ -1,0 +1,89 @@
+/* common util */
+.block {
+  display: block !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.col {
+  margin: 0 0.5em;
+  flex: 1 0 0%;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.divider {
+  display: block;
+  height: 1px;
+  background-color: #e2e2e2;
+  margin: 10px 0;
+}
+
+@for $i from 1 to 10 {
+  .mt-#{$i} {
+    margin-top: $i * 0.3em;
+  }
+  .mb-#{$i} {
+    margin-bottom: $i * 0.3em;
+  }
+  .mx-#{$i} {
+    margin: 0 ($i * 0.3em);
+  }
+  .my-#{$i} {
+    margin: ($i * 0.3em) 0;
+  }
+  .ma-#{$i} {
+    margin: $i * 0.3em;
+  }
+
+  .pt-#{$i} {
+    padding-top: $i * 0.3em;
+  }
+  .pb-#{$i} {
+    padding-bottom: $i * 0.3em;
+  }
+  .px-#{$i} {
+    padding: 0 ($i * 0.3em);
+  }
+  .py-#{$i} {
+    padding: ($i * 0.3em) 0;
+  }
+  .pa-#{$i} {
+    padding: $i * 0.3em;
+  }
+}
+
+.card {
+  border-radius: 10px;
+  box-shadow: $box-shadow;
+
+  .card-header {
+    border-radius: 10px 10px 0 0;
+    background-color: #d2d2d2;
+    padding: 0.6em 1em;
+    font-size: 1.3em;
+    font-weight: 700;
+  }
+
+  .card-body {
+    padding: 1em;
+  }
+
+  .card-footer {
+    border-top: 1px solid #d2d2d2;
+    border-radius: 0 0 10px 10px;
+  }
+}

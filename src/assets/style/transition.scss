@@ -1,0 +1,43 @@
+.page-fade-enter-from {
+  opacity: 0;
+}
+.page-fade-leave-from {
+  display: none;
+}
+.page-fade-enter-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.scale-enter-from, .scale-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+.scale-enter-active, .scale-leave-active {
+  transition: all 0.2s;
+}
+
+$slide: (
+  up: translateY(-1em),
+  right: translateX(-1em),
+  left: translateX(1em),
+  down: translateY(1em)
+);
+
+@each $key, $value in $slide {
+  .slide-#{$key}-enter-from,
+  .slide-#{$key}-leave-to {
+    opacity: 0;
+    transform: $value;
+  }
+  .slide-#{$key}-enter-active,
+  .slide-#{$key}-leave-active {
+    transition: all 0.2s;
+  }
+}

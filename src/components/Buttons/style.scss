@@ -1,0 +1,124 @@
+@import '@/assets/style/const.scss';
+
+.btn {
+  display: inline-block;
+  box-shadow: $box-shadow;
+  border-radius: $border-radius;
+  border: 0;
+  padding: 0 1.5em;
+  height: 40px;
+  transition: background-color 0.2s ease;
+
+  .btn-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  @each $key, $value in $theme-colors {
+    &.#{$key} {
+      background-color: $value;
+      @if $key == light {
+        color: #606060;
+      } @else {
+        color: #fff;
+      }
+
+      &:hover {
+        @if $key == light {
+          background-color: darken(#fff, 8);
+        } @else {
+          background-color: lighten($value, 8);
+        }
+      }
+
+      &.disabled {
+        background-color: #b0b0b0;
+        color: #e3e3e3;
+
+        &:hover {
+          background-color: #b0b0b0;
+        }
+      }
+    }
+  }
+
+  @each $key, $value in $theme-colors {
+    &.#{$key} {
+      background-color: $value;
+      @if $key == light {
+        color: #606060;
+      } @else {
+        color: #fff;
+      }
+
+      &:hover {
+        @if $key == light {
+          background-color: darken(#fff, 8);
+        } @else {
+          background-color: lighten($value, 8);
+        }
+      }
+    }
+  }
+
+  &.icon {
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 2em !important;
+    height: 2em !important;
+    border-radius: 50% !important;
+
+    @each $key, $value in $theme-colors {
+      @if $key != light {
+        &.#{$key} {
+          background-color: transparent;
+          color: $value !important;
+
+          &:hover {
+            background-color: rgba($value, 0.15);
+          }
+        }
+      }
+    }
+  }
+
+  i {
+    font-size: 1.2em;
+  }
+
+  &:not(.icon) {
+    &.right {
+      i {
+        font-size: 1.5em;
+        margin-left: 3px;
+      }
+    }
+
+    &.left {
+      i {
+        font-size: 1.5em;
+        margin-right: 3px;
+      }
+    }
+  }
+
+  .loading {
+    animation: spinner 1s infinite;
+  }
+}
+
+@keyframes spinner {
+  from {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

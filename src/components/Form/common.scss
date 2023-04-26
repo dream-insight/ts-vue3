@@ -1,0 +1,56 @@
+@import '@/assets/style/const.scss';
+
+.options-wrap {
+  display: flex;
+  justify-content: space-between;
+
+  label.input-label {
+    padding: 0 6px;
+    font-size: 0.9em;
+    font-weight: 700;
+
+    &.error {
+      color: map-get($theme-colors, 'danger');
+    }
+
+    .required {
+      color: map-get($theme-colors, 'danger');
+    }
+  }
+
+  .counting {
+    padding: 0 6px;
+    font-size: 0.8em;
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.feedback {
+  padding-top: 0.2em;
+  padding-left: 0.2em;
+  font-size: 0.8em;
+  color: map-get($theme-colors, 'danger');
+
+  &.error {
+    animation: shaking 0.3s;
+  }
+}
+
+/* error message shaking */
+@keyframes shaking {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(10px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

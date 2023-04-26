@@ -1,0 +1,153 @@
+@import '@/assets/style/const.scss';
+
+.no-scroll {
+  overflow: hidden;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-scale-enter-from,
+.modal-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+.modal-scale-enter-active,
+.modal-scale-leave-active {
+  transition: all 0.3s ease;
+}
+
+$transition: (left, right, bottom);
+
+@each $item in $transition {
+  .modal-slide-in-#{$item}-enter-from,
+  .modal-slide-in-#{$item}-leave-to {
+    opacity: 0;
+
+    @if $item == left {
+      transform: translateX(-100%)
+    } @else if $item == right {
+      transform: translateX(100%)
+    } @else if $item == 'bottom' {
+      transform: translateY(100%)
+    }
+  }
+  .modal-slide-in-#{$item}-enter-active,
+  .modal-slide-in-#{$item}-leave-active {
+    transition: all 0.3s ease;
+  }
+}
+
+.modal-bg {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #595959;
+
+  .modal-box {
+    background-color: #fff;
+
+    &.popup {
+      box-shadow: $box-shadow;
+      border-radius: 8px;
+      min-width: 30em;
+      max-height: 95vh;
+      max-width: 95vw;
+
+      &.big {
+        transition: all 0.05s;
+        transform: scale(1.05);
+      }
+    }
+
+    &.screen-cover {
+      width: 100% !important;
+      height: 100% !important
+    }
+
+    &.right {
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .modal-body {
+        flex: 1;
+      }
+    }
+
+    &.left {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .modal-body {
+        flex: 1;
+      }
+    }
+
+    &.bottom {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      min-width: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .modal-body {
+        flex: 1;
+      }
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.7em;
+    font-size: 1.2em;
+    font-weight: 700;
+
+    a {
+      color: rgba(0, 0, 0, 0.5);
+
+      &:hover {
+        color: map-get($theme-colors, 'danger');
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1em;
+    word-break: break-all;
+  }
+
+  .modal-action {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.7em;
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}

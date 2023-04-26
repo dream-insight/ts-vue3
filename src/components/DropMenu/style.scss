@@ -1,0 +1,87 @@
+$transitionList: slide, scale, fade;
+$transitionDirection: top, right, bottom, left;
+
+@each $item in $transitionList {
+  @each $direct in $transitionDirection {
+    .drop-menu-#{$item}-#{$direct}-enter-from,
+    .drop-menu-#{$item}-#{$direct}-leave-to {
+      opacity: 0;
+
+      @if $item == slide {
+        @if $direct == bottom {
+          transform: translateY(-1em);
+        } @else if $direct == right {
+          transform: translateX(-1em);
+        } @else if $direct == left {
+          transform: translateX(1em);
+        } @else {
+          transform: translateY(1em);
+        }
+      } @else if $item == scale {
+        transform: scale(0);
+      }
+    }
+    .drop-menu-#{$item}-#{$direct}-enter-active,
+    .drop-menu-#{$item}-#{$direct}-leave-active {
+      transition: all 0.2s ease;
+    }
+  }
+}
+
+.drop-menu {
+  display: inline-block;
+  position: relative;
+
+  .drop-menu-wrap {
+    width: auto;
+    min-width: 100%;
+    z-index: 30;
+    position: absolute;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+
+    &.top {
+      transform-origin: bottom center;
+      left: 0;
+      bottom: 100%;
+      margin-bottom: 5px;
+    }
+    &.right {
+      transform-origin: top left;
+      top: 0;
+      left: 100%;
+      margin-left: 5px;
+    }
+    &.left {
+      transform-origin: top right;
+      top: 0;
+      right: 100%;
+      margin-right: 5px;
+    }
+    &.bottom {
+      transform-origin: top center;
+      margin-top: 5px;
+    }
+
+    li {
+      margin: 2px;
+
+      a {
+        border-radius: 5px;
+        color: rgba(0, 0, 0, 0.7);
+        display: block;
+        padding: 10px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+}

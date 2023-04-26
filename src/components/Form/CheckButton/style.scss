@@ -1,0 +1,107 @@
+@import '../common.scss';
+
+$primary: map-get($theme-colors, 'primary');
+
+.check-button {
+  .origin-check-button {
+    position: relative;
+    display: inline-block;
+
+    & .block {
+      display: block !important;
+    }
+
+    &:not(&.block) + .origin-check-button {
+      margin-left: 10px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 1em;
+
+      i {
+        color: map-get($theme-colors, 'primary');
+        font-size: 1.2em;
+        margin-right: 3px;
+      }
+
+      input {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+      }
+    }
+  }
+
+  span {
+    color: #5b5b5b;
+    font-size: 14px;
+  }
+
+  label {
+    font-size: 1em;
+    font-weight: 400;
+  }
+
+  .description {
+    font-size: 0.875em !important;
+    font-weight: normal;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+    border: 0 !important;
+    color: map-get($theme-colors, 'danger');
+    text-align: left !important;
+
+    &.error {
+      animation: shaking 0.3s;
+    }
+  }
+
+  .check-scale-enter-from,
+  .check-scale-leave-to {
+    transform: scale(0);
+  }
+  .check-scale-enter-active,
+  .check-scale-leave-active {
+    transition: all 0.1s ease;
+  }
+}
+
+.check-button-group {
+  display: inline-block;
+  position: relative;
+  border: 1px solid #4e8acf;
+  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: $box-shadow;
+
+  input {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  label {
+    font-size: 0.9em;
+    display: inline-block;
+    padding: 0 17px;
+    height: 35px;
+    line-height: 35px;
+    color: $primary;
+    border-right: 1px solid lighten($primary, 10);
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &.last {
+      border-right: 0;
+    }
+
+    &:hover {
+      background-color: lighten($primary, 50);
+    }
+  }
+
+  input:checked + label {
+    background-color: $primary;
+    color: #fff;
+  }
+}
