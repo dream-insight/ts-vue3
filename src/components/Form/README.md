@@ -158,7 +158,7 @@ const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 ### 2.2. Props
 
 | Name | Type | Default | Description |
-|-------|---- |---------|-------------|
+|------|------|---------|-------------|
 | modelValue? | string | <code>''</code> | v-model |
 | type | [TextFieldType](#231-TextFieldType) | <code>text</code> | text or password  |
 | multiline? | boolean | <code>false</code> | textarea 폼으로 변경 |
@@ -248,7 +248,7 @@ const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 ### 3.2. Props
 
 | Name | Type | Default | Description |
-|-------|---- |---------|-------------|
+|------|------|---------|-------------|
 | modelValue? | number | <code>0</code> | v-model |
 | label? | string | <code>''</code> | 라벨 표시 |
 | placeholder? | string | <code>''</code> | placeholder 표시 |
@@ -302,7 +302,7 @@ for (let value = 1; value <= 10; value++) {
 ### 4.2. Props
 
 | Name | Type | Default | Description |
-|-------|---- |---------|-------------|
+|------|------|---------|-------------|
 | modelValue? | SelectBoxModel | <code>''</code> | v-model |
 | selectedIndex? | number | <code>-1</code> | v-model:selectedIndex - 선택된 option의 index 값 |
 | options | [SelectBoxItem[]](#432-selectboxitem) | <code>[]</code> | 선택 가능한 옵션 목록 |
@@ -378,7 +378,7 @@ let label = ref<string[]>(['동의 안함', '동의'])
 ### 5.2. Props
 
 | Name | Type | Default | Description |
-|-------|---- |---------|-------------|
+|------|------|---------|-------------|
 | modelValue? | string | <code>''</code> | v-model |
 | small? | boolean | <code>false</code> | 버튼의 크기를 작게 생성합니다 |
 | label? | string[] | <code>[]</code> | 스위치에 사용자가 설정한 라벨을 표시 합니다, [false label, true label] |
@@ -424,7 +424,7 @@ const rules: Rules = {
 ### 6.2. Props
 
 | Name | Type | Default | Description |
-|-------|---- |---------|-------------|
+|------|------|---------|-------------|
 | modelValue? | string, string[] | <code>none</code> | v-model, option range 설정시 ['', ''] 설정 필요 |
 | label? | string, string[] | <code>none</code> | 라벨 표시 |
 | placeholder? | string, string[] | <code>none</code> | 입력 필드에 placeholder 표시<br>option range 설정시 [시작일, 종료일] 형태로 입력 |
@@ -580,7 +580,7 @@ const fileSelected = (evt: Event): void => {
 ### 7.2. Props
 
 | Name | Type | Default | Description |
-|-------|---- |---------|-------------|
+|------|------|---------|-------------|
 | checkValue | any | <code>none</code> | 유효성 검사를 할 model 변수 설정 |
 | validate | [RuleFunc[]](#2-rulefunc) | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열 입력 |
 | errorMessage? | string | <code>''</code> | 강제로 오류 메시지를 표시 |

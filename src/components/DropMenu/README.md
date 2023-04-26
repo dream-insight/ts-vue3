@@ -53,16 +53,16 @@ app.component('DropMenu', DropMenu)
 # 2. Props
 | Name | Type | Default | Description |
 |-------|---- |---------|-------------|
-| items | [DropMenuItem](#1-DropMenuItem) | <code>none</code> | 드롭다운 메뉴 목록 |
-| position? | [DropMenuPosition](#2-DropMenuPosition-with-enum) | <code>bottom</code> | 메뉴가 보여질 위치 |
-| transition? | [DropMenuTransition](#3-DropMenuTransition-with-enum) | <code>slide</code> | 애이메이션 종류 |
+| items | [DropMenuItem](#31-DropMenuItem) | <code>none</code> | 드롭다운 메뉴 목록 |
+| position? | [DropMenuPosition](#32-DropMenuPosition-with-enum) | <code>bottom</code> | 메뉴가 보여질 위치 |
+| transition? | [DropMenuTransition](#33-DropMenuTransition-with-enum) | <code>slide</code> | 애이메이션 종류 |
 | width? | number | <code>none</code> | 드롭 메뉴의 넓이를 강제로 지정 |
 
 
 ---
 
 # 3. Types
-## 1. DropMenuItem
+## 3.1. DropMenuItem
 ```js
 interface DropMenuItem {
   text: string
@@ -70,7 +70,7 @@ interface DropMenuItem {
 }
 ```
 
-## 2. DropMenuPosition with enum
+## 3.2. DropMenuPosition with enum
 ```js
 export const dropMenuPosition = {
   top: 'top',
@@ -82,7 +82,7 @@ export const dropMenuPosition = {
 export type DropMenuPosition = typeof dropMenuPosition[keyof typeof dropMenuPosition]
 ```
 
-## 3. DropMenuTransition with enum
+## 3.3. DropMenuTransition with enum
 ```js
 export const dropMenuTransition = {
   slide: 'drop-menu-slide',

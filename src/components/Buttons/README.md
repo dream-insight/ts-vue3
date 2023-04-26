@@ -78,7 +78,7 @@ app.component('Button', Button)
 # 2. Props
 | Name | Type | Default | Description |
 |-------|---- |---------|-------------|
-| color | [BtnColors](#1-BtnColors) | <code>none</code> | 툴팁 메시지, 배열입력시 리스트 형태로 출력 |
+| color | [BtnColors](#31-BtnColors) | <code>none</code> | 툴팁 메시지, 배열입력시 리스트 형태로 출력 |
 | class? | string | <code>none</code> | 추가되는 style sheet class |
 | href? | string | <code>#</code> | 연결 링크 |
 | icon? | string | <code>none</code> | 아이콘으로 사용될 Google Material Icon |
@@ -91,7 +91,7 @@ app.component('Button', Button)
 ---
 
 # 3. Types
-## 1. BtnColors
+## 3.1. BtnColors
 ```javascript
 export const btnColors = {
   primary: 'primary',

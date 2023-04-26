@@ -52,7 +52,7 @@ const modal = ref<ModalMethods>()
 |------|------|---------|-------------|
 | modelValue | boolean | <code>false</code> | 모달을 열고 닫습니다. |
 | title | string | <code>none</code> | 모달 제목을 |
-| position? | [ModalPosition](#-32-ModalPosition-with-Enum) | <code>none</code> | 모달 제목을 |
+| position? | [ModalPosition](#32-modalposition-with-enum) | <code>none</code> | 모달 제목을 |
 | escClose? | boolean | <code>false</code> | ESC 키로 모달창을 닫을지 여부 |
 | width? | string | <code>none</code> | 모달의 고정 넓이를 지정합니다, css 크기 단위 필수 |
 | screenCover? | boolean | <code>false</code> | 모달이 전체 화면을 덮을지 여부, ModalPosition.popup일때 사용 불가 |

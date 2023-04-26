@@ -68,7 +68,7 @@ function showToast(color: ToastColorCase) {
 
 # 3. API method
 
-## 3.1. <code>Toast([MessageOptions](#4-MessageOptions))</code>
+## 3.1. <code>Toast([MessageOptions](#44-MessageOptions))</code>
 * 토스트 메시지를 표시 합니다.
 ```javascript
 Toast('토스트 메시지')
@@ -85,7 +85,7 @@ Toast({
 
 # 4. Types
 
-## 1. ToastColorCase
+## 4.1. ToastColorCase
 ```typescript
 export const toastColorCase = {
   success: 'success',
@@ -97,7 +97,7 @@ export const toastColorCase = {
 export type ToastColorCase = typeof toastColorCase[keyof typeof toastColorCase]
 ```
 
-## 2. ToastIconCase
+## 4.2. ToastIconCase
 ```typescript
 export const toastIconCase = {
   success: 'check_circle_outline',
@@ -109,7 +109,7 @@ export const toastIconCase = {
 export type ToastIconCase = typeof toastIconCase[keyof typeof toastIconCase]
 ```
 
-## 3. ToastOptions
+## 4.3. ToastOptions
 ```typescript
 export interface ToastOptions {
   maxShowMessage?: number
@@ -118,7 +118,7 @@ export interface ToastOptions {
 }
 ```
 
-## 4. MessageOptions
+## 4.4. MessageOptions
 ```typescript
 export interface MessageOptions {
   message: string
@@ -127,7 +127,7 @@ export interface MessageOptions {
 }
 ```
 
-## 5. Toast
+## 4.5. Toast
 ```typescript
 export interface Toast {
   (params: string | MessageOptions): void
