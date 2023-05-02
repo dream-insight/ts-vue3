@@ -17,6 +17,8 @@ const props = withDefaults(defineProps<{
   block?: boolean
   loading?: boolean
   disabled?: boolean
+  small?: boolean
+  outline?: boolean
 }>(), {
   href: '#',
   text: false,
@@ -26,6 +28,8 @@ const props = withDefaults(defineProps<{
   loading: false,
   disabled: false,
   iconRight: false,
+  small: false,
+  outline: false,
 })
 
 const buttonStyle = computed<any>(() => {
@@ -33,9 +37,13 @@ const buttonStyle = computed<any>(() => {
     'btn',
     props.class,
     props.onlyIcon ? `icon ${props.color}` : `${props.color}`,
-    props.iconRight ? 'right' : 'left',
-    props.disabled ? 'disabled' : '',
-    { block: props.block }
+    props.icon ? (props.iconRight ? 'right' : 'left') : '',
+    {
+      disabled: props.disabled,
+      small: props.small && !props.icon,
+      block: !props.small && props.block,
+      outline: props.outline,
+    },
   ]
 })
 
@@ -79,3 +87,4 @@ const onClick = (event: MouseEvent): void => {
 <style lang="scss">
 @import './style.scss';
 </style>
+<script lang="ts">export default { name: 'Button' }</script>

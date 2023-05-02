@@ -44,7 +44,6 @@ const setProgress = async (flag: string): Promise<void> => {
     clearTimeout(timeout)
 
     timeout = setTimeout(() => {
-      console.warn('스피너가 닫지히 않습니다. 처리되고 있는 내역을 확인해주세요.')
       progress.value = 0
       isShow.value = false
     }, props.limitTime * 1000)
@@ -74,16 +73,18 @@ defineExpose({
 </script>
 
 <template>
-  <Transition appear name="fade">
-    <div class="spinner-box" v-show="isShow">
-      <Transition appear name="scale" @after-leave="destroy">
-        <div class="box" v-show="isShow">
-          <spa class="loader"></spa>
-          <p>{{ message }}</p>
-        </div>
-      </Transition>
-    </div>
-  </Transition>
+  <Teleport to="body">
+    <Transition appear name="fade" @after-leave="destroy">
+      <div class="spinner-box" v-show="isShow">
+        <Transition appear name="scale">
+          <div class="box" v-show="isShow">
+            <span class="loader"></span>
+            <p>{{ message }}</p>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <style lang="scss" scoped>

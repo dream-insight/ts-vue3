@@ -87,6 +87,7 @@ app.component('Button', Button)
 | iconOnly? | boolean | <code>false</code> | 아이콘으로만 이루어진 버튼을 사용 |
 | block? | boolean | <code>false</code> | 버튼을 전체 라인으로 지정 |
 | disabled? | boolean | <code>false</code> | 버튼 사용 불가 처리 |
+| small? | boolean | <code>false</code> | 버튼 최소 크기 block 옵션 무시 |
 
 ---
 
@@ -119,3 +120,4 @@ export type BtnColors = typeof btnColors[keyof typeof btnColors]
 
 * 최초 작성: 2023.04.20 김종윤 수석 매니저
 * disabled props 추가: 2023.04.25 김종윤 수석 매니저
+* outline type 추가: 2023.04.28 김종윤 수석 매니저

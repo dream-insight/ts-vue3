@@ -1,24 +1,24 @@
-export const tableCellAlign = {
+export const listTableCellAlign = {
   left: 'left',
   center: 'center',
   right: 'right',
 } as const
 
-export type TableCellAlign = typeof tableCellAlign[keyof typeof tableCellAlign]
+export type ListTableCellAlign = typeof listTableCellAlign[keyof typeof listTableCellAlign]
 
 export const footerItemTag = {
   td: 'td',
   th: 'th'
 } as const
 
-export type FooterItemTag = typeof footerItemTag[keyof typeof footerItemTag]
+export type ListTableFooterItemTag = typeof footerItemTag[keyof typeof footerItemTag]
 
 
 // 목록 최상단 라벨링 Array:[{text: String, width: Number, sort: Boolean, target: String(sort target)}] *
-export interface TableHeader {
+export interface ListTableHeader {
   text: string
   width?: number | string
-  align?: TableCellAlign
+  align?: ListTableCellAlign
   sort?: boolean
   target?: string
   order?: string
@@ -31,17 +31,17 @@ interface KeyIndex {
 }
 
 // 테이블 목록 Array:[] *
-export interface TableListItem extends KeyIndex {}
+export interface ListTableItem extends KeyIndex {}
 
-export interface TableFooter {
+export interface ListTableFooter {
   colspan?: number
-  align?: TableCellAlign
-  tag?: FooterItemTag
-  value: FooterItemTag
+  align?: ListTableCellAlign
+  tag?: ListTableFooterItemTag
+  text: any
 }
 
 export interface SortingChangeData {
-  data: TableListItem[]
+  data: ListTableItem[]
   target: string
   order: string
 }

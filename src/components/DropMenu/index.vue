@@ -53,3 +53,6 @@ onMounted(() => {
 <style lang="scss">
 @import './style.scss';
 </style>
+<script lang="ts">
+export default { name: 'DropMenu' }
+</script>

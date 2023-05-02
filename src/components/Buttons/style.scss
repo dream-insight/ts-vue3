@@ -9,6 +9,12 @@
   height: 40px;
   transition: background-color 0.2s ease;
 
+  &.small {
+    padding: 0.9em !important;
+    height: 25px !important;
+    font-size: 0.8em;
+  }
+
   .btn-wrap {
     display: flex;
     align-items: center;
@@ -39,6 +45,26 @@
 
         &:hover {
           background-color: #b0b0b0;
+        }
+      }
+
+      &.outline {
+        background-color: transparent;
+
+        @if $key == light {
+          border: 1px solid #606060;
+          color: #606060;
+        } @else {
+          border: 1px solid $value;
+          color: $value;
+        }
+
+        &:hover {
+          @if $key == light {
+            background-color: rgba(#606060, 0.15);
+          } @else {
+            background-color: rgba($value, 0.3);
+          }
         }
       }
     }

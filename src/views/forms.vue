@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, inject } from 'vue'
+import { ref, reactive, inject, isReactive } from 'vue'
 import type { Rules, OptionItem } from '@/components/Form/types'
 import type { MessageBox, MessageBoxOptions } from '@/components/MessageBox/types'
 import type { ToastColorCase, Toast } from '@/components/Toast/types'
@@ -8,7 +8,8 @@ import type { ValidateForm } from '@/components/Form/ValidateForm/types'
 import type { DropMenuItem  } from '@/components/DropMenu/types'
 import { dropMenuTransition, dropMenuPosition } from '@/components/DropMenu/types'
 import type { ModalMethods } from '@/components/Modal/types'
-import { TableHeader, TableListItem } from '@/components/ListTable/types'
+import { ListTableHeader, ListTableItem } from '@/components/ListTable/types'
+import axios from 'axios'
 
 const MessageBox = inject('MessageBox') as MessageBox
 const Toast = inject('Toast') as Toast
@@ -136,7 +137,6 @@ let isLoading = ref<boolean>(false)
 
 const showLoading = (): void => {
   isLoading.value = true
-  console.log('click')
 
   setTimeout(() => {
     isLoading.value = false
@@ -148,6 +148,7 @@ const modalRight = ref<ModalMethods>()
 const modalLeft = ref<ModalMethods>()
 const modalBottom = ref<ModalMethods>()
 const modalCover = ref<ModalMethods>()
+const inModal = ref<ModalMethods>()
 
 let isShow = reactive<{
   [index: string]: boolean
@@ -157,59 +158,110 @@ let isShow = reactive<{
   left: false,
   bottom: false,
   cover: false,
+  in: false,
 })
 
 const showModal = (flag: string): void => {
   isShow[flag] = true
 }
 
-const list = ref<TableListItem[]>([
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-  { field1: 1, field2: '원신', field3: 'RPG', field4: 'mihoyo' },
-])
-const tableHeader: TableHeader[] = [
-  { text: '번호', width: '', sort: false },
-  { text: '게임 제목', width: '', sort: false },
-  { text: '장르', width: '', sort: false },
-  { text: '개발 업체', width: '', sort: false },
-  { text: '처리', width: '', sort: false },
+// ListTable
+const tableHeader: ListTableHeader[] = [
+  { text: 'idx', width: '100', sort: true, target: 'db_idx' },
+  { text: '이름', width: '150', sort: true, target: 'mb_name' },
+  { text: '미디어', width: '300', sort: true, target: 'mda_name' },
+  { text: '접속정보', width: '700', sort: true, target: 'referer' },
+  { text: 'IP', width: '300', sort: true, target: 'ip' },
+  { text: '등록일', width: '300', sort: true, target: 'reg_date' },
+  { text: '처리', width: '300' },
 ]
+
+const list = ref<ListTableItem[]>([])
+const checkList = ref<string[]>([])
+const checkAll = (checked: boolean): void => {
+  if (checked) {
+    checkList.value = list.value.map((item: ListTableItem) => item.name)
+  } else {
+    checkList.value = []
+  }
+}
+
+let page: number = 1
+const page_size: string = '50'
+let dataLoading = ref<boolean>(false)
+
+const getFormData = (): FormData => {
+  const formData = new FormData()
+  formData.append('page', page.toString())
+  formData.append('page_size', page_size)
+
+  return formData
+}
+
+const getData = async (): Promise<void> => {
+  dataLoading.value = true
+  const reuslt = await axios.post('https://dev.admakernews.com/counsel/get_counsel_list', getFormData())
+
+  if (reuslt.data.data.length) {
+    page++
+    console.log('loading')
+
+    reuslt.data.data.forEach((item: ListTableItem) => {
+      list.value.push(item)
+    })
+
+    dataLoading.value = false
+  }
+}
+
+getData()
 </script>
 
 <template>
   <div class="wrap">
-    <ValidateForm ref="form1">
-      <div class="card mt-3">
-        <div class="card-header h3">
-          List Table
-        </div>
-        <div  class="card-body">
-          <ListTable :header="tableHeader" :items="list">
-            <template #items="{ props, index }: any">
-              <tr>
-                <td>{{ props.field1 }}</td>
-                <td>{{ props.field2 }}</td>
-                <td>{{ props.field3 }}</td>
-                <td>{{ props.field4 }}</td>
-                <td>
-                  <a href="#">버튼1</a>
-                  <a href="#">버튼2</a>
-                </td>
-              </tr>
-            </template>
-          </ListTable>
+    <div class="card mt-3">
+      <div class="card-header h3">
+        List Table
+      </div>
+      <div class="card-body">
+        <ListTable
+          observer
+          check-all
+          ref="listTable"
+          :width="2500"
+          :height="600"
+          :header="tableHeader"
+          :items="list"
+          :loading="dataLoading"
+          @observe="getData"
+          @checked="checkAll">
+          <template v-slot:items="{ props, index }: any">
+            <tr :key="`list-${props.db_idx}`">
+              <td>
+                <label class="checkbox-wrap">
+                  <input type="checkbox" name="checklist" :value="props.db_idx" v-model="checkList" />
+                  <span class="material-icons"></span>
+                </label>
+              </td>
+              <td>{{ props.db_idx }}</td>
+              <td>{{ props.mb_name }}</td>
+              <td>{{ props.mda_name }}</td>
+              <td>{{ props.referer }}</td>
+              <td>{{ props.ip }}</td>
+              <td class="right">{{ props.reg_date }}</td>
+              <td class="center">
+                <Button small color="danger">삭제</Button>
+                <Button small class="ml-2" color="info">수정</Button>
+                <Button only-icon class="ml-2" icon="create" color="primary">수정</Button>
+                <Button only-icon icon="delete_outline" color="warning">수정</Button>
+              </td>
+            </tr>
+          </template>
+        </ListTable>
       </div>
     </div>
 
+    <ValidateForm ref="form1">
       <div class="card mt-3">
         <div class="card-header h3">
           TextField
@@ -603,6 +655,32 @@ const tableHeader: TableHeader[] = [
         </div>
         <div class="row mt-3">
           <div class="col">
+            <Button block outline color="primary">color: primary</Button>
+          </div>
+          <div class="col">
+            <Button block outline color="success">color: success</Button>
+          </div>
+          <div class="col">
+            <Button block outline color="info">color: info</Button>
+          </div>
+          <div class="col">
+            <Button block outline color="warning">color: warning</Button>
+          </div>
+          <div class="col">
+            <Button block outline color="danger">color: danger</Button>
+          </div>
+          <div class="col">
+            <Button block outline color="dark">color: dark</Button>
+          </div>
+          <div class="col">
+            <Button block outline color="secondary">color: secondary</Button>
+          </div>
+          <div class="col">
+            <Button block outline color="light">color: light</Button>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
             <Button block color="primary" icon="file_download">with icon (left)</Button>
           </div>
           <div class="col">
@@ -841,7 +919,22 @@ const tableHeader: TableHeader[] = [
     v-model="isShow.cover"
     v-if="isShow.cover">
     <template v-slot:body>
-      무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
+      무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.<br>
+
+      <br>
+      <Button block color="danger" @click.prevent="showToast('danger')">토스트 메시지 보기</Button>
+      <br>
+      <Button block color="dark" @click.prevent="MessageBoxAlert()">알림창 보기</Button>
+      <br>
+      <Button block color="secondary" @click="showSpinner()">스피너 보기</Button>
+      <br>
+      <Button block color="info" @click="isShow.in = true">모달에서 모달 열기</Button>
+
+      <Modal esc-close ref="inModal" title="모달안의 모달" width="300px" @dispose="isShow.in = false" v-model="isShow.in">
+        <template v-slot:body>
+          와우~~~~
+        </template>
+      </Modal>
     </template>
     <template v-slot:action>
       <Button color="light" @click="modalCover?.close()">닫기</Button>

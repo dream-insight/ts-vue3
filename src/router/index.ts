@@ -17,7 +17,8 @@ const routes: Array<RouteRecordRaw> = [
         component: ItemDetail
       }
     ],
-  }
+  },
+  { path: '/forms', name: 'forms', component: Forms },
 ]
 
 const router = createRouter({
