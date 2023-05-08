@@ -141,6 +141,7 @@ export interface Toast {
 ### UPDATE HISTORY
 
 * styleheet 및 icon 변경(google material icon) : 2023.04.24 김종윤 수석매니저
+* Toast Wrapper를 생성하여 body에 직접 이식하는 형식이 아닌 wrapper에 이식 하는 방식으로 수정: 2023.05.04 김종윤 수석매니저
 
 ---
 

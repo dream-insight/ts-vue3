@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed, withDefaults } from 'vue'
+import { ref, watch, computed, withDefaults, onMounted } from 'vue'
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string | boolean): void
@@ -85,7 +85,6 @@ const resetValidate = (): void => {
 }
 
 const updateValue = (evt: Event): void => {
-  console.log('model update')
   const e = evt.target as HTMLInputElement
 
   if (!props.readonly) {
@@ -95,6 +94,14 @@ const updateValue = (evt: Event): void => {
     e.checked = !e.checked;
   }
 }
+
+const feedback = ref<HTMLDivElement>()
+
+onMounted(() => {
+  feedback.value!.addEventListener('animationend', () => {
+    errorTransition.value = false
+  })
+})
 
 defineExpose({
   resetValidate,
@@ -128,8 +135,9 @@ defineExpose({
     </label>
 
     <div
-      :class="['description', { error: errorTransition }]"
-      v-if="message">
+      ref="feedback"
+      :class="['feedback', { error: errorTransition }]"
+      v-show="message">
       {{ message }}
     </div>
   </div>

@@ -164,11 +164,11 @@ const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 | multiline? | boolean | <code>false</code> | textarea 폼으로 변경 |
 | block? | boolean | <code>false</code> | display: block 설정 |
 | rows? | number | <code>5</code> | multiline 설정시 textarea 높이를 설정 |
-| width? | string, number | <code>none</code> | 넓이 설정 (block 보다 우선) |
+| width? | string, number | <code>none</code> | 넓이 설정 (block 보다 우선), 숫자 형태로 입력 할 경우 px단위로 적용 |
 | height? | string, number | <code>none</code> | multiline 설정시 textarea 높이를 설정 (rows 보다 우선) |
 | validate? | [RuleFunc[]](#2-rulefunc) | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열 입력<br> pattern 옵션이 설정 되어 있는 경우 pattern 검수가 먼저 이루어 집니다. |
 | blurValidate? | boolean | <code>false</code> | 폼의 커서가 없어 질때 유효성 검사를 할 것인지 여부 |
-| maxLength? | string, number | <code>none</code> | 최대 입력 가능한 문자 수 |
+| maxLength? | number | <code>0</code> | 최대 입력 가능한 문자 수 |
 | errorMessage? | string | <code>''</code> | 강제로 오류 메시지를 표시 |
 | disabled? | boolean | <code>false</code> | 폼 사용불가 처리 |
 | readonly? | boolean | <code>false</code> | 폼 입력 불가 처리 |
@@ -177,7 +177,7 @@ const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 | required? | boolean | <code>false</code> | 아스트로피(*) 표시 (필수 여부 표시) validate 여부와 상관없이 표시 가능 |
 | disabled? | boolean | <code>false</code> | 사용 불가 처리 |
 | hideMessage? | boolean | <code>false</code> | 하단에 표시되는 메시지를 표시 안함 |
-| pattern? | [PatternCase](#233-patterncase) | <code>none</code> | value 값에 대해 정규식 검사 실행 후 매칭되지 않을 경우 validation 오류 처리 |
+| pattern? | [TextPatternCase](#232-textpatterncase) | <code>none</code> | value 값에 대해 정규식 검사 실행 후 매칭되지 않을 경우 validation 오류 처리 |
 | | | eng | 영문만 입력 가능 |
 | | | engnum | 영문, 숫자만 입력 가능 |
 | | | id | 영문, 숫자, underbar(_) 입력가능 |
@@ -200,18 +200,24 @@ export const textFieldType = {
 export type TextFieldType = typeof textFieldType[keyof typeof textFieldType]
 ```
 
-#### 2.3.2. PatternCaseValue
+#### 2.3.2. TextPatternCase
 ```typescript
-export interface PatternCaseValue {
-  pattern: RegExp
-  message: string
-}
+export const textPatternCase = {
+  eng: 'eng',
+  engnum: 'engnum',
+  id: 'id',
+  num: 'num',
+  wordnum: 'wordnum',
+  password: 'password',
+  domain: 'domain',
+  email: 'email',
+  tel: 'tel',
+} as const
+
+export type TextPatternCase = typeof textPatternCase[keyof typeof textPatternCase]
+
 ```
 
-#### 2.3.3. PatternCase
-```typescript
-export interface PatternCase extends KeyIndex<PatternCaseValue> {}
-```
 
 
 :arrow_up: [목차](#form-validation-components)
@@ -304,7 +310,6 @@ for (let value = 1; value <= 10; value++) {
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | modelValue? | SelectBoxModel | <code>''</code> | v-model |
-| selectedIndex? | number | <code>-1</code> | v-model:selectedIndex - 선택된 option의 index 값 |
 | options | [SelectBoxItem[]](#432-selectboxitem) | <code>[]</code> | 선택 가능한 옵션 목록 |
 | label? | string | <code>''</code>| label 문자 표시 |
 | placeholder? | string | <code>''</code> | 폼의 placeholder 표시 |
@@ -426,16 +431,20 @@ const rules: Rules = {
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | modelValue? | string, string[] | <code>none</code> | v-model, option range 설정시 ['', ''] 설정 필요 |
+| validate? | [RuleFunc[]](#2-rulefunc) | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열 입력 |
 | label? | string, string[] | <code>none</code> | 라벨 표시 |
 | placeholder? | string, string[] | <code>none</code> | 입력 필드에 placeholder 표시<br>option range 설정시 [시작일, 종료일] 형태로 입력 |
 | range? | boolean | <code>false</code> | 시작일과 종료일을 선택할 수 있도록 설정 |
-| block? | boolean | <code>false</code> | display: block 표시 |
-| validate? | [RuleFunc[]](#2-rulefunc) | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열 입력 |
 | separator? | string | <code>-</code> | 년, 월, 일 사이 구분 문자 설정 |
 | minYear? | number | <code>1900</code> | 선택 가능한 최소 년도 설정 |
 | maxYear? | number | <code>now Year + 100</code> | 선택 가능한 최대 년도 설정 |
+| block? | boolean | <code>false</code> | display: block 표시 |
 | required? | boolean | <code>false</code> | 아스트로피(*) 표시 (필수 여부 표시) validate 여부와 상관없이 표시 가능 |
 | hideMessage? | boolean | <code>false</code> | 하단 메시지 표시 안함 |
+| maxRange? | number | <code>0</code> | 최대 선택 가능한 날짜 기간 range 적용시에만 |
+| readonly? | boolean | <code>false</code> | 데이터 수정 불가 처리 |
+| disabled? | boolean | <code>false</code> | 기능 정지 |
+
 
 ### 6.3. Types
 
@@ -677,3 +686,8 @@ export interface OptionItemGroup {
 * SwitchButton
   - checkbox props 추가
 <br>: 2023.04.24 김종윤 수석매니저
+
+* DatePicker
+  - maxRange 옵션 추가
+  - range 옵션 설정시 시작, 종료일 이전, 이후 선택 불가 기능 추가
+<br>: 2023.05.04 김종윤 수석매니저

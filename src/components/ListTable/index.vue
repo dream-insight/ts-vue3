@@ -3,14 +3,8 @@
  * 해당 컴포넌트는 정렬기능을 활성화 시킨 상태에서
  * 라인당 추가되는 하위 데이터에 대한 변화를 감지 하지 못합니다.
 */
-import { ref, watch, watchEffect, computed, onMounted } from 'vue'
+import { ref, watch, watchEffect, computed, onMounted, StyleValue } from 'vue'
 import type { ListTableHeader, ListTableItem, ListTableFooter, SortingChangeData } from './types'
-
-export interface ListTableEmits {
-  (event: 'checked', value: boolean): void
-  (event: 'sort-change', value: SortingChangeData): void
-  (event: 'observe'): void
-}
 
 export interface ListTableProps {
   items: ListTableItem[]
@@ -26,6 +20,12 @@ export interface ListTableProps {
   loading?: boolean
 }
 
+interface ListTableEmits {
+  (event: 'checked', value: boolean): void
+  (event: 'sort-change', value: SortingChangeData): void
+  (event: 'observe'): void
+}
+
 const emit = defineEmits<ListTableEmits>()
 const props = withDefaults(defineProps<ListTableProps>(), {
   header: (): ListTableHeader[] => [],
@@ -39,33 +39,28 @@ const props = withDefaults(defineProps<ListTableProps>(), {
 
 let colspan = ref<number>(0)
 let tableHeader = ref<ListTableItem[]>([])
-let target = ref<string | undefined>('')
-let order = ref<string>('')
-
 let dataList = ref<ListTableItem[]>([])
-
-const listTableCheck = ref<HTMLInputElement>()
 
 watch(() => props.header, () => setHeader())
 
-const tableWidth = computed<string>(() => {
-  if (typeof props.width  === 'number') {
-    return props.width + 'px'
+const tableWidth = computed<StyleValue>(() => {
+  if (typeof props.width === 'number') {
+    return { width: `${props.width}px` }
   } else if (props.width) {
-    return props.width
+    return { width: props.width }
   }
 
-  return ''
+  return {}
 })
 
-const tableHeight = computed<string>(() => {
-  if (typeof props.height  === 'number') {
-    return props.height + 'px'
+const tableHeight = computed<StyleValue>(() => {
+  if (typeof props.height === 'number') {
+    return { height: `${props.height}px` }
   } else if (props.height) {
-    return props.height
+    return { height: props.height }
   }
 
-  return ''
+  return {}
 })
 
 const setHeader = (): void => {
@@ -90,11 +85,6 @@ const setHeader = (): void => {
       })
     } else {
       tableHeader.value = (<ListTableHeader[]>props.header).map((item) => {
-        if (item.order) {
-          order.value = item.order
-          target.value = item.target
-        }
-
         return {
           text: item.text,
           width: item.width,
@@ -115,35 +105,32 @@ const checkAllEvent = (evt: Event): void => {
 }
 
 // ==================================== Scroll observer ====================================
+let target: string = ''
+let order: string = ''
+
 const listTableWrap = ref<HTMLDivElement>()
 const listTable = ref<HTMLTableElement>()
 
-let observer: IntersectionObserver
-let trList: NodeListOf<HTMLTableRowElement>
-let trTarget: HTMLTableRowElement
+const options: IntersectionObserverInit = {
+  root: listTableWrap.value!,
+  rootMargin: '20px 0px 0px 0px',
+}
+
+const callback: IntersectionObserverCallback = (ent) => {
+  if (ent[0].isIntersecting) {
+    observerStop()
+    emit('observe')
+  }
+}
+
+const observer = new IntersectionObserver(callback, options)
 
 const observerStart = (): void => {
-  if (dataList.value.length) {
-    trList = listTable.value!.querySelectorAll<HTMLTableRowElement>('tbody tr')
+  if (dataList.value.length && props.observer) {
+    const trList = listTable.value!.querySelectorAll<HTMLTableRowElement>('tbody tr')
 
     // 테이블 스크롤이 마지막행에서 5번째 행을 지정
-    trTarget = trList[trList.length - 5]
-
-    const options: IntersectionObserverInit = {
-      root: listTableWrap.value!,
-      rootMargin: '20px 0px 0px 0px',
-    }
-
-    const callback: IntersectionObserverCallback = (ent) => {
-      const { intersectionRect } = ent[0]
-
-      if (intersectionRect.x! > 0) {
-        observerStop()
-        emit('observe')
-      }
-    }
-
-    observer = new IntersectionObserver(callback, options)
+    const trTarget = trList[trList.length - 5]
 
     if (trTarget !== undefined) {
       observer.observe(trTarget)
@@ -163,30 +150,28 @@ dataList.value = [...props.items]
 const setSort = (t: string, o: string): void => {
   listTableWrap.value!.scrollTop = 0
 
-  target.value = t
+  target = t
 
   if (o === 'desc') {
-    order.value = 'asc'
+    order = 'asc'
   } else if (o === 'asc') {
-    order.value = ''
+    order = ''
   } else {
-    order.value = 'desc'
+    order = 'desc'
   }
 
-  if (order.value) {
+  if (order) {
     observerStop()
-  } else {
-    observerStart()
   }
 
   sorting()
 }
 
-const sortLogic = (a: ListTableItem, b: ListTableItem, target: any): number => {
-  const after = a[target]
-  const before = b[target]
+const sortLogic = (a: ListTableItem, b: ListTableItem, trg: any): number => {
+  const before = b[trg]
+  const after = a[trg]
 
-  if (order.value === 'asc') {
+  if (order === 'asc') {
     if (after > before) {
       return 1
     } else if (after < before) {
@@ -204,9 +189,9 @@ const sortLogic = (a: ListTableItem, b: ListTableItem, target: any): number => {
 }
 
 const sorting = (): void => {
-  if (props.items.length && target.value) {
-    if (order.value) {
-      dataList.value.sort((after, before) => sortLogic(after, before, target.value))
+  if (props.items.length && target) {
+    if (order) {
+      dataList.value.sort((after, before) => sortLogic(after, before, target))
     } else {
       dataList.value = [...props.items]
     }
@@ -214,8 +199,8 @@ const sorting = (): void => {
     if (props.multiHeader > 0) {
       tableHeader.value.forEach((main) => {
         (<ListTableHeader[]>main).forEach(item => {
-          if (item.target === target.value) {
-            item.order = order.value
+          if (item.target === target) {
+            item.order = order
           } else {
             item.order = ''
           }
@@ -223,18 +208,22 @@ const sorting = (): void => {
       })
     } else {
       tableHeader.value.forEach((item) => {
-        if (item.target === target.value) {
-          item.order = order.value
+        if (item.target === target) {
+          item.order = order
         } else {
           item.order = ''
         }
       })
     }
 
+    if (dataList.value.length && props.observer && !order) {
+      setTimeout(() => observerStart(), 1)
+    }
+
     emit('sort-change', {
       data: [...dataList.value],
-      target: target.value,
-      order: order.value
+      target: target,
+      order: order
     })
   }
 }
@@ -245,14 +234,8 @@ watchEffect(() => {
     dataList.value = [...props.items]
 
     if (props.observer) {
-      setTimeout(() => {
-        observerStart()
-      }, 1)
+      setTimeout(() => observerStart(), 1)
     }
-
-    // if (props.checkAll && listTableCheck.value) {
-    //   listTableCheck.value.checked = false
-    // }
   }
 })
 
@@ -277,22 +260,26 @@ defineExpose({
 </script>
 
 <template>
-  <div ref="listTableWrap" class="list-table" :style="{ height: tableHeight }">
+  <div
+    ref="listTableWrap"
+    class="list-table"
+    :style="tableHeight">
+
     <table
       ref="listTable"
       :class="{ 'no-box-shadow': tableHeight }"
-      :style="{ width: tableWidth }">
+      :style="tableWidth">
       <thead v-if="multiHeader === 0">
         <tr>
           <th width="50" v-if="checkAll">
             <label class="checkbox-wrap">
-              <input ref="listTableCheck" type="checkbox" @click="checkAllEvent" />
+              <input type="checkbox" @click="checkAllEvent" />
               <span class="material-icons"></span>
             </label>
           </th>
           <th
-            :width="(item.width ? item.width : '')"
-            :key="'head' + item.text"
+            :width="item.width"
+            :key="`head${item.text}`"
             v-for="item in tableHeader">
             <div
               :class="['columns', item.align]"
@@ -302,12 +289,8 @@ defineExpose({
               <div class="sort-cell-text">{{ item.text }}</div>
 
               <span :class="['sorting rotate', item.order]">
-                <span class="order-icon"  v-if="item.order">
-                  <i class="material-icons">expand_more</i>
-                </span>
-                <span class="order-icon" v-else>
-                  <i class="material-icons">unfold_more</i>
-                </span>
+                <i class="material-icons" v-if="item.order">expand_more</i>
+                <i class="material-icons"  v-else>unfold_more</i>
               </span>
             </div>
             <span v-else>{{ item.text }}</span>
@@ -325,7 +308,7 @@ defineExpose({
           <th
             :colspan="item.colspan"
             :rowspan="item.rowspan"
-            :width="item.width ? item.width : ''"
+            :width="item.width"
             :key="`th${i}${j}`"
             v-for="(item, j) in headLine">
             <div
@@ -366,14 +349,14 @@ defineExpose({
             <th
               :colspan="item.colspan"
               :class="item.align"
-              :key="`foot${i}`"
+              :key="`foot-${i}`"
               v-if="item.tag === 'th'">
               {{ item.text }}
             </th>
             <td
               :colspan="item.colspan"
               :class="item.align"
-              :key="`foot-${i}`"
+              :key="`foot${i}`"
               v-else>
               <b>{{ item.text }}</b>
             </td>
@@ -385,7 +368,9 @@ defineExpose({
       </tfoot>
     </table>
 
-    <div class="spinner" v-if="props.loading"></div>
+    <div class="spinner-wrap" v-if="props.loading">
+      <div class="spinner"></div>
+    </div>
   </div>
 </template>
 

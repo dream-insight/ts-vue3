@@ -23,7 +23,7 @@ app.component('Tooltip', Tooltip)
 <script setup lang="ts">
 import { ref } from 'vue'
 
-let message = ref<string[]>([
+const message = ref<string[]>([
   '아래에서 나오는 메시지',
   '매시지를 목록으로 전달 가능'
 ])
@@ -51,13 +51,6 @@ let message = ref<string[]>([
     </p>
   </div>
 </template>
-
-<style scoped lang="scss">
-.wrap {
-  padding: 200px;
-  text-align: center;
-}
-</style>
 ```
 
 :arrow_up: [항목](#항목)
@@ -71,15 +64,18 @@ let message = ref<string[]>([
 | left? | boolean | <code>false</code> | 메시지를 왼쪽에 표시 |
 | right? | boolean | <code>false</code> | 메시지를 오른쪽에 표시 |
 | top? | boolean | <code>false</code> | 메시지를 위쪽에 표시 |
-| bottom? | boolean | <code>true</code> | 메시지를 아랫쪽에 표시 |
+| bottom? | boolean | <code>true</code> | 메시지를 아래쪽에 표시 |
 | width? | number | <code>300</code> | 메시지를 box의 최대 넓이(px 단위) |
+| hovering? | boolean | <code>false</code> | slot 요소를 클릭하지 않고 hover 되었을때 보여지도록 설정 |
+| btnClose? | boolean | <code>false</code> | 닫기 버튼 보여지기 |
+| icon? | string | <code>help</code> | 사용자 지정 아이콘 표시 (google material icons) |
+| iconSize? | string | <code>''</code> | 표시될 아이콘의 사이즈 (px, em 등 단위 필수) |
+
+---
 
 ## 3. 그 외
-### Fontawsome 과 함께 사용하여야 icon 표시 가능
-```css
-@import url("https://use.fontawesome.com/releases/v5.4.2/css/all.css");
-```
-> Fontawesome component는 표시 안되는 오류로 인해 사용 불가(추후 수정 가능)
+- Google Material Icons 과 함께 사용하여야 icon 표시 가능 [링크](https://fonts.google.com/icons?selected=Material+Icons+Outlined:arrow_circle_up:&icon.query=arrow&icon.set=Material+Icons)
+
 
 :arrow_up: [항목](#항목)
 
@@ -87,8 +83,9 @@ let message = ref<string[]>([
 
 ### UPDATE HISTORY
 
-* 최초 작성: 2023.02.23 김종윤 수석 매니저
-* 제목 및 닫기 버튼 기능 추가: 2023.04.19 김종윤 수석 매니저
+* 최초 작성: 2023.02.23 김종윤 수석매니저
+* 제목 및 닫기 버튼 기능 추가: 2023.04.19 김종윤 수석매니저
+* 아이콘 지정 기능 추가: 2023.05.04 김종윤 수석매니저
 
 ---
 

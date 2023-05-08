@@ -62,9 +62,7 @@ const onClick = (event: MouseEvent): void => {
     <div class="btn-wrap">
       <template v-if="!onlyIcon">
         <template v-if="props.loading">
-          <i class="loading material-icons">
-            workspaces_filled
-          </i>
+          <i class="loading material-icons">workspaces_filled</i>
         </template>
         <template v-else>
           <template v-if="props.icon">
@@ -87,4 +85,6 @@ const onClick = (event: MouseEvent): void => {
 <style lang="scss">
 @import './style.scss';
 </style>
-<script lang="ts">export default { name: 'Button' }</script>
+<script lang="ts">
+export default { name: 'Button' }
+</script>

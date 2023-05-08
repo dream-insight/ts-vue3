@@ -15,8 +15,6 @@ const props = withDefaults(defineProps<{
   dateType: 'year'
 })
 
-const Selector = ref<HTMLElement>()
-
 // 목록
 const el = ref<HTMLElement>()
 let items = ref<number[]>([])
@@ -35,7 +33,7 @@ watch(() => props.isShow, v => {
   if (v) {
     setTimeout(() => {
       if (el.value) {
-        const li = el.value.querySelector('li.active') as HTMLLIElement
+        const li = el.value.querySelector<HTMLLIElement>('li.active')
         const top: number = (li) ? li.offsetTop - li.offsetHeight : 0
         el.value.scrollTop = top
       }
@@ -79,12 +77,7 @@ onMounted(() => {
             :key="`date-${num}`"
             @click="updateValue(num)"
             v-for="num in items">
-            <template v-if="max > 0">
-              {{ num }}
-            </template>
-            <template v-else>
-              {{ num + 1 }}
-            </template>
+            {{ max ? num : num + 1 }}
           </li>
         </ul>
       </div>

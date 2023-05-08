@@ -52,7 +52,7 @@ export interface SelectedDateValueType {
 
 export interface SelectedDateType extends KeyIndex<SelectedDateValueType> {}
 
-export interface TimeStateType {
+export interface TimeStateType extends KeyIndex<number> {
   start: number
   end: number
 }

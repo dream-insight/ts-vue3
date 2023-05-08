@@ -16,6 +16,7 @@ const Toast = inject('Toast') as Toast
 const Spinner = inject('Spinner') as Spinner
 
 let text = ref<string>('')
+let textarea = ref<string>('')
 let num = ref<number>(0)
 let select = ref<string>('')
 let selectMulti = ref<any[]>([])
@@ -88,11 +89,16 @@ const MessageBoxAlert = (flag?: string): void => {
       title: '재밌는데?',
       message: '드디어 간다!',
       okay: () => {
-        console.log('test')
+        Toast('oh Yes!!!')
       }
-    } as MessageBoxOptions)
+    })
   } else {
-    MessageBox.alert('갈까나~!?')
+    MessageBox.alert({
+      message: '갈까나~!?',
+      okay: () => {
+        Toast('alert boom!!!')
+      }
+    })
   }
 }
 
@@ -180,20 +186,21 @@ const list = ref<ListTableItem[]>([])
 const checkList = ref<string[]>([])
 const checkAll = (checked: boolean): void => {
   if (checked) {
-    checkList.value = list.value.map((item: ListTableItem) => item.name)
+    checkList.value = list.value.map((item: ListTableItem) => item.db_idx)
   } else {
     checkList.value = []
   }
 }
 
 let page: number = 1
-const page_size: string = '50'
+const page_size: number = 50
 let dataLoading = ref<boolean>(false)
 
 const getFormData = (): FormData => {
   const formData = new FormData()
+
   formData.append('page', page.toString())
-  formData.append('page_size', page_size)
+  formData.append('page_size', page_size.toString())
 
   return formData
 }
@@ -219,48 +226,6 @@ getData()
 
 <template>
   <div class="wrap">
-    <div class="card mt-3">
-      <div class="card-header h3">
-        List Table
-      </div>
-      <div class="card-body">
-        <ListTable
-          observer
-          check-all
-          ref="listTable"
-          :width="2500"
-          :height="600"
-          :header="tableHeader"
-          :items="list"
-          :loading="dataLoading"
-          @observe="getData"
-          @checked="checkAll">
-          <template v-slot:items="{ props, index }: any">
-            <tr :key="`list-${props.db_idx}`">
-              <td>
-                <label class="checkbox-wrap">
-                  <input type="checkbox" name="checklist" :value="props.db_idx" v-model="checkList" />
-                  <span class="material-icons"></span>
-                </label>
-              </td>
-              <td>{{ props.db_idx }}</td>
-              <td>{{ props.mb_name }}</td>
-              <td>{{ props.mda_name }}</td>
-              <td>{{ props.referer }}</td>
-              <td>{{ props.ip }}</td>
-              <td class="right">{{ props.reg_date }}</td>
-              <td class="center">
-                <Button small color="danger">삭제</Button>
-                <Button small class="ml-2" color="info">수정</Button>
-                <Button only-icon class="ml-2" icon="create" color="primary">수정</Button>
-                <Button only-icon icon="delete_outline" color="warning">수정</Button>
-              </td>
-            </tr>
-          </template>
-        </ListTable>
-      </div>
-    </div>
-
     <ValidateForm ref="form1">
       <div class="card mt-3">
         <div class="card-header h3">
@@ -280,7 +245,7 @@ getData()
               <TextField
                 block
                 required
-                max-length="30"
+                :max-length="30"
                 label="유효성 검사 및 필수 입력"
                 placeholder="이곳에 텍스트를 입력해주세요."
                 :validate="rule.input"
@@ -292,7 +257,7 @@ getData()
                 block
                 required
                 type="password"
-                max-length="30"
+                :max-length="30"
                 label="비밀번호 타입"
                 placeholder="이곳에 텍스트를 입력해주세요."
                 :validate="rule.input"
@@ -306,7 +271,7 @@ getData()
                 block
                 required
                 is-counting
-                max-length="30"
+                :max-length="30"
                 label="입력 텍스트 카운팅"
                 placeholder="이곳에 텍스트를 입력해주세요."
                 :validate="rule.input"
@@ -336,6 +301,21 @@ getData()
               </TextField>
             </div>
           </div>
+          <div class="row mt-3">
+            <div class="col">
+              <TextField
+                block
+                multiline
+                is-counting
+                label="멀티 라인 입력"
+                placeholder="여러줄 입력 가능합니다."
+                :max-length="10"
+                :rows="10"
+                v-model="textarea"
+              />
+            </div>
+          </div>
+
           <div class="row">
             <div class="col mt-3 text-center">
               <Button block color="primary" @click.prevent="checkForm()">폼 체크하기</Button>
@@ -518,9 +498,33 @@ getData()
             <div class="col">
               <DatePicker
                 block
+                readonly
+                separator="."
+                label="읽기 전용"
+                placeholder="날짜 선택"
+                :validate="rule.input"
+                v-model="date2"
+              />
+            </div>
+            <div class="col">
+              <DatePicker
+                disabled
+                block
+                range
+                label="사용 불가"
+                :placeholder="['시작일 선택', '종료일 선택']"
+                :max-range="30"
+                :validate="rule.input"
+                v-model="rangeDate"
+              />
+            </div>
+            <div class="col">
+              <DatePicker
+                block
                 range
                 label="서비스 기간 (날짜 구분 기본)"
                 :placeholder="['시작일 선택', '종료일 선택']"
+                :max-range="30"
                 :validate="rule.input"
                 v-model="rangeDate"
               />
@@ -546,7 +550,7 @@ getData()
               <CheckButton
                 block
                 name="checkbutton"
-                max-length="3"
+                :max-length="3"
                 :validate="rule.check"
                 :items="items"
                 v-model="checked"
@@ -714,18 +718,18 @@ getData()
       <div class="card-body">
         <div class="row mt-2">
           <div class="col">
-            <DropMenu :width="200" :items="dropMenuItem">
+            <DropMenu :width="300" :items="dropMenuItem">
               <Button icon-right icon="expand_more" color="primary">드롭 메뉴(slide) 보기</Button>
+            </DropMenu>
+          </div>
+          <div class="col">
+            <DropMenu :position="dropMenuPosition.left" :transition="dropMenuTransition.scale" :items="dropMenuItem">
+              <Button icon-right icon="expand_more" color="info">메뉴 왼쪽(scale) 보기</Button>
             </DropMenu>
           </div>
           <div class="col">
             <DropMenu :position="dropMenuPosition.right" :transition="dropMenuTransition.fade" :items="dropMenuItem">
               <Button icon-right icon="expand_more" color="success">메뉴 오른쪽(fade) 보기</Button>
-            </DropMenu>
-          </div>
-          <div class="col">
-            <DropMenu :width="200" :position="dropMenuPosition.left" :transition="dropMenuTransition.scale" :items="dropMenuItem">
-              <Button icon-right icon="expand_more" color="info">메뉴 왼쪽(scale) 보기</Button>
             </DropMenu>
           </div>
           <div class="col">
@@ -773,24 +777,42 @@ getData()
       </div>
       <div class="card-body">
         <div class="row mt-2">
-          <div class="col">
+          <div class="col text-center">
             <Tooltip right hovering message="이건 툴팁입니다.">
-              <div class="flex-row">
-                <span class="material-icons" style="font-size: 30px">help_outline</span>
-                마우스를 올리면 툴팁이 보입니다.
-              </div>
+              <span class="material-icons" style="font-size: 30px">warning</span>
+              마우스를 올리면 툴팁이 보입니다.
             </Tooltip>
           </div>
           <div class="col">
-            <div class="flex-row">
-              오른쪽 아이콘을 클릭해주세요.
+            <div class="row justify-center">
+              오른쪽 아이콘을 클릭 해주세요.
               <Tooltip
                 bottom
                 btn-close
+                icon-size="24px"
                 title="제목이거든요"
                 :message="['이건 툴팁입니다.', '툴팁의 방향을 조절해주세요.']"
               />
             </div>
+          </div>
+          <div class="col text-center">
+            <Tooltip
+              left
+              hovering
+              icon="info"
+              icon-size="24px"
+              title="왼쪽에서 나옵니다."
+              :message="['이건 툴팁입니다.', '툴팁의 방향을 조절해주세요.']"
+            />
+          </div>
+          <div class="col text-center">
+            <Tooltip
+              top
+              icon-size="24px"
+              title="위에서 보여집니다."
+              icon="arrow_circle_up"
+              :message="['이건 툴팁입니다.', '툴팁의 방향을 조절해주세요.']"
+            />
           </div>
         </div>
       </div>
@@ -840,15 +862,57 @@ getData()
     </div>
   </div>
 
+  <div class="card mt-3">
+    <div class="card-header h3">
+      List Table
+    </div>
+    <div class="card-body">
+      <ListTable
+        observer
+        check-all
+        ref="listTable"
+        :width="2500"
+        :height="600"
+        :header="tableHeader"
+        :items="list"
+        :loading="dataLoading"
+        @observe="getData"
+        @checked="checkAll">
+        <template #items="{ props, index }: any">
+          <tr :key="`list-${props.db_idx}`">
+            <td>
+              <label class="checkbox-wrap">
+                <input type="checkbox" name="checklist" :value="props.db_idx" v-model="checkList" />
+                <span class="material-icons"></span>
+              </label>
+            </td>
+            <td>{{ props.db_idx }}</td>
+            <td>{{ props.mb_name }}</td>
+            <td>{{ props.mda_name }}</td>
+            <td>{{ props.referer }}</td>
+            <td>{{ props.ip }}</td>
+            <td class="right">{{ props.reg_date }}</td>
+            <td class="center">
+              <Button small color="danger">삭제</Button>
+              <Button small class="ml-2" color="info">수정</Button>
+              <Button only-icon class="ml-2" icon="create" color="primary">수정</Button>
+              <Button only-icon icon="delete_outline" color="warning">수정</Button>
+            </td>
+          </tr>
+        </template>
+      </ListTable>
+    </div>
+  </div>
+
   <Modal
     ref="modalPopup"
     title="기본 형태 모달 팝업"
     @dispose="isShow.popup = false"
     v-model="isShow.popup">
-    <template v-slot:body>
+    <template #body>
       무궁화 꽃이 피었습니다.
     </template>
-    <template v-slot:action>
+    <template #action>
       <Button color="light" @click="modalPopup?.close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
@@ -864,10 +928,10 @@ getData()
     @dispose="isShow.right = false"
     v-model="isShow.right"
     v-if="isShow.right">
-    <template v-slot:body>
+    <template #body>
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
-    <template v-slot:action>
+    <template #action>
       <Button color="light" @click="modalRight?.close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
@@ -882,10 +946,10 @@ getData()
     @dispose="isShow.left = false"
     v-model="isShow.left"
     v-if="isShow.left">
-    <template v-slot:body>
+    <template #body>
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
-    <template v-slot:action>
+    <template #action>
       <Button color="light" @click="modalLeft?.close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
@@ -899,10 +963,10 @@ getData()
     @dispose="isShow.bottom = false"
     v-model="isShow.bottom"
     v-if="isShow.bottom">
-    <template v-slot:body>
+    <template #body>
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
-    <template v-slot:action>
+    <template #action>
       <Button color="light" @click="modalBottom?.close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
@@ -918,7 +982,7 @@ getData()
     @dispose="isShow.cover = false"
     v-model="isShow.cover"
     v-if="isShow.cover">
-    <template v-slot:body>
+    <template #body>
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.<br>
 
       <br>
@@ -931,12 +995,12 @@ getData()
       <Button block color="info" @click="isShow.in = true">모달에서 모달 열기</Button>
 
       <Modal esc-close ref="inModal" title="모달안의 모달" width="300px" @dispose="isShow.in = false" v-model="isShow.in">
-        <template v-slot:body>
+        <template #body>
           와우~~~~
         </template>
       </Modal>
     </template>
-    <template v-slot:action>
+    <template #action>
       <Button color="light" @click="modalCover?.close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>

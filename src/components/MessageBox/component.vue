@@ -76,8 +76,8 @@ const keyupEvent = (evt: KeyboardEvent): void => {
 onMounted(() => {
   document.body.classList.add('hide-scroll')
 
-  btnOkay.value?.focus()
-  btnOkay.value?.blur()
+  btnOkay.value!.focus()
+  btnOkay.value!.blur()
 
   document.addEventListener('keyup', keyupEvent)
 })
@@ -88,36 +88,34 @@ defineExpose({
 </script>
 
 <template>
-  <Teleport to="body">
-    <transition name="msg-box-fade">
-      <div class="msg-box-bg" tabindex="0" v-show="isShow">
-        <transition appear name="msg-box-scale" @after-leave="close">
-          <div class="msg-box"
-            :style="{ width: `${width}px` }"
-            v-show="isShow">
-            <div class="title">{{ title }}</div>
-            <div class="contents" v-html="message"></div>
-            <div class="actions">
-              <a
-                href="#"
-                ref="btnOkay"
-                class="btn-okay"
-                @click.prevent="clickOkay">
-                {{ btnOkayText }}
-              </a>
-              <a
-                href="#"
-                class="btn-cancel"
-                @click.prevent="clickCancel"
-                v-if="type == 'confirm'">
-                {{ btnCancelText }}
-              </a>
-            </div>
+  <Transition name="msg-box-fade">
+    <div class="msg-box-bg" tabindex="0" v-show="isShow">
+      <Transition appear name="msg-box-scale" @after-leave="close">
+        <div class="msg-box"
+          :style="{ width: `${width}px` }"
+          v-show="isShow">
+          <h5 class="title">{{ title }}</h5>
+          <div class="contents" v-html="message"></div>
+          <div class="actions">
+            <a
+              href="#"
+              ref="btnOkay"
+              class="btn-okay"
+              @click.prevent="clickOkay">
+              {{ btnOkayText }}
+            </a>
+            <a
+              href="#"
+              class="btn-cancel"
+              @click.prevent="clickCancel"
+              v-if="type === 'confirm'">
+              {{ btnCancelText }}
+            </a>
           </div>
-        </transition>
-      </div>
-    </transition>
-  </Teleport>
+        </div>
+      </Transition>
+    </div>
+  </Transition>
 </template>
 
 <style lang="scss">

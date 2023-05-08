@@ -10,28 +10,53 @@
 .row {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .col {
+  align-self: flex-start;
   margin: 0 0.5em;
   flex: 1 0 0%;
 }
 
+.justify-center {
+  justify-content: center;
+}
+
 .justify-between {
-  justify-content: space-between;
+  justify-content: space-between !important;
 }
 
 .justify-around {
-  justify-content: space-around;
+  justify-content: space-around !important;
 }
 
-.divider {
-  display: block;
-  height: 1px;
-  background-color: #e2e2e2;
-  margin: 10px 0;
+.self-start {
+  align-self: flex-start;
 }
 
+.self-center {
+  align-self: center;
+}
+
+.self-end {
+  align-self: flex-end;
+}
+
+// text align
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+// spacing
 @for $i from 1 to 10 {
   .mt-#{$i} {
     margin-top: $i * 0.3em;
@@ -98,4 +123,11 @@
     border-top: 1px solid #d2d2d2;
     border-radius: 0 0 10px 10px;
   }
+}
+
+.divider {
+  display: block;
+  height: 1px;
+  background-color: #e2e2e2;
+  margin: 10px 0;
 }

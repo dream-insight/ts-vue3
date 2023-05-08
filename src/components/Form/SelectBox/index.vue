@@ -3,14 +3,13 @@ import { ref, watch, computed, withDefaults, onMounted, StyleValue } from 'vue'
 import type { SelectBoxItem } from './types'
 import type { RuleFunc } from '../types'
 
-const emit = defineEmits<{
+export interface SelectBoxEmits {
   (event: 'update:modelValue', value: any): void,
   (event: 'update:selectedIndex', index: number): void
-}>()
+}
 
-const props = withDefaults(defineProps<{
+export interface SelectBoxProps {
   modelValue: string | string[]
-  selectedIndex?: number
   options: SelectBoxItem[]
   label?: string
   placeholder?: string
@@ -28,11 +27,14 @@ const props = withDefaults(defineProps<{
   maxLength?: number
   searchable?: boolean
   hideMessage?: boolean
-}>(), {
+}
+
+const emit = defineEmits<SelectBoxEmits>()
+
+const props = withDefaults(defineProps<SelectBoxProps>(), {
   block: false,
   label: '',
   placeholder: '',
-  selectedIndex: -1,
   errorMessage: '',
   validate: (): RuleFunc[] => [],
   multiple: false,
@@ -69,14 +71,6 @@ watch(() => props.errorMessage, (v) => {
   }
 })
 
-watch(errorTransition, (v) => {
-  if (v) {
-    setTimeout(() => {
-      errorTransition.value = false
-    }, 300)
-  }
-})
-
 watch(() => props.validate, () => {
   resetValidate()
 })
@@ -110,14 +104,10 @@ watch(() => props.options, () => {
 })
 
 const styleWidth = computed<string>(() => {
-  if (props.width) {
-    let check: boolean = false
-
-    if (typeof props.width === 'string') {
-      check = props.width.indexOf('%') > -1
-    }
-
-    return check ? props.width.toString() : props.width.toString() + 'px'
+  if (typeof props.width === 'string') {
+    return props.width
+  } else if (typeof props.width === 'number') {
+    return `${props.width}px`
   }
 
   return ''
@@ -125,13 +115,8 @@ const styleWidth = computed<string>(() => {
 
 const wrapperStyle = computed<StyleValue>(() => ({ 'with-label': props.label, error: !isValidate.value, block: props.block }))
 
-const updateValue = (v: string | string[], index?: number): void => {
+const updateValue = (v: string | string[]): void => {
   emit('update:modelValue', v)
-
-  if (index !== undefined) {
-    emit('update:selectedIndex', index)
-  }
-
   check()
 }
 
@@ -144,7 +129,7 @@ const check = (): boolean => {
     // 임의로 지정된 에러가 없는 경우
     // validate check
     if (!props.errorMessage && props.validate.length) {
-      for (let i = 0; i < props.validate.length; i++) {
+      for (let i: number = 0; i < props.validate.length; i++) {
         let result: string | boolean = props.validate[i](selectedValue.value)
 
         if (typeof result === 'string') {
@@ -171,12 +156,14 @@ const resetForm = (): void => {
   if (props.multiple) {
     selectedText.value = []
     selectedValue.value = []
+
+    emit('update:modelValue', '')
   } else {
     selectedText.value = ''
     selectedValue.value = ''
-  }
 
-  emit('update:modelValue', '')
+    emit('update:modelValue', [])
+  }
 }
 
 /**
@@ -220,11 +207,10 @@ const selectOption = (v: any): void => {
   }
 
   if (!props.btnAccept) {
-    updateValue(selectedValue.value, index)
+    updateValue(selectedValue.value)
   }
 
   if (!props.multiple) {
-    console.log('here')
     toggleOption()
   }
 }
@@ -237,9 +223,9 @@ const selectOption = (v: any): void => {
 const isOptionSelected = (v: any): boolean => {
   if (props.multiple) {
     return selectedValue.value.includes(v)
-  } else {
-    return props.modelValue === v
   }
+
+  return props.modelValue === v
 }
 
 const removeSelected = (index: number): void => {
@@ -284,7 +270,7 @@ const toggleOption = (): void => {
     showBottom.value = false
 
     const windowHeight: number = window.innerHeight
-    const rect = SelectBox.value?.getBoundingClientRect() as DOMRect
+    const rect: DOMRect = SelectBox.value!.getBoundingClientRect()
 
     if (windowHeight / 2 < rect.top) {
       showBottom.value = true
@@ -360,8 +346,15 @@ const outSideClickEvent = (evt: MouseEvent): void => {
 
 optionList.value = [...props.options]
 
+const feedback = ref<HTMLDivElement>()
+
 onMounted(() => {
   document.addEventListener('click', outSideClickEvent)
+
+  // feedback message 트랜지션 초기화
+  feedback.value!.addEventListener('animationend', () => {
+    errorTransition.value = false
+  })
 })
 
 defineExpose({
@@ -391,22 +384,21 @@ defineExpose({
       :class="['control-wrap', { disabled: props.disabled, 'error': message }]"
       @click="toggleOption">
       <template v-if="props.multiple">
-        <div :class="['text', { scroll: props.multiple }]" v-if="selectedText.length">
+        <div
+          :class="['text', { scroll: props.multiple }]"
+          v-if="selectedText.length">
           <template v-if="props.labelText">
             <template v-if="!props.isShort">
               <span
                 :key="`selectedItem${i}`"
                 v-for="(txt, i) in selectedText">
                 {{ txt }}
-                <i
-                  class="remove-icon material-icons"
-                  @click.stop="removeSelected(i)">
-                  close
-                </i>
+                <i class="remove-icon material-icons" @click.stop="removeSelected(i)">close</i>
               </span>
             </template>
             <template v-else>
               <span>{{ selectedText[0] }}</span>
+
               <template v-if="selectedText.length > 1">
                 &nbsp; + {{ selectedText.length - 1 }}
               </template>
@@ -441,7 +433,7 @@ defineExpose({
         <i class="material-icons">expand_more</i>
       </div>
 
-      <Transition :name="showBottom ? 'options-view-bottom': 'options-view'">
+      <Transition :name="showBottom ? 'options-view-bottom' : 'options-view'">
         <div :class="['option-list', showBottom ? 'show-bottom' : 'show-top']" v-show="showOption">
           <div class="search" @click.stop v-if="props.searchable">
             <div class="search-wrap">
@@ -488,8 +480,9 @@ defineExpose({
     </div>
 
     <div
+      ref="feedback"
       :class="['feedback', { error: errorTransition }]"
-      v-if="message && !props.hideMessage">
+      v-show="message && !props.hideMessage">
       {{ message }}
     </div>
   </div>

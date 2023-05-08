@@ -1,21 +1,13 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted, withDefaults, useSlots } from 'vue'
+import { ref, watch, computed, onMounted, withDefaults } from 'vue'
 import type { StyleValue } from 'vue'
-import type { PatternCase, PatternCaseValue, TextFieldType } from './types'
-import type { RuleFunc } from '../types';
+import type { TextFieldType, TextPatternCase } from './types'
+import type { KeyIndex, RuleFunc } from '../types'
 
-const slots = useSlots()
-
-const useSlotState: boolean = slots.default ? true : false
-
-const emit = defineEmits<{
-  (event: 'update:modelValue', value: string): void
-}>()
-
-const props = withDefaults(defineProps<{
+export interface TextFieldProps {
   modelValue: string
   type?: TextFieldType
-  rows?: number | string
+  rows?: number
   label?: string
   placeholder?: string
   height?: string | number
@@ -23,9 +15,9 @@ const props = withDefaults(defineProps<{
   block?: boolean
   validate?: RuleFunc[]
   blurValidate?: boolean
-  pattern?: string
+  pattern?: TextPatternCase
   errorMessage?: string
-  maxLength?: number | string
+  maxLength?: number
   multiline?: boolean
   disabled?: boolean
   readonly?: boolean
@@ -33,7 +25,15 @@ const props = withDefaults(defineProps<{
   isCounting?: boolean
   required?: boolean
   hideMessage?: boolean
-}>(), {
+}
+
+export interface TextFieldEmits {
+  (event: 'update:modelValue', value: string): void
+}
+
+const emit = defineEmits<TextFieldEmits>()
+
+const props = withDefaults(defineProps<TextFieldProps>(), {
   rows: 5,
   type: 'text',
   label: '',
@@ -41,8 +41,8 @@ const props = withDefaults(defineProps<{
   block: false,
   validate: (): RuleFunc[] => [],
   blurValidate: true,
-  pattern: '',
   errorMessage: '',
+  maxLength: 0,
   multiline: false,
   disabled: false,
   readonly: false,
@@ -75,37 +75,25 @@ watch(() => props.errorMessage, (v) => {
   }
 })
 
-watch(errorTransition, (v) => {
-  if (v) {
-    setTimeout((): void => {
-      errorTransition.value = false
-    }, 300)
-  }
-})
-
-watch(() => props.modelValue, (v) => {
-  // 외부에서 model이 업데이트 되도 유효성 검사
-  if (v != '') {
-    resetValidate()
-  }
-})
-
 watch(() => props.validate, () => {
   message.value = ''
   isValidate.value = true
   errorTransition.value = false
 })
 
+watch(() => props.modelValue, (v) => {
+  // 외부에서 model이 업데이트 되도 유효성 검사
+  if (props.modelValue != '') {
+    resetValidate()
+  }
+})
+
 const successful = computed<boolean>(() => isValidate.value && checkPass.value)
 const styleWidth = computed<string>(() => {
-  if (props.width) {
-    let check: boolean = false
-
-    if (typeof props.width === 'string') {
-      check = props.width.indexOf('%') > -1
-    }
-
-    return check ? props.width.toString() : props.width.toString() + 'px'
+  if (typeof props.width === 'number') {
+    return `${props.width}px`
+  } else if (typeof props.width === 'string') {
+    return `${props.width}`
   }
 
   return ''
@@ -122,61 +110,16 @@ const labelStyle = computed<StyleValue>(() => ['input-label', { error: !isValida
 
 const updateValue = (evt: Event): void => {
   const target = evt.target as HTMLInputElement
-  emit('update:modelValue', target.value.trim())
-}
 
-
-const getPattern = (): PatternCaseValue | null => {
-  const patternCase: PatternCase = {
-    // 영문만 유효성 검사
-    eng: {
-      pattern: /^[a-z|A-Z]+$/,
-      message: '영문만 입력 가능합니다.'
-    },
-    // 영문,숫자 유효성 검사
-    engnum: {
-      pattern: /^[(a-z|A-Z)0-9]+$/,
-      message: '영문, 숫자만 입력 가능합니다.'
-    },
-    // 아이디 영문,숫자,underbar(_) 사용 유효성 검사
-    id: {
-      pattern: /^[(a-z|A-Z)0-9]+[_]*[(a-z|A-Z)0-9]+$/,
-      message: '영문, 숫자 입력만 가능합니다.( _ 중간 사용 가능)'
-    },
-    // 정수 유효성 검사
-    num: {
-      pattern: /^[0-9]+$/,
-      message: '숫자만 입력 가능합니다.'
-    },
-    // 영문,숫자 혼합사용 유효성 검사
-    wordnum: {
-      pattern: /^([0-9]+[a-z|A-Z]+)|([a-z|A-Z]+[0-9]+)$/,
-      message: '영문, 숫자 혼합하여 입력해주세요.'
-    },
-    password: {
-      pattern: /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])|(?=.*[a-zA-Z])(?=.*[0-9])|(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/,
-      message: '영문, 숫자, 특수문자 중 2가지 이상을 조합하여 입력해주세요.(8~16자)'
-    },
-    // 도메인
-    domain: {
-      pattern: /^([a-zA-Z0-9]{1,}\.?)[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9]{2,})+(?:\:[0-9]{1,})*$/,
-      message: '도메인주소 형식이 일치 하지 않습니다.(http://, https:// 제외)'
-    },
-    // 이메일 유효성 검사
-    email: {
-      pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
-      message: '이메일 형식과 일치하지 않습니다.'
-    },
-    // 전화 번호 유효성
-    tel: {
-      pattern: /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})-?[0-9]{3,4}-?[0-9]{4}$/,
-      message: '전화번호 형식과 일치하지 않습니다.'
-    },
+  // textarea maxlength 기능이 없기 때문에 코드로 구현
+  if (props.isCounting && props.maxLength) {
+    if (target.value.length > props.maxLength) {
+      const cut = target.value.substring(0, props.maxLength)
+      target.value = cut
+    }
   }
 
-  return (props.pattern in patternCase)
-    ? patternCase[props.pattern]
-    : null
+  emit('update:modelValue', target.value.trim())
 }
 
 const check = (): boolean => {
@@ -188,13 +131,51 @@ const check = (): boolean => {
   if (props.errorMessage === '') {
     // pattern check
     if (props.pattern) {
-      const pt: PatternCaseValue | null = getPattern()
+      const patterns: KeyIndex<[RegExp, string]> = {
+        eng: [
+          /^[a-z|A-Z]+$/,
+          '영문만 입력 가능합니다.'
+        ],
+        engnum: [/^[(a-z|A-Z)0-9]+$/, '영문, 숫자만 입력 가능합니다.'],
+        // 아이디 영문,숫자,underbar(_) 사용 유효성 검사
+        id: [
+          /^[(a-z|A-Z)0-9]+[_]*[(a-z|A-Z)0-9]+$/,
+          '영문, 숫자 입력만 가능합니다.( _ 중간 사용 가능)'
+        ],
+        num: [
+          /^[0-9]+$/,
+          '숫자만 입력 가능합니다.'
+        ],
+        // 영문,숫자 혼합사용 유효성 검사
+        wordnum: [
+          /^([0-9]+[a-z|A-Z]+)|([a-z|A-Z]+[0-9]+)$/,
+          '영문, 숫자 혼합하여 입력해주세요.'
+        ],
+        password: [
+          /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])|(?=.*[a-zA-Z])(?=.*[0-9])|(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/,
+          '영문, 숫자, 특수문자 중 2가지 이상을 조합하여 입력해주세요.(8~16자)'
+        ],
+        domain: [
+          /^([a-zA-Z0-9]{1,}\.?)[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9]{2,})+(?:\:[0-9]{1,})*$/,
+          '도메인주소 형식이 일치 하지 않습니다.(http://, https:// 제외)'
+        ],
+        email: [
+          /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+          '이메일 형식과 일치하지 않습니다.'
+        ],
+        tel: [
+          /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})-?[0-9]{3,4}-?[0-9]{4}$/,
+          '전화번호 형식과 일치하지 않습니다.'
+        ],
+      }
 
-      if (pt !== null) {
-        if (pt.pattern.test(props.modelValue)) {
+      const [regExp, errMsg] = patterns[props.pattern]
+
+      if (regExp) {
+        if (regExp.test(props.modelValue)) {
           message.value = ''
         } else {
-          message.value = pt.message
+          message.value = errMsg
           isValidate.value = false
           checkPass.value = false
           errorTransition.value = true
@@ -230,7 +211,7 @@ const check = (): boolean => {
 
   errorTransition.value = true
 
-   return false
+  return false
 }
 
 const blurCheck = (): void => {
@@ -249,6 +230,8 @@ const resetValidate = (): void => {
   errorTransition.value = false
 }
 
+const feedback = ref<HTMLDivElement>()
+
 onMounted(() => {
   if (props.autofocus) {
     if (props.multiline) {
@@ -257,6 +240,11 @@ onMounted(() => {
       Input.value?.focus()
     }
   }
+
+  // feedback 메시지 animation 제어 (흔들리는 애니메이션이 종료되면 해당 트랜지션 트리거 변수를 초기화 한다)
+  feedback.value!.addEventListener('animationend', () => {
+    errorTransition.value = false
+  })
 })
 
 defineExpose({
@@ -286,7 +274,7 @@ defineExpose({
     <textarea
       ref="textarea"
       :class="{ 'error': message }"
-      :style="[{ height: props.height ? `${props.height}px` : '' }]"
+      :style="[{ height: props.height && `${props.height}px` }]"
       :rows="props.rows"
       :placeholder="props.placeholder"
       :value="props.disabled ? '' : props.modelValue"
@@ -315,8 +303,9 @@ defineExpose({
     </div>
 
     <div
+      ref="feedback"
       :class="['feedback', { error: errorTransition }]"
-      v-if="message && !props.hideMessage">
+      v-show="message && !props.hideMessage">
       {{ message }}
     </div>
   </div>

@@ -2,7 +2,14 @@
   overflow: auto;
   position: relative;
 
+  &.scroll-hold {
+    overflow: hidden !important;
+  }
+
   table {
+    position: absolute;
+    top: 0;
+    left: 0;
     min-width: 100%;
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.15);
     border-spacing: 0;
@@ -58,30 +65,26 @@
     .sorting {
       transition: all .2s;
       transform-origin: center;
-      font-size: 14px;
-      width: 21px;
-      height: 21px;
       color: #fff;
-    }
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    .sorting:hover {
-      color: rgba(198, 220, 255, 0.5);
-    }
+      i {
+        font-size: 1.6em;
+      }
 
-    .order-icon {
-      display: block;
-      line-height: 21px;
-      width: 21px;
-      font-size: 18px;
-      text-align: center;
-    }
+      &:hover {
+        color: rgba(198, 220, 255, 0.5);
+      }
 
-    .desc {
-      transform: rotate(360deg);
-    }
+      &.desc {
+        transform: rotate(360deg);
+      }
 
-    .asc {
-      transform: rotate(180deg);
+      &.asc {
+        transform: rotate(180deg);
+      }
     }
 
     .sort-cell-text {
@@ -130,43 +133,43 @@
     justify-content: center;
     cursor: pointer;
 
-    .checkbox-scale-enter-from,
-    .checkbox-scale-leave-to {
-      transform: scale(0);
-    }
-
-    .checkbox-scale-enter-active,
-    .checkbox-scale-list-active {
-      transition: transform 0.2s;
-    }
-
-    input {
+    input[type=checkbox] {
       position: absolute;
       clip: rect(0, 0, 0, 0);
     }
 
-    input + .material-icons::after {
+    input[type=checkbox] + .material-icons::after {
       content: "\e835";
     }
 
-    input:checked + .material-icons::after {
+    input[type=checkbox]:checked + .material-icons::after {
       content: "\e834";
     }
   }
 }
 
-.spinner {
-  margin: 1em;
-  left: 50%;
-  position: absolute;
-  display: block;
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgb(121, 121, 121);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-out infinite;
-  -webkit-animation: spin 1s ease-out infinite;
+.spinner-wrap {
+  z-index: 100;
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .spinner {
+    display: block;
+    width: 50px;
+    height: 50px;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-out infinite;
+    -webkit-animation: spin 1s ease-out infinite;
+  }
 }
 
 @keyframes spin {

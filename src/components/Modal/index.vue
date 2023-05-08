@@ -118,7 +118,7 @@ defineExpose({
         v-show="isShow">
         <Transition appear :name="transitionName">
           <div
-            :style="{ width: props.width && props.width }"
+            :style="{ width: props.width }"
             :class="boxStyle"
             v-show="isShow">
             <div class="modal-header">

@@ -8,6 +8,10 @@ export default {
   install: (app: App, options?: ToastOptions) => {
     let VNode: VNode | null = null
     const body = document.querySelector('body') as HTMLBodyElement
+    const wrapper: HTMLDivElement = document.createElement('div')
+    wrapper.id = 'toast'
+
+    body.appendChild(wrapper)
 
     const props: ToastOptions = {
       maxShowMessage: 4,
@@ -20,8 +24,10 @@ export default {
 
     const init = () => {
       if (!isVNode(VNode)) {
+        const toastBase = document.querySelector('#toast') as HTMLDivElement
+
         VNode = h(ToastComponent, props)
-        render(VNode, body)
+        render(VNode, toastBase)
       }
     }
 

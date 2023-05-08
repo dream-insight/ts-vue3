@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, withDefaults } from 'vue'
+import type { StyleValue } from 'vue'
 import type { RuleFunc } from '../types'
 
-const emit = defineEmits<{
+export interface NumberFormatEmits {
   (event: 'update:modelValue', value: number): void
-}>()
+}
 
-const props = withDefaults(defineProps<{
+export interface NumberFormatProps {
   modelValue: number | string
   label?: string
   placeholder?: string
@@ -20,7 +21,11 @@ const props = withDefaults(defineProps<{
   readonly?: boolean
   required?: boolean
   hideMessage?: boolean
-}>(), {
+}
+
+const emit = defineEmits<NumberFormatEmits>()
+
+const props = withDefaults(defineProps<NumberFormatProps>(), {
   label: '',
   placeholder: '',
   validate: (): RuleFunc[] => [],
@@ -54,14 +59,6 @@ watch(() => props.errorMessage, (v) => {
   }
 })
 
-watch(errorTransition, (v) => {
-  if (v) {
-    setTimeout(() => {
-      errorTransition.value = false
-    }, 300)
-  }
-})
-
 watch(() => props.modelValue, (v) => {
   // 외부에서 model이 업데이트 되도 유효성 검사
   if (v !== '') {
@@ -80,7 +77,7 @@ watch(() => props.validate, () => {
 })
 
 const successful = computed<boolean>(() => isValidate.value && checkPass.value)
-const wrapperStyle = computed<any>(() => [
+const wrapperStyle = computed<StyleValue>(() => [
   'input-wrap',
   {
     'with-label': props.label,
@@ -96,15 +93,13 @@ const wrapperStyle = computed<any>(() => [
  * @param { Event } evt
  */
 const zeroCheck = (evt: Event) => {
-  if (Input.value) {
-    if (evt.type === 'focus' && Input.value.value === '0') {
-      Input.value.value = ''
-      emit('update:modelValue', 0)
-    } else if (evt.type === 'blur' && !Input.value.value.length) {
-      Input.value.value = '0'
-      emit('update:modelValue', 0)
-      check()
-    }
+  if (evt.type === 'focus' && Input.value!.value === '0') {
+    Input.value!.value = ''
+    emit('update:modelValue', 0)
+  } else if (evt.type === 'blur' && !Input.value!.value.length) {
+    Input.value!.value = '0'
+    emit('update:modelValue', 0)
+    check()
   }
 }
 
@@ -114,26 +109,26 @@ const zeroCheck = (evt: Event) => {
  * @param v
  * @return format number string
  */
-const format = (v: number | string): string => {
-  if (v === '-') {
-    return v
-  } else {
-    return new Intl.NumberFormat().format(Number(v))
-  }
-}
+const format = (v: number | string): string => (v === '-') ? v : new Intl.NumberFormat().format(Number(v))
 
 const updateValue = (evt: Event): void => {
   const e = evt.target as HTMLInputElement
 
-  let value: string = e.value.replace(/[^\d\-]/g, '').replace(/\-{2,}/g, '-').replace(/^$/, '')
-  value = (value.charAt(0) === '-') ? '-'.concat(value.replace(/[-]/g, '')) : value.replace(/[-]/g, '')
+  let value: string = e.value
+    .replace(/[^\d\-]/g, '')
+    .replace(/\-{2,}/g, '-')
+    .replace(/^$/, '')
+
+  value = (value.charAt(0) === '-')
+    ? '-'.concat(value.replace(/[-]/g, ''))
+    : value.replace(/[-]/g, '')
 
   if (value) {
     e.value = format(value)
     emit('update:modelValue', isNaN(Number(value)) ? 0 : Number(value))
-  } else {
-    e.value = ''
   }
+
+  e.value = ''
 }
 
 const check = (): boolean => {
@@ -148,7 +143,7 @@ const check = (): boolean => {
       for (let i: number = 0; i < props.validate.length; i++) {
         let result: string | boolean = props.validate[i](props.modelValue)
 
-        if (typeof result !== 'boolean') {
+        if (typeof result === 'string') {
           message.value = result
           isValidate.value = false
           checkPass.value = false
@@ -186,6 +181,8 @@ const resetValidate = (): void => {
   errorTransition.value = false
 }
 
+const feedback = ref<HTMLDivElement>()
+
 onMounted(() => {
   if (props.autofocus && Input.value) {
     Input.value.focus()
@@ -194,6 +191,11 @@ onMounted(() => {
   if (props.modelValue && Input.value) {
     Input.value.value = format(props.modelValue)
   }
+
+  // error transition 초기화
+  feedback.value!.addEventListener('animationend', () => {
+    errorTransition.value = false
+  })
 })
 
 defineExpose({
@@ -206,7 +208,7 @@ defineExpose({
 <template>
   <div
     :class="wrapperStyle"
-    :style="{ width: width ?? '' }">
+    :style="{ width: props.width }">
 
     <div class="options-wrap">
       <label :class="['input-label', { error: !isValidate }]" v-if="props.label">
@@ -218,8 +220,7 @@ defineExpose({
     <input
       ref="Input"
       type="text"
-      :class="['form-control', { 'is-invalid': message }]"
-      :style="{ width: width ? width + 'px' : '' }"
+      :class="{ 'is-invalid': message }"
       :placeholder="props.placeholder"
       :disabled="props.disabled"
       :readonly="props.readonly"
@@ -230,8 +231,9 @@ defineExpose({
     />
 
     <div
+      ref="feedback"
       :class="['feedback', { error: errorTransition }]"
-      v-if="message && !props.hideMessage">
+      v-show="message && !props.hideMessage">
       {{ message }}
     </div>
   </div>

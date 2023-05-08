@@ -77,6 +77,9 @@ const tableHeader: ListTableHeader[] = [
 | checkAll? | boolean | <code>false</code> | 전체 체크 버튼을 표시 해줌 |
 | width? | number | <code>false</code> | 테이블의 넓이를 고정하여 가로 스크롤이 생성 |
 | height? | boolean | <code>false</code> | 테이블의 높이를 지정하면 목록의 수량이 해당 높이를 초과 할때 새로 스크롤 생성 |
+| observer? | boolean | <code>false</code> | 테이블 스크롤 감지를 통하여 스크롤 끝 부분 전에 <code>observe</code> 이벤트 발생 (height 옵션이 설정 되어 있는 경우만) |
+| loading? | boolean | <code>false</code> | spinner를 표시 해준다. |
+
 
 :arrow_up: [항목](#항목)
 
@@ -84,7 +87,7 @@ const tableHeader: ListTableHeader[] = [
 
 # 3. Event
 
-## Boolean checked
+## 3.1. Boolean checked
 * checkAll 옵션이 있는 경우 테이블 컬럼 제목의 <code>checkbox</code>를 클릭하면 발생하는 이벤트
 ```vue
 <script stup lang="ts">
@@ -115,7 +118,11 @@ const listCheck = (evt: boolean): void => {
 > check-all 옵션 설정시 테이블 첫번째 컬럼에 체크 박스가 필요 합니다.<br>
 위와 같이 디자인이 변경된 형태를 사용하지 않고 <code>\<input type="checkbox" /></code> 그대로 사용하여도 무방합니다.
 
-## sort-change(): [SortingChangeData](#44-sortingchangedata)
+## 3.2. [SortingChangeData](#44-sortingchangedata) sort-change
+> table head 부분에 생성된 정렬 버튼을 클릭시 발생하는 이벤트
+
+## 3.3. void observe
+> 테이블 목록의 스크롤이 하단에 다다를때 쯤 발생하는 이벤트, 스크롤 감지 이벤트에서 사용
 
 :arrow_up: [항목](#항목)
 

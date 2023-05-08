@@ -1,10 +1,10 @@
-export interface MessageBoxStyleOptions {
+ export interface MessageBoxStyleOptions {
   modalStyleClass?: string
   noScrollStyleClass?: string
 }
 
 export interface MessageBoxOptions extends MessageBoxStyleOptions {
-  type?: string
+  type?: MessageBoxType
   message: string
   title?: string
   width?: number
@@ -19,3 +19,10 @@ export interface MessageBox {
   alert(params: MessageBoxOptions | string): void
   confirm(params: MessageBoxOptions | string): void
 }
+
+export const messageBoxType = {
+  alert: 'alert',
+  confirm: 'confirm'
+} as const
+
+export type MessageBoxType = typeof messageBoxType[keyof typeof messageBoxType]

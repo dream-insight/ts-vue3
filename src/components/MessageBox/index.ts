@@ -1,11 +1,16 @@
 import { h, render, isVNode }  from 'vue'
 import type { App, VNode } from 'vue'
 import MessageBoxComponent from './component.vue'
-import type { MessageBox, MessageBoxStyleOptions, MessageBoxOptions } from './types'
+import { messageBoxType } from './types'
+import type { MessageBox, MessageBoxType, MessageBoxStyleOptions, MessageBoxOptions } from './types'
 
 export default {
   install(app: App, options?: MessageBoxStyleOptions) {
     const body = document.querySelector('body') as HTMLBodyElement
+    const msgWrapper = document.createElement('div')
+    msgWrapper.id = 'messageBox'
+
+    body.appendChild(msgWrapper)
 
     let VNode: VNode | null = null
 
@@ -23,15 +28,15 @@ export default {
     }
 
     const destroy = (): void => {
-      render(null, body)
+      render(null, msgWrapper)
       VNode = null
     }
 
-    const setMessage = (opt: MessageBoxOptions | string, type: string): void => {
+    const setMessage = (opt: MessageBoxOptions | string, type: MessageBoxType): void => {
       const props: MessageBoxOptions = {
         message: '',
-        type,
-        title: (type === 'alert') ? '알림' : '확인',
+        title: (type === messageBoxType.alert) ? '알림' : '확인',
+        type
       }
 
       if (opt instanceof Object) {
@@ -83,17 +88,19 @@ export default {
       props.destroy = destroy
 
       if (!isVNode(VNode)) {
+        const wrapper = document.querySelector('#messageBox') as HTMLDivElement
+
         VNode = h(MessageBoxComponent, props)
-        render(VNode, body)
+        render(VNode, wrapper)
       }
     }
 
     const alert = (params: MessageBoxOptions | string): void => {
-      setMessage(params, 'alert')
+      setMessage(params, messageBoxType.alert)
     }
 
     const confirm = (params: MessageBoxOptions | string): void => {
-      setMessage(params, 'confirm')
+      setMessage(params, messageBoxType.confirm)
     }
 
     const messageBox: MessageBox = {

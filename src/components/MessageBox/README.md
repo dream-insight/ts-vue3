@@ -93,7 +93,7 @@ export interface MessageBoxStyleOptions {
 ## 3.2. ModalOptions
 ```typescript
 export interface MessageBoxOptions extends MessageBoxStyleOptions {
-  type?: string
+  type?: MessageBoxType
   message: string
   title?: string
   width?: number
@@ -113,6 +113,16 @@ export interface MessageBox {
 }
 ```
 
+## 3.4. MessageBoxType with Enum
+```typescript
+export const messageBoxType = {
+  alert: 'alert',
+  confirm: 'confirm'
+} as const
+
+export type MessageBoxType = typeof messageBoxType[keyof typeof messageBoxType]
+```
+
 :arrow_up: [항목](#항목)
 
 ---
@@ -120,6 +130,8 @@ export interface MessageBox {
 ### UPDATE HISTORY
 
 * 컴포넌트 플러그인 이름 변경 Modal -> MessageBox : 2023.04.25 김종윤 수석매니저
+* MessageBoxType type 추가 : 2023.05.03 김종윤 수석매니저
+* body에 바로 이식하는 방식에서 wrapper를 생성하여 wrapper에 이식하는 방식으로 변경: 2023.05.04 김종윤 수석매니저
 
 
 ---

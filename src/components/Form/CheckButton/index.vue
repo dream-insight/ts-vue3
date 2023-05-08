@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, computed, withDefaults } from 'vue'
+import { ref, watch, withDefaults, onMounted } from 'vue'
 import type { CheckButtonItem, CheckButtonType } from './types'
 import type { RuleFunc } from '../types'
 
 const emit = defineEmits<{
-  (event: 'update:modelValue', value: any | any[]): void
+  (event: 'update:modelValue', value: string | string[]): void
   (evemt: 'update:clickIndex', value: number): void
 }>()
 
@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<{
   // 전체 버튼 추가
   all?: boolean
   // 최대 체크 가능한 수량
-  maxLength?: number | string
+  maxLength?: number
   validate?: RuleFunc[]
   // 강제 에러 출력 - check함수를 수행 하지 않음
   errorMessage?: string
@@ -35,14 +35,17 @@ const props = withDefaults(defineProps<{
 })
 
 let list = ref<CheckButtonItem[]>([])
-let val = (props.type === 'checkbox') ? ref<any[]>(['']) : ref<any>('')
+let val = ref<string | string[]>((props.type === 'checkbox') ? [''] : '')
 let isValidate = ref<boolean>(true)
 let checkPass = ref<boolean>(false)
 let message = ref<string>('')
 let errorTransition = ref<boolean>(false)
 
 watch(() => props.modelValue, (v) => {
-  val.value = props.modelValue
+  if (v) {
+    val.value = v
+  }
+
   resetValidate()
 })
 
@@ -51,7 +54,7 @@ watch(val, () => {
 })
 
 watch(() => props.items, (items) => {
-  if (items.length > 0) {
+  if (items.length) {
     list.value = [...items]
   }
 })
@@ -60,40 +63,24 @@ watch(() => props.validate, () => {
   resetValidate()
 })
 
-watch(errorTransition, (v) => {
-  if (v) {
-    setTimeout(() => {
-      errorTransition.value = false
-    }, 300)
-  }
-})
-
-const successful = computed<boolean>(() => isValidate.value && checkPass.value)
-
 const setIndex = (index: number): void => {
   emit('update:clickIndex', index)
   emit('update:modelValue', val.value)
 }
 
-const checkValue = (index: number, v: string | number): void => {
+const checkValue = (index: number, v: string): void => {
   setIndex(index)
 
   if (props.type === 'checkbox') {
-    let model: string[] = ['']
-
     if (v !== '') {
-      if (Number(props.maxLength) > 0 && Array.isArray(val.value)) {
+      if (props.maxLength > 0 && Array.isArray(val.value)) {
         val.value.splice(props.maxLength, 1)
       } else {
         if (val.value.indexOf('') > -1 && Array.isArray(val.value)) {
           val.value.splice(0, 1)
         }
       }
-
-      model = val.value
     }
-
-    val.value = model
   }
 
   emit('update:modelValue', val.value)
@@ -155,6 +142,14 @@ if (props.modelValue) {
   val.value = props.modelValue
 }
 
+const feedback = ref<HTMLDivElement>()
+
+onMounted(() => {
+  feedback.value!.addEventListener('animationend', () => {
+    errorTransition.value = false
+  })
+})
+
 defineExpose({
   check,
   resetForm,
@@ -166,7 +161,9 @@ defineExpose({
   <div :class="['check-button', { button, error: message }]">
     <template v-if="button">
       <div class="check-button-group">
-        <template :key="`keyword${i}`" v-for="({ text, value }, i) in list">
+        <template
+          :key="`keyword${i}`"
+          v-for="({ text, value }, i) in list">
           <input
             type="checkbox"
             :id="`btnCheck${i}`"
@@ -197,7 +194,7 @@ defineExpose({
             :value="value"
             @change="setIndex(i)"
             v-model="val"
-            v-if="type == 'radio'"
+            v-if="type === 'radio'"
           />
 
           <input
@@ -229,14 +226,15 @@ defineExpose({
     </template>
 
     <div
+      ref="feedback"
       :class="['description', { error: errorTransition }]"
-      v-if="message">
+      v-show="message">
       {{ message }}
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @import './style.scss';
 </style>
 <script lang="ts">

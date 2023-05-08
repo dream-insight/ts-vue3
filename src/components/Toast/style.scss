@@ -8,83 +8,83 @@ $danger: map-get($theme-colors, 'danger');
 #toast {
   position: fixed;
   bottom: 0;
-  z-index: 100000;
+  z-index: 10010;
   width: 100%;
   background-color: transparent;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-}
 
-.toast-body {
-  margin: 5px 0;
-  height: 55px;
-  padding: 0 25px 0 15px;
-  min-width: 400px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: left;
-  box-shadow: $box-shadow;
+  .toast-body {
+    margin: 5px 0;
+    height: 55px;
+    padding: 0 25px 0 15px;
+    min-width: 400px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    box-shadow: $box-shadow;
 
-  &.bg-success {
-    border-left: 6px solid darken($success, 5);
+    &.bg-success {
+      border-left: 6px solid darken($success, 5);
+    }
+
+    &.bg-info {
+      border-left: 6px solid darken($info, 5);
+    }
+
+    &.bg-warning {
+      border-left: 6px solid darken($warning, 5);
+    }
+
+    &.bg-danger {
+      border-left: 6px solid darken($danger, 5);
+    }
+
+    .icon {
+      display: block;
+      margin-right: 10px;
+      font-size: 1.7em;
+    }
+
+    .message {
+      font-size: 14px;
+    }
   }
 
-  &.bg-info {
-    border-left: 6px solid darken($info, 5);
+  .bg-success {
+    background-color: $success;
+    color: #fff;
   }
 
-  &.bg-warning {
-    border-left: 6px solid darken($warning, 5);
+  .bg-info {
+    background-color: $info;
+    color: #fff;
   }
 
-  &.bg-danger {
-    border-left: 6px solid darken($danger, 5);
+  .bg-warning {
+    background-color: $warning;
+    color: #fff;
   }
 
-  .icon {
-    display: block;
-    margin-right: 10px;
-    font-size: 1.7em;
+  .bg-danger {
+    background-color: $danger;
+    color: #fff;
   }
 
-  .message {
-    font-size: 14px;
+  .toast-view-enter-from {
+    margin-bottom: -60px;
+    opacity: 0;
   }
-}
-
-.bg-success {
-  background-color: $success;
-  color: #fff;
-}
-
-.bg-info {
-  background-color: $info;
-  color: #fff;
-}
-
-.bg-warning {
-  background-color: $warning;
-  color: #fff;
-}
-
-.bg-danger {
-  background-color: $danger;
-  color: #fff;
-}
-
-.toast-view-enter-from {
-  margin-bottom: -60px;
-  opacity: 0;
-}
-.toast-view-leave-to {
-  transform: scale(0);
-  opacity: 0;
-}
-.toast-view-enter-active,
-.toast-view-leave-active {
-  transition: all 0.2s ease-out;
+  .toast-view-leave-to {
+    transform: scale(0);
+    opacity: 0;
+  }
+  .toast-view-enter-active,
+  .toast-view-leave-active {
+    transition: all 0.2s ease-out;
+  }
 }

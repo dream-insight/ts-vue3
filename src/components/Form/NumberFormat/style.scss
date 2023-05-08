@@ -24,6 +24,10 @@
     &.error {
       border-color: map-get($theme-colors, 'danger');
     }
+
+    &:disabled {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
   }
 
   &.error input {

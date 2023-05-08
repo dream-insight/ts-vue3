@@ -7,9 +7,16 @@ export const textFieldType = {
 
 export type TextFieldType = typeof textFieldType[keyof typeof textFieldType]
 
-export interface PatternCaseValue {
-  pattern: RegExp
-  message: string
-}
+export const textPatternCase = {
+  eng: 'eng',
+  engnum: 'engnum',
+  id: 'id',
+  num: 'num',
+  wordnum: 'wordnum',
+  password: 'password',
+  domain: 'domain',
+  email: 'email',
+  tel: 'tel',
+} as const
 
-export interface PatternCase extends KeyIndex<PatternCaseValue> {}
+export type TextPatternCase = typeof textPatternCase[keyof typeof textPatternCase]

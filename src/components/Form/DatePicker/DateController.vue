@@ -60,9 +60,6 @@ const changeMonth = (increase: number): void => {
   emit('change-month', increase)
 }
 
-selectedYear.value = props.year
-selectedMonth.value = props.month
-
 const outsideClickEvent = (evt: Event): void => {
   const target = evt.target as HTMLElement
 
@@ -79,6 +76,9 @@ const outsideClickEvent = (evt: Event): void => {
   }
 }
 
+selectedYear.value = props.year
+selectedMonth.value = props.month
+
 onMounted(() => {
   document.addEventListener('click', outsideClickEvent)
 })
@@ -90,47 +90,35 @@ onUnmounted(() => {
 
 <template>
   <div class="select-month">
-    <button type="button" class="prev2" @click="changeMonth(-12)">
-      <span class="arrow-icon material-icons">keyboard_double_arrow_left</span>
-    </button>
+    <i class="material-icons" @click="changeMonth(-12)">keyboard_double_arrow_left</i>
+    <i class="material-icons" @click="changeMonth(-1)">keyboard_arrow_left</i>
 
-    <button type="button" class="prev" @click="changeMonth(-1)">
-      <span class="arrow-icon material-icons">keyboard_arrow_left</span>
-    </button>
+    <span ref="YearSelector" @click="toggleSelector()">
+      {{ year }}년
 
-    <div class="date-text">
-      <em ref="YearSelector" @click="toggleSelector()">
-        {{ year }}년
+      <Selector
+        :max="maxYear"
+        :date="selectedYear"
+        :is-show="showYearSelector"
+        @selected="setYearMonth('year', $event)"
+        @hide="toggleSelector()"
+        v-show="showYearSelector"
+      />
+    </span>
+    <span ref="MonthSelector" @click="toggleSelector('month')">
+      {{ month + 1 }}월
 
-        <Selector
-          :max="maxYear"
-          :date="selectedYear"
-          :is-show="showYearSelector"
-          @selected="setYearMonth('year', $event)"
-          @hide="toggleSelector()"
-          v-show="showYearSelector"
-        />
-      </em>
-      <em ref="MonthSelector" @click="toggleSelector('month')">
-        {{ month + 1 }}월
+      <Selector
+        date-type="month"
+        :date="selectedMonth"
+        @selected="setYearMonth('month', $event)"
+        @hide="toggleSelector('month')"
+        :is-show="showMonthSelector"
+        v-show="showMonthSelector"
+      />
+    </span>
 
-        <Selector
-          date-type="month"
-          :date="selectedMonth"
-          @selected="setYearMonth('month', $event)"
-          @hide="toggleSelector('month')"
-          :is-show="showMonthSelector"
-          v-show="showMonthSelector"
-        />
-      </em>
-    </div>
-
-    <button type="button" class="next" @click="changeMonth(1)">
-      <span class="arrow-icon material-icons">keyboard_arrow_right</span>
-    </button>
-
-    <button type="button" class="next2" @click="changeMonth(12)">
-      <span class="arrow-icon material-icons">keyboard_double_arrow_right</span>
-    </button>
+    <i class="material-icons" @click="changeMonth(1)">keyboard_arrow_right</i>
+    <i class="material-icons" @click="changeMonth(12)">keyboard_double_arrow_right</i>
   </div>
 </template>

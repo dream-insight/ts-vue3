@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, withDefaults } from 'vue'
+import { ref, watch, withDefaults, onMounted } from 'vue'
 import type { RuleFunc } from '../types'
 
 export interface ValidateWrapProps {
@@ -28,6 +28,7 @@ watch(() => props.errorMessage, (v) => {
 let isValidate = ref<boolean>(true)
 let checkPass = ref<boolean>(false)
 let message = ref<string>('')
+let errorTransition = ref<boolean>(false)
 
 const check = (): boolean => {
   // 임의로 지정된 에러가 없는 경우
@@ -38,6 +39,7 @@ const check = (): boolean => {
         let result = props.validate[i](props.checkValue)
 
         if (typeof result === 'string') {
+          errorTransition.value = false
           message.value = result
           isValidate.value = false
           checkPass.value = false
@@ -68,6 +70,14 @@ const resetValidate = (): void => {
   resetForm()
 }
 
+const feedback = ref<HTMLDivElement>()
+
+onMounted(() => {
+  feedback.value!.addEventListener('animationend', () => {
+    errorTransition.value = false
+  })
+})
+
 defineExpose({
   check,
   resetForm,
@@ -79,7 +89,10 @@ defineExpose({
   <div class="validate-wrap">
     <slot></slot>
 
-    <div :class="['error-message']" v-if="message !== ''">
+    <div
+      ref="feedback"
+      :class="['feedback', { error: errorTransition }]"
+      v-show="message !== ''">
       {{ message }}
     </div>
   </div>

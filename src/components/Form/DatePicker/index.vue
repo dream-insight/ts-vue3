@@ -16,10 +16,11 @@ import type {
 import type { RuleFunc } from '../types'
 import DateController from './DateController.vue'
 
-const emit = defineEmits<{
+export interface DatePickerEmits {
   (event: 'update:modelValue', value: String[] | String): void
-}>()
-const props = withDefaults(defineProps<{
+}
+
+export interface DatePickerProps {
   modelValue: string[] | string
   validate?: RuleFunc[]
   label?: string
@@ -31,18 +32,27 @@ const props = withDefaults(defineProps<{
   block?: boolean
   required?: boolean
   hideMessage?: boolean
-}>(), {
+  maxRange?: number
+  readonly?: boolean
+  disabled?: boolean
+}
+
+const emit = defineEmits<DatePickerEmits>()
+
+const props = withDefaults(defineProps<DatePickerProps>(), {
   validate: (): RuleFunc[] => [],
   range: false,
   label: '',
   placeholder: '',
-  // 년, 월, 일 사이 구분 표시
   separator: '-',
   minYear: 1900,
   maxYear: Number(new Date().getFullYear()) + 10,
   block: false,
   required: false,
   hideMessage: false,
+  maxRange: 0,
+  readonly: false,
+  disabled: false
 })
 
 const el = ref<HTMLElement>()
@@ -115,10 +125,10 @@ const selected = reactive<SelectedDateType>({
   },
 })
 
-const timeState: TimeStateType = {
+const timeState = reactive<TimeStateType>({
   start: 0,
   end: 0,
-}
+})
 
 let selectedError = ref<string>('')
 let message = ref<string | boolean>('')
@@ -128,14 +138,6 @@ let isValidate = ref<boolean>(true)
 
 watch([() => selected.start.date, () => selected.end.date], () => {
   resetError()
-})
-
-watch(errorTransition, (v) => {
-  if (v) {
-    setTimeout(() => {
-      errorTransition.value = false
-    }, 300)
-  }
 })
 
 watch(() => props.modelValue, (v) => {
@@ -257,35 +259,39 @@ const init = (): void => {
 const toggleCalendar = (): void => {
   // 달력 표시 전 처리
   const bodyRect: DOMRect = document.body.getBoundingClientRect()
-  const rect: DOMRect | undefined = el.value?.getBoundingClientRect()
+  const rect: DOMRect = el.value!.getBoundingClientRect()
   const pickerWidth: number = props.range ? 480 : 230
   const pickerHeight: number = props.range ? 454 : 280
 
   if (rect && picker.value) {
-    // 포지션이 아래쪽으로 치우쳤다면 위로 나오게 변경한다.
+    // 객체의 위치가 스크린 아래쪽으로 치우쳤다면 위로 나오게 변경한다.
     if (window.innerHeight < rect.bottom + pickerHeight) {
       picker.value.style.top = ''
-      picker.value.style.bottom = `${Math.floor(window.innerHeight - rect.top) + 5}px`
+      picker.value.style.bottom = '100%'
 
       if (bodyRect.width / 2 < rect.x) {
         picker.value.style.transformOrigin = 'bottom right'
-        picker.value.style.left = `${Math.floor(rect.x + rect.width) - pickerWidth}px`
+        picker.value.style.right = '0px'
       } else {
         picker.value.style.transformOrigin = 'bottom left'
+        picker.value.style.left = '0px'
       }
 
     } else {
       picker.value.style.bottom = ''
-      picker.value.style.top = `${Math.floor(rect.top + rect.height) + 5}px`
+      picker.value.style.top = 'calc(100% + 5px)'
 
       if (bodyRect.width / 2 < rect.x) {
         picker.value.style.transformOrigin = 'top right'
-        picker.value.style.left = `${Math.floor(rect.x + rect.width) - pickerWidth}px`
+        picker.value.style.right = '0px'
       } else {
         picker.value.style.transformOrigin = 'top left'
+        picker.value.style.left = '0px'
       }
     }
+  }
 
+  if (!props.readonly && !props.disabled) {
     isShow.value = !isShow.value
   }
 }
@@ -325,20 +331,31 @@ const makeCanlendar = (flag: string): void => {
 
       // 시작 날짜와 끝 날짜 사이에 색상 표시
       if (objData.type !== 'today') {
-        if (props.range && selected.start.date !== '' && selected.end.date !== '') {
+        if (props.range) {
           let time = new Date(dateState[flag].year, dateState[flag].month, day).getTime()
 
-          if (time >= timeState.start && time <= timeState.end) {
-            if (flag === 'start' && time > timeState.start) {
-              objData.type = 'date-range'
-            } else if (flag === 'end' && time < timeState.end) {
-              objData.type = 'date-range'
+          // 선택된 날짜 사이의 색상을 변경
+          if (selected.start.date && selected.end.date) {
+            if (time >= timeState.start && time <= timeState.end) {
+              if (flag === 'start' && time > timeState.start) {
+                objData.type = 'date-range'
+              } else if (flag === 'end' && time < timeState.end) {
+                objData.type = 'date-range'
+              }
             }
+          }
+
+          // 시작일과 종료일 기준으로 선택 할 수 없도록 처리
+          if (flag === 'end' && selected.start.date && time < timeState.start) {
+            objData.type = 'disabled'
+          } else if (flag === 'start' && selected.end.date && time > timeState.end) {
+            objData.type = 'disabled'
           }
         }
       }
 
       day++
+
     } else if (day > lastDay) {
       objData = { day: afterDay, type: 'afterMonth' }
       afterDay++
@@ -361,6 +378,13 @@ const makeCanlendar = (flag: string): void => {
 const getBeforeDay = (year: number, month: number, week: number): number => {
   const day = new Date(year, month, 0).getDate()
   return day - week + 1
+}
+
+const resetTransition = (flag: string): void => {
+  setTimeout(() => {
+    makeCanlendar(flag)
+    show[flag] = true
+  }, 30)
 }
 
 /**
@@ -412,13 +436,6 @@ const changeMonth = (flag: TransitionFlag, increase: number): void => {
     }
 
     show[flag] = false
-
-    clearTimeout(timeout[flag])
-
-    timeout[flag] = setTimeout(() => {
-      makeCanlendar(flag)
-      show[flag] = true
-    }, 150)
   }
 }
 
@@ -436,13 +453,6 @@ const changeYearMonth = (flag: TransitionFlag, target: string, value: number): v
   // transition animate
   transitionName[flag] = 'trans-down'
   show[flag] = false
-
-  clearTimeout(timeout[flag])
-
-  timeout[flag] = setTimeout(() => {
-    makeCanlendar(flag)
-    show[flag] = true
-  }, 150)
 }
 
 const pickCaseDate = (flag: number): void => {
@@ -517,14 +527,6 @@ const pickCaseDate = (flag: number): void => {
   show.start = false
   show.end = false
 
-  timeout.start = setTimeout(() => {
-    makeCanlendar('start')
-    makeCanlendar('end')
-
-    show.start = true
-    show.end = true
-  }, 150)
-
   updateValue()
 }
 
@@ -544,23 +546,30 @@ const selectedDay = (tr: number, td: number, flag: string = 'start'): void => {
   const day: number = dateRender[flag][tr][td].day
 
   if (['current', 'today', 'date-range'].includes(type)) {
+    const prevDay = selected[flag].day
+    const prevDate = selected[flag].date
+    const prevTime = timeState[flag]
+
     selected[flag].day = day
+    selected[flag].date = dateFormat(dateState[flag].year, dateState[flag].month, selected[flag].day)
+    timeState[flag] = new Date(dateState[flag].year, dateState[flag].month, selected[flag].day).getTime()
 
-    if (flag === 'start') {
-      selected.start.date = dateFormat(dateState.start.year, dateState.start.month, selected.start.day)
-      timeState.start = new Date(dateState.start.year, dateState.start.month, selected.start.day).getTime()
-    } else {
-      selected.end.date = dateFormat(dateState.end.year, dateState.end.month, selected.end.day)
-      timeState.end = new Date(dateState.end.year, dateState.end.month, selected.end.day).getTime()
-    }
+    // 선택 최대 기간이 설정된 경우 날짜를 계산하여 선택이 안되도록 처리
+    if (props.maxRange && timeState.start && timeState.end) {
+      const term: number = (timeState.end - timeState.start) / (86400 * 1000) + 1
 
-    if (props.range && timeState.start > 0 && timeState.end > 0) {
-      // 범위 선택 달력일 경우 종료일이 시작일보다 빠르지 않도록 처리
-      if (timeState.start > timeState.end) {
-        selected.end.date = ''
-        timeState.end = 0
+      // 만약 기간이 초과 한다면 변수를 초기화 하고, 다시 랜더링 하지 않는다.
+      if (props.maxRange < term) {
+        selected[flag].day = prevDay
+        selected[flag].date = prevDate
+        timeState[flag] = prevTime
 
-        selectedError.value = '종료일이 시작일 보다 날짜가 빠릅니다.'
+        selectedError.value = `최대 선택기간 ${props.maxRange}일을 초과 하였습니다.`
+
+        // 3초 후 메시지 초기화
+        setTimeout(() => {
+          selectedError.value = ''
+        }, 3000)
       }
     }
 
@@ -668,7 +677,7 @@ const resetError = (): void => {
  */
 const check = (): boolean => {
   // 데이터 검증
-  if (props.validate.length) {
+  if (props.validate.length && !props.disabled) {
     for (let i = 0; i < props.validate.length; i++) {
       let result1: string | boolean = true
       let result2: string | boolean = true
@@ -721,43 +730,47 @@ if (props.modelValue) {
 }
 
 const outsideClickEvent = (evt: Event): void => {
-  if (el.value) {
-    if (isShow.value) {
-      const target = evt.target as HTMLElement
-      const classList = target.classList.value
-      const indexOf1 = classList.indexOf('current')
-      const indexOf2 = classList.indexOf('today')
-      const indexOf3 = classList.indexOf('date-range')
+  if (el.value && isShow.value) {
+    const target = evt.target as HTMLElement
+    const classList = target.classList.value
+    const indexOf1 = classList.indexOf('current')
+    const indexOf2 = classList.indexOf('today')
+    const indexOf3 = classList.indexOf('date-range')
 
-      if (indexOf1 === -1 && indexOf2 === -1 && indexOf3 === -1) {
-        isShow.value = el.value.contains(target)
-      }
+    if (indexOf1 === -1 && indexOf2 === -1 && indexOf3 === -1) {
+      isShow.value = el.value.contains(target)
     }
   }
 }
 
 
-const scrollEvent = (): void => {
-  if (el.value) {
-    const rect: DOMRect = el.value.getBoundingClientRect()
+// const scrollEvent = (): void => {
+//   if (el.value) {
+//     const rect: DOMRect = el.value.getBoundingClientRect()
 
-    if (picker.value) {
-      picker.value.style.top = `${(rect.top + rect.height + 5)}px`
-    }
-  }
-}
+//     if (picker.value) {
+//       picker.value.style.top = `${(rect.top + rect.height + 5)}px`
+//     }
+//   }
+// }
+
+const feedback = ref<HTMLDivElement>()
 
 onMounted(() => {
   // 달력 외의 영역 클릭시 달력 닫기
   document.addEventListener('click', outsideClickEvent)
 
   // 스크롤 시 달력 닫기
-  document.addEventListener('scroll', scrollEvent)
+  // document.addEventListener('scroll', scrollEvent)
+
+  feedback.value!.addEventListener('animationend', () => {
+    errorTransition.value = false
+  })
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', outsideClickEvent)
-  document.removeEventListener('scroll', scrollEvent)
+  // document.removeEventListener('scroll', scrollEvent)
 })
 
 defineExpose({
@@ -775,14 +788,14 @@ defineExpose({
         <span class="required" v-if="props.required">*</span>
       </label>
 
-      <div :class="['picker-date-text', { 'error': message }]">
+      <div :class="['picker-date-text', { error: message, disabled: props.disabled }]">
         <template v-if="range">
             <input
               readonly
               type="text"
               :class="{ 'error': message }"
               :placeholder="holderText[0]"
-              :value="modelValue[0]"
+              :value="props.disabled ? '' : modelValue[0]"
             />
             <span class="input-group-text">~</span>
             <input
@@ -790,7 +803,7 @@ defineExpose({
               type="text"
               :class="{ 'error': message }"
               :placeholder="holderText[1]"
-              :value="modelValue[1]"
+              :value="props.disabled ? '' : modelValue[1]"
             />
 
             <i class="material-icons">date_range</i>
@@ -802,15 +815,16 @@ defineExpose({
             type="text"
             :class="{ 'error': message }"
             :placeholder="holderText[0]"
-            :value="modelValue"
+            :value="props.disabled ? '' : modelValue"
           />
           <i class="material-icons">calendar_month</i>
         </template>
       </div>
 
       <div
+        ref="feedback"
         :class="['feedback', { error: errorTransition }]"
-        v-if="message && !props.hideMessage">
+        v-show="message && !props.hideMessage">
         {{ message }}
       </div>
     </div>
@@ -821,7 +835,7 @@ defineExpose({
           <div class="search-date">
             <a
               href="#"
-              :class="[v.checked ? 'active' : '']"
+              :class="[v.checked && 'active']"
               :key="v.text" @click.prevent="pickCaseDate(i)"
               v-for="(v, i) in toggleDateButton">
               {{ v.text }}
@@ -843,7 +857,7 @@ defineExpose({
               />
 
               <div class="select-calendar-wrap">
-                <Transition :name="transitionName.start">
+                <Transition :name="transitionName.start" @after-leave="resetTransition('start')">
                   <div class="select-calendar" v-show="show.start">
                     <ul class="header">
                       <li
@@ -883,7 +897,7 @@ defineExpose({
               />
 
               <div class="select-calendar-wrap">
-                <Transition :name="transitionName.end">
+                <Transition :name="transitionName.end" @after-leave="resetTransition('end')">
                   <div class="select-calendar" v-show="show.end">
                     <ul class="header">
                       <li
@@ -942,7 +956,7 @@ defineExpose({
                 />
 
                 <div class="select-calendar-wrap">
-                  <Transition :name="transitionName.start">
+                  <Transition :name="transitionName.start" @after-leave="resetTransition('start')">
                     <div class="select-calendar" v-show="show.start">
                       <ul class="header">
                         <li

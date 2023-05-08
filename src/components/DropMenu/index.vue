@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import type { StyleValue } from 'vue'
 import type { DropMenuItem, DropMenuPosition, DropMenuTransition } from './types'
 import { dropMenuPosition, dropMenuTransition } from './types'
 
@@ -10,10 +11,11 @@ const props = withDefaults(defineProps<{
   width?: number
 }>(), {
   position: dropMenuPosition.bottom,
-  transition: dropMenuTransition.slide
+  transition: dropMenuTransition.slide,
 })
 
 const transitionName = computed<string>(() => `${props.transition}-${props.position}`)
+const wrapperWidth = computed<StyleValue>(() => ({ width: !!props.width ? `${props.width}px` : '' }))
 
 const dropMenu = ref<HTMLDivElement>()
 let isShow = ref<boolean>(false)
@@ -39,7 +41,7 @@ onMounted(() => {
 
     <Transition :name="transitionName">
       <ul
-        :style="{ width: width && `${width}px` }"
+        :style="wrapperWidth"
         :class="['drop-menu-wrap', props.position]"
         v-show=isShow>
         <li v-for="(item, i) in props.items">

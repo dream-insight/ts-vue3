@@ -1,4 +1,4 @@
-.validate-wrap .error-message {
+.validate-wrap .feedback {
   font-size: 0.875em !important;
   font-weight: normal;
   padding: 0 !important;
@@ -7,7 +7,10 @@
   border: 0 !important;
   color: #ff5252;
   text-align: left !important;
-  animation: shaking 0.2s;
+
+  &.error {
+    animation: shaking 0.2s;
+  }
 }
 
 /* error message shaking */

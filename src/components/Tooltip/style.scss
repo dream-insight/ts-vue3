@@ -9,13 +9,13 @@
     color: #595959;
   }
 
-  .pointer {
-    cursor: pointer;
-  }
+  .icon-wrap {
+    display: flex;
+    align-items: center;
 
-  .icon {
-    width: 20px;
-    height: 20px;
+    .icon {
+      cursor: pointer;
+    }
   }
 
   .message-box {
@@ -27,7 +27,7 @@
     box-shadow: 0 0 2px 1px rgba(map-get($theme-colors, 'primary'), 0.4);
     font-size: 13px;
     font-weight: 400;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s;
     text-align: left;
     color: #000;
 
@@ -102,6 +102,6 @@
   }
   .tooltip-enter-active,
   .tooltip-leave-active {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s;
   }
 }

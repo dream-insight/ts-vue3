@@ -79,24 +79,20 @@ defineExpose({
 </script>
 
 <template>
-  <div id="toast">
-    <TransitionGroup name="toast-view">
-      <div
-        :class="['toast-body', (item.color ? `bg-${item.color}` : '')]"
-        :key="`toast-${item.key}`"
-        @click="hide(i)"
-        v-for="(item, i) in list">
+  <TransitionGroup name="toast-view">
+    <div
+      :class="['toast-body', (item.color ? `bg-${item.color}` : '')]"
+      :key="`toast-${item.key}`"
+      @click="hide(i)"
+      v-for="(item, i) in list">
 
-        <template v-if="item.icon">
-          <i class="icon material-icons">{{ item.icon }}</i>
-        </template>
+      <i class="icon material-icons" v-if="item.icon">{{ item.icon }}</i>
 
-        <span class="message">{{ item.message }}</span>
-      </div>
-    </TransitionGroup>
-  </div>
+      <span class="message">{{ item.message }}</span>
+    </div>
+  </TransitionGroup>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import './style.scss';
 </style>

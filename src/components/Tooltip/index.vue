@@ -12,6 +12,8 @@ const props = withDefaults(defineProps<{
   width?: number
   hovering?: boolean
   btnClose?: boolean
+  icon?: string
+  iconSize?: string
 }>(), {
   left: false,
   right: false,
@@ -20,6 +22,8 @@ const props = withDefaults(defineProps<{
   width: 300,
   hovering: false,
   btnClose: false,
+  icon: 'help',
+  iconSize: '',
 })
 
 let position = ref<string>('')
@@ -59,8 +63,15 @@ if (props.top) {
     class="tooltip-wrap"
     @mouseenter="onMouse(true)"
     @mouseleave="onMouse(false)">
-    <slot v-if="showIcon" class="pointer" @click="toggle"></slot>
-    <span class="icon pointer material-icons" @click="toggle" v-else>help</span>
+    <div class="icon-wrap">
+      <slot v-if="showIcon" class="pointer" @click="toggle"></slot>
+      <span
+        class="icon material-icons"
+        :style="{ fontSize: props.iconSize }"
+        @click="toggle" v-else>
+        {{ props.icon }}
+      </span>
+    </div>
 
     <Transition name="tooltip">
       <div
@@ -73,6 +84,7 @@ if (props.top) {
             <span class="material-icons">close</span>
           </a>
         </div>
+
         <template v-if="Array.isArray(message)">
           <ul>
             <li
