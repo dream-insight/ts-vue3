@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { h, ref, computed, useSlots, withDefaults, Fragment } from 'vue'
-import type { ComputedRef } from 'vue'
+import type { VNode } from 'vue'
 
 const slots = useSlots()
 
@@ -11,9 +11,7 @@ const props = withDefaults(defineProps<{
   inBox: false,
 })
 
-// 참조 가능한 내용을 확인하지 못하여 ComputedRef 선언
-// computed 를 통해 slot rendering 자체가 확실한지가 모호함(상세 참조 문서 부재)
-const RenderSlotItems: ComputedRef = computed(() => h(Fragment, slots.default ? [slots.default()[active.value]] : []))
+const RenderSlotItems = computed<VNode>(() => h(Fragment, slots.default ? [slots.default()[active.value]] : []))
 
 const Tabs = ref<HTMLDivElement>()
 let active = ref<number>(0)
@@ -28,7 +26,7 @@ const setIndex = (index: number): void => {
   transition.value = (active.value < index) ? 'tab-slide-left' : 'tab-slide-right'
   active.value = index
 
-  const contents = Tabs.value?.querySelectorAll('.tab-contents') as NodeListOf<HTMLElement>
+  const contents = Tabs.value!.querySelectorAll('.tab-contents') as NodeListOf<HTMLElement>
   const rect = contents[0].firstElementChild?.getBoundingClientRect() as DOMRect
 
   contents[0].style.overflow = 'hidden'
@@ -39,7 +37,7 @@ const setIndex = (index: number): void => {
  * tab-contents의 높이를 초기화 시켜준다
  */
 const resetHeight = (): void => {
-  const contents = Tabs.value?.querySelectorAll('.tab-contents') as NodeListOf<HTMLElement>
+  const contents = Tabs.value!.querySelectorAll('.tab-contents') as NodeListOf<HTMLElement>
   contents[0].style.overflow = 'unset'
   contents[0].style.height = 'unset'
 }

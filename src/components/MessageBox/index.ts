@@ -2,10 +2,10 @@ import { h, render, isVNode }  from 'vue'
 import type { App, VNode } from 'vue'
 import MessageBoxComponent from './component.vue'
 import { messageBoxType } from './types'
-import type { MessageBox, MessageBoxType, MessageBoxStyleOptions, MessageBoxOptions } from './types'
+import type { MessageBox, MessageBoxType, MessageBoxOptions } from './types'
 
 export default {
-  install(app: App, options?: MessageBoxStyleOptions) {
+  install(app: App) {
     const body = document.querySelector('body') as HTMLBodyElement
     const msgWrapper = document.createElement('div')
     msgWrapper.id = 'messageBox'
@@ -13,19 +13,6 @@ export default {
     body.appendChild(msgWrapper)
 
     let VNode: VNode | null = null
-
-    let modalStyleClass: string = '.modal-bg'
-    let noScrollStyleClass: string = '.no-scroll'
-
-    if (options) {
-      if ('modalStyleClass' in options) {
-        modalStyleClass = options.modalStyleClass!
-      }
-
-      if ('noScrollStyleClass' in options) {
-        noScrollStyleClass = options.noScrollStyleClass!
-      }
-    }
 
     const destroy = (): void => {
       render(null, msgWrapper)
@@ -64,18 +51,6 @@ export default {
 
         if (opt.cancel instanceof Function) {
           props.cancel = opt.cancel
-        }
-
-        if ('modalStyleClass' in opt) {
-          props.modalStyleClass = opt.modalStyleClass
-        } else {
-          props.modalStyleClass = modalStyleClass
-        }
-
-        if ('noScrollStyleClass' in opt) {
-          props.noScrollStyleClass = opt.noScrollStyleClass
-        } else {
-          props.noScrollStyleClass = noScrollStyleClass
         }
 
         props.destroy = destroy

@@ -90,6 +90,7 @@ app.component('Button', Button)
 | small? | boolean | <code>false</code> | 버튼 최소 크기 block 옵션 무시 |
 | loading? | boolean | <code>false</code> | 버튼에 스피너를 표시하고 사용 불가 상태로 변경 |
 | outline? | boolean | <code>false</code> | 배경색을 제거하고 외곽선을 표시 |
+| tag? | string | <code>a</code> | 버튼 태그 설정 |
 
 ---
 

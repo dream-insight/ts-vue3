@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, defineEmits } from 'vue'
+import { h, computed, defineEmits } from 'vue'
+import type { VNode } from 'vue'
 import type { BtnColors } from './types'
 
 const emit = defineEmits<{
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   small?: boolean
   outline?: boolean
+  tag?: string
 }>(), {
   href: '#',
   text: false,
@@ -30,6 +32,7 @@ const props = withDefaults(defineProps<{
   iconRight: false,
   small: false,
   outline: false,
+  tag: 'a'
 })
 
 const buttonStyle = computed<any>(() => {
@@ -47,18 +50,36 @@ const buttonStyle = computed<any>(() => {
   ]
 })
 
-const onClick = (event: MouseEvent): void => {
+const hrefState = computed<string>(() => {
   if (!props.disabled) {
-    emit('click', event)
+    return props.href ? props.href : '#'
+  }
+
+  return ''
+})
+
+const options: any = {
+  class: buttonStyle.value,
+  onClick: (event: MouseEvent): void => {
+    event.preventDefault()
+
+    if (!props.disabled) {
+      emit('click', event)
+    }
   }
 }
+
+if (props.tag.toLowerCase() === 'a') {
+  options.href = hrefState.value
+} else if (props.tag.toLowerCase() == 'button') {
+  options.type = 'button'
+}
+
+const WrapperTag = computed<VNode>(() => h(props.tag, options))
 </script>
 
 <template>
-  <a
-    :href="props.disabled ? '' : props.href"
-    :class="buttonStyle"
-    @click.prevent="onClick">
+  <WrapperTag>
     <div class="btn-wrap">
       <template v-if="!onlyIcon">
         <template v-if="props.loading">
@@ -79,7 +100,7 @@ const onClick = (event: MouseEvent): void => {
         <i class="material-icons">{{ props.icon }}</i>
       </template>
     </div>
-  </a>
+  </WrapperTag>
 </template>
 
 <style lang="scss">

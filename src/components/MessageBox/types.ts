@@ -1,9 +1,4 @@
- export interface MessageBoxStyleOptions {
-  modalStyleClass?: string
-  noScrollStyleClass?: string
-}
-
-export interface MessageBoxOptions extends MessageBoxStyleOptions {
+export interface MessageBoxOptions {
   type?: MessageBoxType
   message: string
   title?: string

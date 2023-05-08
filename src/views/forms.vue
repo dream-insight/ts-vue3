@@ -320,7 +320,7 @@ getData()
 
           <div class="row">
             <div class="col mt-3 text-center">
-              <Button block color="primary" @click.prevent="checkForm()">폼 체크하기</Button>
+              <Button block tag="button" color="primary" @click.prevent="checkForm()">폼 체크하기</Button>
             </div>
           </div>
         </div>
@@ -454,6 +454,16 @@ getData()
                 btn-accept
                 label="적용 버튼 추가(다중 선택에서만 가능)"
                 placeholder="선택 후 적용 버튼을 클릭 하지 않으면 초기화 됩니다."
+                :options="opt"
+                v-model="selectMulti"
+              />
+            </div>
+            <div class="col">
+              <SelectBox
+                block
+                disabled
+                label="사용불가 처리"
+                placeholder="이 컴포넌트는 disabled 상태입니다."
                 :options="opt"
                 v-model="selectMulti"
               />

@@ -60,14 +60,16 @@ watch(() => props.errorMessage, (v) => {
 })
 
 watch(() => props.modelValue, (v) => {
-  // 외부에서 model이 업데이트 되도 유효성 검사
-  if (v !== '') {
-    message.value = ''
-    isValidate.value = true
-    errorTransition.value = false
+  if (!props.disabled) {
+    // 외부에서 model이 업데이트 되도 유효성 검사
+    if (v !== '') {
+      message.value = ''
+      isValidate.value = true
+      errorTransition.value = false
 
-    if (Input.value) {
-      Input.value.value = format(v)
+      if (Input.value) {
+        Input.value.value = format(v)
+      }
     }
   }
 })
@@ -112,6 +114,10 @@ const zeroCheck = (evt: Event) => {
 const format = (v: number | string): string => (v === '-') ? v : new Intl.NumberFormat().format(Number(v))
 
 const updateValue = (evt: Event): void => {
+  if (props.disabled) {
+    return
+  }
+
   const e = evt.target as HTMLInputElement
 
   let value: string = e.value
@@ -127,8 +133,6 @@ const updateValue = (evt: Event): void => {
     e.value = format(value)
     emit('update:modelValue', isNaN(Number(value)) ? 0 : Number(value))
   }
-
-  e.value = ''
 }
 
 const check = (): boolean => {

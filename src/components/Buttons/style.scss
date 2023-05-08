@@ -15,6 +15,11 @@
     font-size: 0.8em;
   }
 
+  &.block {
+    display: block !important;
+    width: 100%;
+  }
+
   .btn-wrap {
     display: flex;
     align-items: center;
