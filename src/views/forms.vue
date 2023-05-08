@@ -99,6 +99,8 @@ const MessageBoxAlert = (flag?: string): void => {
         Toast('alert boom!!!')
       }
     })
+
+    // MessageBox.alert('알림!')
   }
 }
 

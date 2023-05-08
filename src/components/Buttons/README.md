@@ -88,6 +88,8 @@ app.component('Button', Button)
 | block? | boolean | <code>false</code> | 버튼을 전체 라인으로 지정 |
 | disabled? | boolean | <code>false</code> | 버튼 사용 불가 처리 |
 | small? | boolean | <code>false</code> | 버튼 최소 크기 block 옵션 무시 |
+| loading? | boolean | <code>false</code> | 버튼에 스피너를 표시하고 사용 불가 상태로 변경 |
+| outline? | boolean | <code>false</code> | 배경색을 제거하고 외곽선을 표시 |
 
 ---
 
