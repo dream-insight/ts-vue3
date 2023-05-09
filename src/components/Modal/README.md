@@ -5,6 +5,7 @@
 1. [사용방법](#1-사용방법)
 2. [Options](#2-options)
 3. [Types](#3-types)
+3. [Slots](#4-slots)
 
 # 1. 사용방법
 
@@ -21,7 +22,6 @@ app.compnent('Modal', Modal)
 <script setup lang="ts">
 import { ref } from 'vue'
 import Modal from '@/components/Modal/index.vue'
-import { ModalMethods } from '@/components/Modal/types'
 
 let isShow = ref<boolean>(false)
 </script>
@@ -42,8 +42,8 @@ let isShow = ref<boolean>(false)
   </Modal>
 </template>
 ```
-> 주의 사항: <code>v-model</code>을 변이할 경우 transition이 완전히 이루어지지 않고 창이 닫히게 됩니다.<br>
-해당 현상을 피하기 위해서는 반듯이 <code>ModalMethods.close</code> 함수와 <code>dispose</code>를 이용해주세요.
+> action slot의 close 함수를 실행하게 되면 modelValue를 업데이트 해준다.<br>
+하지만 document 자체에는 modal이 남아 있기 때문에 완전히 컴포넌트를 파기 하기 위해서는 v-if로 제어 해야 한다.
 
 # 2. Options
 | Name | Type | Default | Description |
@@ -104,9 +104,7 @@ export type ModalTransition = typeof modalTransition[keyof typeof modalTransitio
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| close | Function(callback) | null | 모달을 닫기 위해 전달되는 함수, 창을 닫기전 수행해야 할 스크립트를 callback으로 전달하여 실행 가능|
-
-
+| close | Function(callback): void | null | 모달을 닫기 위해 전달되는 함수, 창을 닫기전 수행해야 할 스크립트를 callback으로 전달하여 실행 가능 |
 
 
 :arrow_up: [항목](#항목)
@@ -116,6 +114,7 @@ export type ModalTransition = typeof modalTransition[keyof typeof modalTransitio
 ### UPDATE HISTORY
 
 * 최초 작성 : 2023.04.25 김종윤 수석매니저
+* action slot close method 추가: 2023.05.09 김종윤 수석매니저
 
 
 ---
