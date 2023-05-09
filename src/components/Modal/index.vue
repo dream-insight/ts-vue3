@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  (event: 'dispose'): void
+  (event: 'update:modelValue', value: boolean): void
 }>()
 
 let isShow = ref<boolean>(false)
@@ -53,7 +53,11 @@ const boxStyle = computed<string[]>(() => {
 /**
  * 모달 창 닫기
  */
-const close = (): void => {
+const close = (callback: Function | null = null): void => {
+  if (callback instanceof Function) {
+    callback()
+  }
+
   // 창이 제거되기 전이기 때문에 팝업의 수는 기본 1
   if (modalBg!.length === 1) {
     document.body.classList.remove('no-scroll')
@@ -63,6 +67,10 @@ const close = (): void => {
   modal.value!.removeEventListener('keyup', keyUpEvent)
 
   isShow.value = false
+}
+
+const dispose = (): void => {
+  emit('update:modelValue', false)
 }
 
 const keyDownEvent = (event: KeyboardEvent): void => {
@@ -83,14 +91,6 @@ const keyUpEvent = (event: KeyboardEvent): void => {
   }
 }
 
-/**
- * 모달창 닫기
- * 애니메이션 처리를 제대로 해주기 위해서 사용
- */
-const dispose = (): void => {
-  emit('dispose')
-}
-
 const setEvents = (): void => {
   modalBg = document.body.querySelectorAll('.modal-bg:not(.hide)')
 
@@ -98,10 +98,6 @@ const setEvents = (): void => {
   modal.value!.addEventListener('keyup', keyUpEvent)
   modal.value!.focus()
 }
-
-defineExpose({
-  close
-})
 </script>
 
 <template>
@@ -123,7 +119,7 @@ defineExpose({
             v-show="isShow">
             <div class="modal-header">
               <span>{{ props.title }}</span>
-              <a href="#" class="close" @click.prevent="close">
+              <a href="#" class="close" @click.prevent="close()">
                 <span class="material-icons">close</span>
               </a>
             </div>
@@ -131,7 +127,7 @@ defineExpose({
               <slot name="body"></slot>
             </div>
             <div class="modal-action" v-if="slots.action">
-              <slot name="action"></slot>
+              <slot name="action" :close="close"></slot>
             </div>
           </div>
         </Transition>

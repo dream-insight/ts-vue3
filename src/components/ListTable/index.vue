@@ -333,7 +333,7 @@ defineExpose({
       </thead>
 
       <tbody :class="{ 'no-hover-bg': noHoverBg }" v-if="dataList.length > 0">
-        <slot tag="tr" name="items" :props="item" :index="index" v-for="(item, index) in dataList"></slot>
+        <slot name="items" :props="item" :index="index" v-for="(item, index) in dataList"></slot>
       </tbody>
       <tbody v-else>
         <tr>

@@ -7,7 +7,6 @@ import type { Spinner } from '@/components/Spinner/types'
 import type { ValidateForm } from '@/components/Form/ValidateForm/types'
 import type { DropMenuItem  } from '@/components/DropMenu/types'
 import { dropMenuTransition, dropMenuPosition } from '@/components/DropMenu/types'
-import type { ModalMethods } from '@/components/Modal/types'
 import { ListTableHeader, ListTableItem } from '@/components/ListTable/types'
 import axios from 'axios'
 
@@ -150,13 +149,6 @@ const showLoading = (): void => {
     isLoading.value = false
   }, 5000)
 }
-
-const modalPopup = ref<ModalMethods>()
-const modalRight = ref<ModalMethods>()
-const modalLeft = ref<ModalMethods>()
-const modalBottom = ref<ModalMethods>()
-const modalCover = ref<ModalMethods>()
-const inModal = ref<ModalMethods>()
 
 let isShow = reactive<{
   [index: string]: boolean
@@ -919,13 +911,12 @@ getData()
   <Modal
     ref="modalPopup"
     title="기본 형태 모달 팝업"
-    @dispose="isShow.popup = false"
     v-model="isShow.popup">
     <template #body>
       무궁화 꽃이 피었습니다.
     </template>
-    <template #action>
-      <Button color="light" @click="modalPopup?.close()">닫기</Button>
+    <template #action="{ close }">
+      <Button color="light" @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
@@ -933,43 +924,38 @@ getData()
 
   <Modal
     esc-close
-    ref="modalRight"
     title="오른쪽에서 나오는 모달"
     position="right"
     width="40em"
-    @dispose="isShow.right = false"
     v-model="isShow.right"
     v-if="isShow.right">
     <template #body>
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
-    <template #action>
-      <Button color="light" @click="modalRight?.close()">닫기</Button>
+    <template #action="{ close }">
+      <Button color="light" @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
   </Modal>
 
   <Modal
-    ref="modalLeft"
     title="왼쪽에서 나오는 모달"
     position="left"
     width="250px"
-    @dispose="isShow.left = false"
     v-model="isShow.left"
     v-if="isShow.left">
     <template #body>
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
-    <template #action>
-      <Button color="light" @click="modalLeft?.close()">닫기</Button>
+    <template #action="{ close }">
+      <Button color="light" @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
   </Modal>
 
   <Modal
-    ref="modalBottom"
     title="하단에서 나오는 모달"
     position="bottom"
     @dispose="isShow.bottom = false"
@@ -978,8 +964,8 @@ getData()
     <template #body>
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
-    <template #action>
-      <Button color="light" @click="modalBottom?.close()">닫기</Button>
+    <template #action="{ close }">
+      <Button color="light" @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
@@ -988,10 +974,8 @@ getData()
   <Modal
     screen-cover
     esc-close
-    ref="modalCover"
     title="화면 전체 덮기"
     position="bottom"
-    @dispose="isShow.cover = false"
     v-model="isShow.cover"
     v-if="isShow.cover">
     <template #body>
@@ -1012,8 +996,8 @@ getData()
         </template>
       </Modal>
     </template>
-    <template #action>
-      <Button color="light" @click="modalCover?.close()">닫기</Button>
+    <template #action="{ close }">
+      <Button color="light" @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>

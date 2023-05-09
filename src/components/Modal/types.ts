@@ -1,7 +1,3 @@
-export interface ModalMethods {
-  close: Function
-}
-
 export const modalPosition = {
   popup: 'popup',
   right: 'right',

@@ -184,12 +184,12 @@ import { ref, reactive } from 'vue'
 
 // Bad
 let name = ref<string | null>(null)
-const ary = ref<any[] | null>(null)
+const ary = ref<any | null>(null)
 const obj = reactive<Options | undefined>(undefined)
 
 // Good
 let name = ref<string>('')
-const ary = ref<any[]>([])
+const ary = ref<any>([])
 const obj = reactive<Option>({})
 // or
 const obj = reactive<Option | null>(null)
@@ -267,6 +267,8 @@ const func = (): void => {
   ...
 }
 ```
+> 중요! 함수 선언시 <code>hoisting</code>에 주의 하세요.<br>
+화살표 함수 사용시 선언전에 사용하면 안됩니다.
 
 ### 4.2. 함수를 명확히 구분하여 사용하세요. (void, return)
 * 대부분의 언어에서는 함수에 대해 명확히 정의 하기를 요구합니다.
@@ -324,7 +326,7 @@ const setFamilyName = (): void => {
 
 setFamilyName()
 ```
-* 위와 같이 함수 수행을 종료하고자 <code>return false</code>를 사용하는 것은 아무 의미 없습니다.
+* 위와 같이 함수 수행을 종료하고자 <code>return false</code>를 처리를 하는 것은 의미가 없습니다.
 * 따라서 함수 수행을 종료하고자 할 때는 오직 <code>return</code>으로 종료시켜 주세요.
 > 다행이 Typescript 로 작성 할 경우 해당 방식의 코드는 인정되지 않습니다. 하지만 일반 적인 javascript를 작성 할때도
 위와 같은 사항을 잊어서는 안됩니다.
@@ -370,7 +372,7 @@ const good: number[] = ary.map(item => {
 const ary: ReadonlyArray<number> = [1, 2, 3, 4, 5]
 
 // it's okay
-const okay1: number[] = ary.map((num) => Number(intNum) + ((Number(intNum) / 2) * 0.1))
+const okay1: number[] = ary.map((num) => num + ((num / 2) * 0.1))
 
 // it's okay
 const okay2: number[] = ary.map((num) => {
@@ -498,7 +500,7 @@ const cp = JSON.parse(JSON.stringify(obj)) // it's okay
 const cp = Object.assign({}, obj) // Good
 const cp = { ...obj } // Best
 ```
-* 위와 같이 object 깊은 복사(shallow copy)를 통해 데이터 참조의 고리를 끊을 수 있게 됩니다.
+* 위와 같이 object 깊은 복사(shallow copy)를 통해 메모리 참조의 고리를 끊을 수 있게 됩니다.
 
 ### 5.5. Property undefined
 * 단축구문을 사용하는 경우 간혹 property가 undefined 상태 일수도 있습니다.
@@ -1536,7 +1538,7 @@ interface Props {
   mexLenght?: number
   title: string
   isHide: boolean
-  items?: any[]
+  items?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
