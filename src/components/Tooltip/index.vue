@@ -81,7 +81,7 @@ if (props.top) {
         <div class="title">
           <h5 v-if="props.title">{{ props.title }}</h5>
           <a href="#" @click.stop.prevent="close" v-if="props.btnClose">
-            <span class="material-icons">close</span>
+            <span class="mdi mdi-window-close"></span>
           </a>
         </div>
 

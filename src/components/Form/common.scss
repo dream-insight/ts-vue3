@@ -1,13 +1,23 @@
 @import '@/assets/style/const.scss';
 
+$primary: map-get($theme-colors, 'primary');
+$success: map-get($theme-colors, 'success');
+$info: map-get($theme-colors, 'info');
+$warning: map-get($theme-colors, 'warning');
+$danger: map-get($theme-colors, 'danger');
+$secondary: map-get($theme-colors, 'secondary');
+$dark: map-get($theme-colors, 'dark');
+$light: map-get($theme-colors, 'light');
+
 .options-wrap {
   display: flex;
   justify-content: space-between;
 
   label.input-label {
     padding: 0 6px;
-    font-size: 0.9em;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 400;
+    color: $gray-800;
 
     &.error {
       color: map-get($theme-colors, 'danger');
@@ -15,6 +25,7 @@
 
     .required {
       color: map-get($theme-colors, 'danger');
+      font-weight: 400;
     }
   }
 

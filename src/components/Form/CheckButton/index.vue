@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, withDefaults, onMounted } from 'vue'
-import type { CheckButtonItem, CheckButtonType } from './types'
+import type { CheckButtonColors, CheckButtonItem, CheckButtonType } from './types'
+import { checkButtonColors } from './types'
 import type { RuleFunc } from '../types'
 
 const emit = defineEmits<{
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<{
   // button UI 변경
   button?: boolean
   block?: boolean
+  color?: CheckButtonColors
 }>(), {
   type: 'checkbox',
   all: false,
@@ -32,6 +34,7 @@ const props = withDefaults(defineProps<{
   errorMessage: '',
   button: false,
   block: false,
+  color: checkButtonColors.primary,
 })
 
 let list = ref<CheckButtonItem[]>([])
@@ -160,7 +163,7 @@ defineExpose({
 <template>
   <div :class="['check-button', { button, error: message }]">
     <template v-if="button">
-      <div class="check-button-group">
+      <div :class="['check-button-group', props.color]">
         <template
           :key="`keyword${i}`"
           v-for="({ text, value }, i) in list">
@@ -186,7 +189,7 @@ defineExpose({
         :class="['origin-check-button', { block: props.block }]"
         :key="'check-button-' + i"
         v-for="({ text, value }, i) in list">
-        <label :for="`${name}${i}`">
+        <label :class="[props.color]" :for="`${name}${i}`">
           <input
             type="radio"
             :id="`${name}${i}`"
@@ -209,14 +212,14 @@ defineExpose({
 
           <template v-if="type === 'radio'">
             <Transition name="check-scale" mode="out-in">
-              <i class="material-icons" v-if="props.modelValue === value">radio_button_checked</i>
-              <i class="material-icons" v-else>radio_button_unchecked</i>
+              <i class="mdi mdi-radiobox-marked" v-if="props.modelValue === value"></i>
+              <i class="mdi mdi-radiobox-blank" v-else></i>
             </Transition>
           </template>
           <template v-else>
             <Transition name="check-scale" mode="out-in">
-              <i class="material-icons" v-if="props.modelValue?.includes(value)">check_box</i>
-              <i class="material-icons" v-else>check_box_outline_blank</i>
+              <i class="mdi mdi-checkbox-marked" v-if="props.modelValue?.includes(value)"></i>
+              <i class="mdi mdi-checkbox-blank-outline" v-else></i>
             </Transition>
           </template>
 

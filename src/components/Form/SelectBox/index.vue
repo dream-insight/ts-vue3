@@ -381,7 +381,7 @@ defineExpose({
 
     <div
       ref="SelectBox"
-      :class="['control-wrap', { disabled: props.disabled, 'error': message }]"
+      :class="['control-wrap', { disabled: props.disabled, error: message, active: showOption }]"
       @click="toggleOption">
       <template v-if="props.multiple">
         <div
@@ -430,24 +430,22 @@ defineExpose({
       </template>
 
       <div :class="['arrow', { rotate: showOption }]">
-        <i class="material-icons">expand_more</i>
+        <span class="mdi mdi-chevron-down"></span>
       </div>
 
       <Transition :name="showBottom ? 'options-view-bottom' : 'options-view'">
         <div :class="['option-list', showBottom ? 'show-bottom' : 'show-top']" v-show="showOption">
           <div class="search" @click.stop v-if="props.searchable">
             <div class="search-wrap">
-              <input ref="searchInput" type="text" @keydown="searchText">
-              <span class="material-icons">search</span>
+              <input ref="searchInput" placeholder="검색어 입력" type="text" @keydown="searchText">
+              <span class="mdi mdi-magnify"></span>
             </div>
           </div>
           <ul>
             <li
               @click.stop="selectAll"
               v-if="props.multiple && !props.maxLength">
-              <span class="checkbox material-icons">
-                {{ isSelectAll ? 'check_box' : 'check_box_outline_blank' }}
-              </span>
+              <span :class="['checkbox mdi', isSelectAll ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline']"></span>
               {{ isSelectAll ? '전체 해제' : '전체 선택' }}
             </li>
             <template v-if="optionList.length">
@@ -457,9 +455,7 @@ defineExpose({
                 @click.stop="selectOption(item.value)"
                 v-for="(item, i) in optionList">
                 <template v-if="props.multiple">
-                  <span class="checkbox material-icons">
-                    {{ isOptionSelected(item.value) ? 'check_box' : 'check_box_outline_blank' }}
-                  </span>
+                  <span :class="['checkbox mdi', isOptionSelected(item.value) ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline']"></span>
                 </template>
                 {{ item.text }}
               </li>

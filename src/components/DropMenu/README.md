@@ -4,7 +4,8 @@
 
 1. [사용방법](#1-사용방법)
 2. [Props](#2-props)
-3. [그 외](#3-그-외)
+3. [Slots](#3-그-외)
+4. [그 외](#4-그-외)
 
 ---
 
@@ -52,17 +53,33 @@ app.component('DropMenu', DropMenu)
 
 # 2. Props
 | Name | Type | Default | Description |
-|-------|---- |---------|-------------|
-| items | [DropMenuItem](#31-DropMenuItem) | <code>none</code> | 드롭다운 메뉴 목록 |
-| position? | [DropMenuPosition](#32-DropMenuPosition-with-enum) | <code>bottom</code> | 메뉴가 보여질 위치 |
-| transition? | [DropMenuTransition](#33-DropMenuTransition-with-enum) | <code>slide</code> | 애이메이션 종류 |
+|------|------|---------|-------------|
+| items | [DropMenuItem](#41-DropMenuItem) | <code>none</code> | 드롭다운 메뉴 목록 |
+| position? | [DropMenuPosition](#42-DropMenuPosition-with-enum) | <code>bottom</code> | 메뉴가 보여질 위치 |
+| transition? | [DropMenuTransition](#43-DropMenuTransition-with-enum) | <code>slide</code> | 애이메이션 종류 |
 | width? | number | <code>none</code> | 드롭 메뉴의 넓이를 강제로 지정 |
 
 
 ---
 
-# 3. Types
-## 3.1. DropMenuItem
+# 3. Slots
+
+## 3.1. default
+
+* 버튼, 텍스트 등등 메뉴를 활성화 시키기 위한 외부 컴포넌트 및 테그
+
+### 3.1.1. Props
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| toggle | boolean | <code>false</code> | 드롭메뉴 내부에서 발생하는 메뉴 토글 상태를 전달하는 변수 |
+
+:arrow_up: [항목](#항목)
+
+---
+
+# 4. Types
+## 4.1. DropMenuItem
 ```js
 interface DropMenuItem {
   text: string
@@ -70,7 +87,7 @@ interface DropMenuItem {
 }
 ```
 
-## 3.2. DropMenuPosition with enum
+## 4.2. DropMenuPosition with enum
 ```js
 export const dropMenuPosition = {
   top: 'top',
@@ -82,7 +99,7 @@ export const dropMenuPosition = {
 export type DropMenuPosition = typeof dropMenuPosition[keyof typeof dropMenuPosition]
 ```
 
-## 3.3. DropMenuTransition with enum
+## 4.3. DropMenuTransition with enum
 ```js
 export const dropMenuTransition = {
   slide: 'drop-menu-slide',

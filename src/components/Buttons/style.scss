@@ -1,18 +1,22 @@
 @import '@/assets/style/const.scss';
 
+// $btn-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.25);
+$btn-box-shadow: none;
+
 .btn {
   display: inline-block;
-  box-shadow: $box-shadow;
+  box-shadow: $btn-box-shadow;
   border-radius: $border-radius;
   border: 0;
   padding: 0 1.5em;
   height: 40px;
   transition: background-color 0.2s ease;
+  font-size: 15px;
 
   &.small {
-    padding: 0.9em !important;
-    height: 25px !important;
-    font-size: 0.8em;
+    padding: 0 12px;
+    height: 32px !important;
+    font-size: 14px;
   }
 
   &.block {
@@ -30,27 +34,28 @@
   @each $key, $value in $theme-colors {
     &.#{$key} {
       background-color: $value;
-      @if $key == light {
-        color: #606060;
-      } @else {
-        color: #fff;
-      }
 
-      &:hover {
-        @if $key == light {
-          background-color: darken(#fff, 8);
-        } @else {
-          background-color: lighten($value, 8);
-        }
+      @if $key == light {
+        color: $gray-800;
+      } @else {
+        color: white;
       }
 
       &.disabled {
-        background-color: #b0b0b0;
-        color: #e3e3e3;
+        background-color: lighten($value, 40);
+        color: white;
+      }
 
-        &:hover {
-          background-color: #b0b0b0;
+      &:not(.disabled):hover {
+        @if $key == dark {
+          background-color: lighten($value, 20);
+        } @else {
+          background-color: darken($value, 8);
         }
+      }
+
+      &:not(.disabled):active {
+        background-color: $value !important;
       }
 
       &.outline {
@@ -64,31 +69,16 @@
           color: $value;
         }
 
+        &:active {
+          background-color: white !important;
+        }
+
         &:hover {
           @if $key == light {
-            background-color: rgba(#606060, 0.15);
+            background-color: rgba($gray-800, 0.15);
           } @else {
-            background-color: rgba($value, 0.3);
+            background-color: rgba($value, 0.15);
           }
-        }
-      }
-    }
-  }
-
-  @each $key, $value in $theme-colors {
-    &.#{$key} {
-      background-color: $value;
-      @if $key == light {
-        color: #606060;
-      } @else {
-        color: #fff;
-      }
-
-      &:hover {
-        @if $key == light {
-          background-color: darken(#fff, 8);
-        } @else {
-          background-color: lighten($value, 8);
         }
       }
     }
@@ -116,20 +106,25 @@
   }
 
   i {
-    font-size: 1.2em;
+    transition: transform 0.2s;
+    font-size: 20px;
+
+    &.rotate {
+      transform: rotate(180deg);
+    }
   }
 
   &:not(.icon) {
     &.right {
       i {
-        font-size: 1.5em;
+        font-size: 20px;
         margin-left: 3px;
       }
     }
 
     &.left {
       i {
-        font-size: 1.5em;
+        font-size: 20px;
         margin-right: 3px;
       }
     }

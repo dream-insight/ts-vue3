@@ -1,5 +1,25 @@
+@import '../common.scss';
+
 .switch-wrap {
   display: inline-block;
+
+  @each $color in $colors {
+    &.#{$color} {
+      i {
+        color: map-get($theme-colors, $color);
+      }
+
+      input[type=checkbox]:checked + span {
+        border: 2px solid map-get($theme-colors, $color);
+        background: map-get($theme-colors, $color);
+      }
+
+      input[type=checkbox]:checked + span:hover {
+        border: 2px solid map-get($theme-colors, $color);
+        background: map-get($theme-colors, $color);
+      }
+    }
+  }
 
   .switch {
     position: relative;
@@ -13,7 +33,6 @@
       align-items: center;
 
       i {
-        color: #1867c0;
         margin-right: 3px;
       }
     }
@@ -50,20 +69,10 @@
       left: 0;
       width: 27px;
       height: 27px;
-      background: #fff;
+      background: $white;
       border-radius: 100%;
       content: '';
       transition: all 0.3s;
-    }
-
-    input[type=checkbox]:checked + span {
-      border: 2px solid #64B5F6;
-      background: #64B5F6;
-    }
-
-    input[type=checkbox]:checked + span:hover {
-      border: 2px solid #4490cf;
-      background: #4490cf;
     }
 
     input[type=checkbox]:checked + span:after {
@@ -98,7 +107,7 @@
     padding: 0 !important;
     margin-bottom: 0 !important;
     border: 0 !important;
-    color: #ff5252;
+    color: $danger;
     text-align: left !important;
 
     &.error {

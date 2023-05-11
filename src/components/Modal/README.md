@@ -50,7 +50,7 @@ let isShow = ref<boolean>(false)
 |------|------|---------|-------------|
 | modelValue | boolean | <code>false</code> | 모달을 열고 닫습니다. |
 | title | string | <code>none</code> | 모달 제목을 |
-| position? | [ModalPosition](#31-modalposition-with-enum) | <code>none</code> | 모달 제목을 |
+| position? | [ModalPosition](#41-modalposition-with-enum) | <code>none</code> | 모달 제목을 |
 | escClose? | boolean | <code>false</code> | ESC 키로 모달창을 닫을지 여부 |
 | width? | string | <code>none</code> | 모달의 고정 넓이를 지정합니다, css 크기 단위 필수 |
 | screenCover? | boolean | <code>false</code> | 모달이 전체 화면을 덮을지 여부, ModalPosition.popup일때 사용 불가 |
@@ -60,9 +60,30 @@ let isShow = ref<boolean>(false)
 
 ---
 
-# 3. Types
+# 3. Slots
 
-## 3.1 ModalPosition with Enum
+## 3.1. body
+
+* 주요 컨텐츠를 표시
+
+## 3.2. action
+
+* 버튼 등을 나열하여 각종 기능을 수행 할 수 있도록 나눠 놓은 섹션
+
+### 3.2.1. Props
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| close | Function(callback): void | null | 모달을 닫기 위해 전달되는 함수, 창을 닫기전 수행해야 할 스크립트를 callback으로 전달하여 실행 가능 |
+
+
+:arrow_up: [항목](#항목)
+
+---
+
+# 4. Types
+
+## 4.1 ModalPosition with Enum
 ```js
 export const modalPosition = {
   popup: 'popup',
@@ -74,7 +95,7 @@ export const modalPosition = {
 export type ModalPosition = typeof modalPosition[keyof typeof modalPosition]
 ```
 
-## 3.2 ModalTransition with Enum
+## 4.2 ModalTransition with Enum
 ```js
 export const modalTransition = {
   popup: 'modal-scale',
@@ -85,27 +106,6 @@ export const modalTransition = {
 
 export type ModalTransition = typeof modalTransition[keyof typeof modalTransition]
 ```
-
-:arrow_up: [항목](#항목)
-
----
-
-# 4. Slots
-
-## 4.1. body
-
-* 주요 컨텐츠를 표시
-
-## 4.2. action
-
-* 버튼 등을 나열하여 각종 기능을 수행 할 수 있도록 나눠 놓은 섹션
-
-### 4.2.1. Props
-
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| close | Function(callback): void | null | 모달을 닫기 위해 전달되는 함수, 창을 닫기전 수행해야 할 스크립트를 callback으로 전달하여 실행 가능 |
-
 
 :arrow_up: [항목](#항목)
 

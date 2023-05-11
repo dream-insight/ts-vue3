@@ -90,8 +90,8 @@ onUnmounted(() => {
 
 <template>
   <div class="select-month">
-    <i class="material-icons" @click="changeMonth(-12)">keyboard_double_arrow_left</i>
-    <i class="material-icons" @click="changeMonth(-1)">keyboard_arrow_left</i>
+    <i class="mdi mdi-chevron-double-left" @click="changeMonth(-12)"></i>
+    <i class="mdi mdi-chevron-left" @click="changeMonth(-1)"></i>
 
     <span ref="YearSelector" @click="toggleSelector()">
       {{ year }}년
@@ -118,7 +118,7 @@ onUnmounted(() => {
       />
     </span>
 
-    <i class="material-icons" @click="changeMonth(1)">keyboard_arrow_right</i>
-    <i class="material-icons" @click="changeMonth(12)">keyboard_double_arrow_right</i>
+    <i class="mdi mdi-chevron-right" @click="changeMonth(1)"></i>
+    <i class="mdi mdi-chevron-double-right" @click="changeMonth(12)"></i>
   </div>
 </template>

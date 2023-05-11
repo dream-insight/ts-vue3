@@ -25,6 +25,8 @@ export interface TextFieldProps {
   isCounting?: boolean
   required?: boolean
   hideMessage?: boolean
+  icon?: string
+  iconLeft?: boolean
 }
 
 export interface TextFieldEmits {
@@ -38,18 +40,10 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   type: 'text',
   label: '',
   placeholder: '',
-  block: false,
   validate: (): RuleFunc[] => [],
   blurValidate: true,
   errorMessage: '',
   maxLength: 0,
-  multiline: false,
-  disabled: false,
-  readonly: false,
-  autofocus: false,
-  isCounting: false,
-  required: false,
-  hideMessage: false,
 })
 
 let isValidate = ref<boolean>(true)
@@ -106,6 +100,13 @@ const wrapperStyle = computed<StyleValue>(() => ['input-wrap', {
   block: props.block
 }])
 const labelStyle = computed<StyleValue>(() => ['input-label', { error: !isValidate.value }])
+const inputStyleClass = computed<StyleValue>(() => [
+  {
+    'error': message.value,
+    'left-space': props.icon && props.iconLeft,
+    'right-space': props.icon && !props.iconLeft,
+  }
+])
 
 
 const updateValue = (evt: Event): void => {
@@ -289,16 +290,19 @@ defineExpose({
       <input
         ref="input"
         :type="props.type"
-        :class="{ 'error': message }"
+        :class="inputStyleClass"
         :style="[{ width: width ? `${props.width}px` : '' }]"
         :placeholder="props.placeholder"
         :value="props.disabled ? '' : props.modelValue"
         :disabled="props.disabled"
         :readonly="props.readonly"
-        :maxlength="props.maxLength"
+        :maxlength="props.maxLength > 0 ? props.maxLength : ''"
         @blur="blurCheck"
         @input="updateValue"
       />
+      <template v-if="props.icon">
+        <span :class="['mdi', props.icon, { left: props.iconLeft }]"></span>
+      </template>
       <slot></slot>
     </div>
 

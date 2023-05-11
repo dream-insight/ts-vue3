@@ -119,8 +119,9 @@ const setEvents = (): void => {
             v-show="isShow">
             <div class="modal-header">
               <span>{{ props.title }}</span>
+
               <a href="#" class="close" @click.prevent="close()">
-                <span class="material-icons">close</span>
+                <span class="mdi mdi-window-close"></span>
               </a>
             </div>
             <div class="modal-body">

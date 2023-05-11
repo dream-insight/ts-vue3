@@ -28,7 +28,7 @@ onMounted(() => {
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement
 
-    if (!dropMenu.value?.contains(target)) {
+    if (!dropMenu.value!.contains(target)) {
       isShow.value = false
     }
   })
@@ -37,7 +37,7 @@ onMounted(() => {
 
 <template>
   <div ref="dropMenu" class="drop-menu" @click="toggle">
-    <slot></slot>
+    <slot name="default" :toggle="isShow"></slot>
 
     <Transition :name="transitionName">
       <ul

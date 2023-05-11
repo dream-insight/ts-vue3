@@ -21,7 +21,7 @@
   }
 
   &.error input[type=text] {
-    border: 1px solid #ff5252;
+    border: 1px solid map-get($theme-colors, 'danger');
   }
 
   input[type=text] {
@@ -31,7 +31,7 @@
 
   .picker-popup {
     position: absolute;
-    border-radius: 3px;
+    // border-radius: 3px;
     box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.3);
     background: #fff;
     z-index: 100;
@@ -40,54 +40,56 @@
 
     .search-date {
       padding: 10px;
-      border-bottom: 1px solid #dadada;
+      border-bottom: 1px solid $gray-300;
       text-align: left;
 
       a {
         display: inline-block;
         text-decoration: none;
-        border: 1px solid rgb(200, 200, 200);
+        border: 1px solid $gray-300;
         font-size: 11px;
         padding: 0 12px;
         line-height: 24px;
         color: rgba(0, 0, 0, 0.5);
-        border-radius: 3px;
+        // border-radius: 3px;
 
         & + a {
           margin-left: 3px;
         }
 
         &.active {
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: $gray-500;
           color: #fff;
         }
       }
     }
 
     .start-end-text {
-      line-height: 30px;
-      font-size: 14px;
-      font-weight: 700;
+      line-height: 45px;
+      font-size: 15px;
+      font-weight: 400;
       text-align: center;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid $gray-300;
       color: #444;
+    }
+
+    &.single .calendar {
+      height: 284px;
     }
 
     .picker-wrap {
       .calendar-inner {
-        width: 100%;
         text-align: center;
         font-size: 0;
       }
 
       .calendar {
         display: inline-block;
-        width: 240px;
         box-sizing: border-box;
         vertical-align: top;
 
         &.end_calendar {
-          border-left: 1px solid #eee;
+          border-left: 1px solid $gray-300;
         }
       }
 
@@ -116,7 +118,7 @@
           text-align: center;
           background-color: teal;
           color: #fff !important;
-          border-radius: 5px;
+          // border-radius: 5px;
         }
       }
 
@@ -128,7 +130,8 @@
         ul {
           display: table;
           width: 100%;
-          font-size: 13px;
+          font-size: 14px;
+          font-weight: 400;
           margin: 0;
           padding-left: 0;
 
@@ -142,7 +145,7 @@
 
             &.beforeMonth,
             &.afterMonth {
-              color: #aaa !important;
+              color: $gray-500 !important;
             }
 
             &.today {
@@ -160,7 +163,7 @@
             }
 
             &.disabled {
-              color: #aaa !important;
+              color: $gray-300 !important;
             }
           }
 
@@ -181,23 +184,22 @@
           }
 
           li:first-child {
-            color: #ff5253;
+            color: map-get($theme-colors, 'danger');
           }
 
           li:last-child {
-            color: #425cf4;
+            color: map-get($theme-colors, 'primary');
           }
 
           &:first-child li {
-            font-weight: 700;
-            color: #222;
+            color: $gray-500;
           }
         }
       }
 
       .btn-area {
         padding: 10px;
-        border-top: 1px solid #dadada;
+        border-top: 1px solid $gray-300;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -206,55 +208,28 @@
           font-size: 0.9em;
 
           &.selected-error {
-            color: red;
+            color: map-get($theme-colors, 'danger');
           }
         }
 
         a {
           display: inline-block;
           text-decoration: none;
-          border: 1px solid rgb(138, 138, 138);
+          border: 1px solid $gray-300;
           font-size: 14px;
           padding: 0 15px;
-          line-height: 28px;
-          color: rgb(101, 101, 101);
-          border-radius: 3px;
+          line-height: 32px;
+          color: $gray-800;
+          // border-radius: 3px;
 
           & + a {
             margin-left: 5px;
           }
 
           &.okay {
-            background-color: rgb(138, 138, 138);
+            border: none;
+            background-color: map-get($theme-colors, 'primary');
             color: #fff;
-          }
-        }
-      }
-    }
-
-    &.single {
-      width: 230px;
-
-      .picker-wrap .calendar {
-        width: 210px;
-      }
-    }
-
-    &.singleFull {
-      width: 100%;
-
-      .picker-wrap {
-        .calendar {
-          width: 189px;
-        }
-
-        .select-calendar {
-          width: 189px;
-          margin-bottom: 20px;
-
-          ul li {
-            width: 27px;
-            line-height: 27px;
           }
         }
       }
@@ -272,8 +247,8 @@
 
   .wrap label {
     padding: 0 6px;
-    font-size: 0.9em;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 400;
     background-color: #fff;
 
     &.error {
@@ -287,7 +262,7 @@
 
   .picker-date-text {
     width: 100%;
-    border: 1px solid #b3b3b3;
+    border: 1px solid $gray-300;
     border-radius: $border-radius;
     height: 40px;
     padding: 10px 15px;
@@ -304,6 +279,7 @@
       margin: 0;
       text-align: center;
       background-color: transparent;
+      color: $gray-800;
 
       &:focus {
         outline: none;
@@ -311,10 +287,14 @@
     }
 
     i {
-      color: rgb(143, 143, 143);
+      color: $gray-800;
 
       & + input {
         margin-left: 5px;
+      }
+
+      &::before {
+        font-size: 22px;
       }
     }
 
@@ -340,8 +320,9 @@
   }
 
   .select-calendar-wrap {
+    width: 300px;
     min-height: 210px !important;
-    margin-bottom: 10px;
+    padding: 0 30px 30px 30px;
   }
 }
 
@@ -403,14 +384,16 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin: 15px auto;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 5px;
   width: 210px;
-  height: 30px;
   font-size: 14px;
 
   i {
     cursor: pointer;
-    font-size: 1.6em;
+    font-weight: 400;
+    font-size: 18px;
   }
 
   span {
@@ -431,7 +414,7 @@
   background-color: #555;
   padding: 8px 4px 8px 8px;
   margin-top: 5px;
-  border-radius: 3px;
+  // border-radius: 3px;
 
   &.month {
     left: calc(-50% + 7px);
@@ -461,22 +444,22 @@
       }
       &::-webkit-scrollbar-thumb {
         background-color: rgb(7, 78, 158);
-        border-radius: 2px;
+        // border-radius: 2px;
       }
       &::-webkit-scrollbar-track {
         background-color: #888;
-        border-radius: 2px;
+        // border-radius: 2px;
       }
 
       li {
         padding: 5px 8px;
         color: #ccc;
-        border-radius: 3px;
+        // border-radius: 3px;
         margin-right: 3px;
 
         &.active,
         &:hover {
-          background-color: #777;
+          background-color: $gray-100;
         }
       }
     }

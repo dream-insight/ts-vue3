@@ -1,7 +1,5 @@
 @import '../common.scss';
 
-$primary: map-get($theme-colors, 'primary');
-
 .check-button {
   .origin-check-button {
     position: relative;
@@ -21,9 +19,14 @@ $primary: map-get($theme-colors, 'primary');
       font-size: 1em;
 
       i {
-        color: map-get($theme-colors, 'primary');
         font-size: 1.2em;
         margin-right: 3px;
+      }
+
+      @each $color in $colors {
+        &.#{$color} i {
+          color: map-get($theme-colors, $color);
+        }
       }
 
       input {
@@ -41,6 +44,56 @@ $primary: map-get($theme-colors, 'primary');
   label {
     font-size: 1em;
     font-weight: 400;
+  }
+
+  .check-button-group {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    // border-radius: 5px;
+    box-shadow: $box-shadow;
+
+    @each $color in $colors {
+      &.#{$color} {
+        border: 1px solid map-get($theme-colors, $color);
+
+        label {
+          border-right: 1px solid lighten(map-get($theme-colors, $color), 10);
+          color: map-get($theme-colors, $color);
+
+          &:hover {
+            background-color: lighten(map-get($theme-colors, $color), 40);
+          }
+        }
+
+        input:checked + label {
+          background-color: map-get($theme-colors, $color);
+        }
+      }
+    }
+
+    input {
+      position: absolute;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    label {
+      font-size: 0.9em;
+      display: inline-block;
+      padding: 0 17px;
+      height: 35px;
+      line-height: 35px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+
+      &.last {
+        border-right: 0 !important;
+      }
+    }
+
+    input:checked + label {
+      color: #fff;
+    }
   }
 
   .description {
@@ -64,44 +117,5 @@ $primary: map-get($theme-colors, 'primary');
   .check-scale-enter-active,
   .check-scale-leave-active {
     transition: all 0.1s ease;
-  }
-}
-
-.check-button-group {
-  display: inline-block;
-  position: relative;
-  border: 1px solid #4e8acf;
-  overflow: hidden;
-  border-radius: 5px;
-  box-shadow: $box-shadow;
-
-  input {
-    position: absolute;
-    clip: rect(0, 0, 0, 0);
-  }
-
-  label {
-    font-size: 0.9em;
-    display: inline-block;
-    padding: 0 17px;
-    height: 35px;
-    line-height: 35px;
-    color: $primary;
-    border-right: 1px solid lighten($primary, 10);
-    font-weight: 500;
-    transition: all 0.2s ease;
-
-    &.last {
-      border-right: 0;
-    }
-
-    &:hover {
-      background-color: lighten($primary, 50);
-    }
-  }
-
-  input:checked + label {
-    background-color: $primary;
-    color: #fff;
   }
 }

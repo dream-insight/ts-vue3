@@ -56,50 +56,52 @@
   text-align: right;
 }
 
+$space: 4px;
+
 // spacing
 @for $i from 1 to 10 {
   .mt-#{$i} {
-    margin-top: $i * 0.3em;
+    margin-top: $i * $space;
   }
   .mb-#{$i} {
-    margin-bottom: $i * 0.3em;
+    margin-bottom: $i * $space;
   }
   .ml-#{$i} {
-    margin-left: $i * 0.3em;
+    margin-left: $i * $space;
   }
   .mr-#{$i} {
-    margin-right: $i * 0.3em;
+    margin-right: $i * $space;
   }
   .mx-#{$i} {
-    margin: 0 ($i * 0.3em);
+    margin: 0 ($i * $space);
   }
   .my-#{$i} {
-    margin: ($i * 0.3em) 0;
+    margin: ($i * $space) 0;
   }
   .ma-#{$i} {
-    margin: $i * 0.3em;
+    margin: $i * $space;
   }
 
   .pt-#{$i} {
-    padding-top: $i * 0.3em;
+    padding-top: $i * $space;
   }
   .pb-#{$i} {
-    padding-bottom: $i * 0.3em;
+    padding-bottom: $i * $space;
   }
   .pl-#{$i} {
-    padding-left: $i * 0.3em;
+    padding-left: $i * $space;
   }
   .pr-#{$i} {
-    padding-right: $i * 0.3em;
+    padding-right: $i * $space;
   }
   .px-#{$i} {
-    padding: 0 ($i * 0.3em);
+    padding: 0 ($i * $space);
   }
   .py-#{$i} {
-    padding: ($i * 0.3em) 0;
+    padding: ($i * $space) 0;
   }
   .pa-#{$i} {
-    padding: $i * 0.3em;
+    padding: $i * $space;
   }
 }
 

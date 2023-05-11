@@ -43,7 +43,7 @@ $transitionDirection: top, right, bottom, left;
     margin: 0;
     list-style: none;
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.15);
-    border-radius: 5px;
+    // border-radius: 5px;
 
     &.top {
       transform-origin: bottom center;
@@ -72,7 +72,7 @@ $transitionDirection: top, right, bottom, left;
       margin: 2px;
 
       a {
-        border-radius: 5px;
+        // border-radius: 5px;
         color: rgba(0, 0, 0, 0.7);
         display: block;
         padding: 10px;

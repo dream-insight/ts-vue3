@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<{
   small?: boolean
   outline?: boolean
   tag?: string
+  dropMenuToggle?: boolean
 }>(), {
   href: '#',
   text: false,
@@ -32,21 +33,22 @@ const props = withDefaults(defineProps<{
   iconRight: false,
   small: false,
   outline: false,
-  tag: 'a'
+  tag: 'a',
+  dropMenuToggle: false,
 })
 
 const buttonStyle = computed<any>(() => {
   return [
     'btn',
-    props.class,
     props.onlyIcon ? `icon ${props.color}` : `${props.color}`,
     props.icon ? (props.iconRight ? 'right' : 'left') : '',
     {
-      disabled: props.disabled,
       small: props.small && !props.icon,
-      block: !props.small && props.block,
       outline: props.outline,
+      disabled: props.disabled,
+      block: !props.small && props.block,
     },
+    props.class,
   ]
 })
 
@@ -87,9 +89,9 @@ const WrapperTag = computed<VNode>(() => h(props.tag, options))
         </template>
         <template v-else>
           <template v-if="props.icon">
-            <i class="material-icons" v-if="props.icon && !props.iconRight">{{ props.icon }}</i>
+            <i :class="['mdi', props.icon, { rotate: props.dropMenuToggle }]" v-if="props.icon && !props.iconRight"></i>
             <slot></slot>
-            <i class="material-icons" v-if="props.icon && props.iconRight">{{ props.icon }}</i>
+            <i :class="['mdi', props.icon, { rotate: props.dropMenuToggle }]" v-if="props.icon && props.iconRight"></i>
           </template>
           <template v-else>
             <slot></slot>
@@ -97,7 +99,7 @@ const WrapperTag = computed<VNode>(() => h(props.tag, options))
         </template>
       </template>
       <template v-else>
-        <i class="material-icons">{{ props.icon }}</i>
+        <i :class="['mdi', props.icon]"></i>
       </template>
     </div>
   </WrapperTag>

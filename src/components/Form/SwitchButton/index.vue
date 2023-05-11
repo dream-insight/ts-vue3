@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed, withDefaults, onMounted } from 'vue'
+import { switchButtonColors } from './types'
+import type { SwitchButtonColors } from './types'
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string | boolean): void
@@ -16,6 +18,7 @@ const props = withDefaults(defineProps<{
   placeholder?: string
   readonly?: boolean
   checkbox?: boolean
+  color?: SwitchButtonColors
 }>(), {
   small: false,
   label: (): string[] => ['미설정', '설정'],
@@ -25,6 +28,7 @@ const props = withDefaults(defineProps<{
   falseValue: false,
   readonly: false,
   checkbox: false,
+  color: switchButtonColors.primary,
 })
 
 let onError = ref<boolean>(false)
@@ -111,7 +115,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="switch-wrap">
+  <div :class="['switch-wrap', props.color]">
     <label
       :class="['switch', { small, checkbox: props.checkbox, error: onError }]">
       <input

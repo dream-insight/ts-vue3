@@ -790,23 +790,23 @@ defineExpose({
 
       <div :class="['picker-date-text', { error: message, disabled: props.disabled }]">
         <template v-if="range">
-            <input
-              readonly
-              type="text"
-              :class="{ 'error': message }"
-              :placeholder="holderText[0]"
-              :value="props.disabled ? '' : modelValue[0]"
-            />
-            <span class="input-group-text">~</span>
-            <input
-              readonly
-              type="text"
-              :class="{ 'error': message }"
-              :placeholder="holderText[1]"
-              :value="props.disabled ? '' : modelValue[1]"
-            />
+          <input
+            readonly
+            type="text"
+            :class="{ 'error': message }"
+            :placeholder="holderText[0]"
+            :value="props.disabled ? '' : modelValue[0]"
+          />
+          <span class="input-group-text">~</span>
+          <input
+            readonly
+            type="text"
+            :class="{ 'error': message }"
+            :placeholder="holderText[1]"
+            :value="props.disabled ? '' : modelValue[1]"
+          />
 
-            <i class="material-icons">date_range</i>
+          <i class="mdi mdi-calendar-month"></i>
         </template>
 
         <template v-else>
@@ -817,7 +817,7 @@ defineExpose({
             :placeholder="holderText[0]"
             :value="props.disabled ? '' : modelValue"
           />
-          <i class="material-icons">calendar_month</i>
+          <i class="mdi mdi-calendar-month"></i>
         </template>
       </div>
 
@@ -929,7 +929,7 @@ defineExpose({
               </div>
               <div>
                 <a href="#" class="cancel" @click.prevent="cancel">취소</a>
-                <a href="#" class="okay" @click.prevent="accept">확인</a>
+                <a href="#" class="okay" @click.prevent="accept">적용</a>
               </div>
             </div>
           </div>

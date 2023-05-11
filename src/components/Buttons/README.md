@@ -91,6 +91,7 @@ app.component('Button', Button)
 | loading? | boolean | <code>false</code> | 버튼에 스피너를 표시하고 사용 불가 상태로 변경 |
 | outline? | boolean | <code>false</code> | 배경색을 제거하고 외곽선을 표시 |
 | tag? | string | <code>a</code> | 버튼 태그 설정 |
+| dropMenuToggle? | boolean | <code>false</code> | 드롭메뉴에서 전달된 toggle 상태를 기반으로 icon의 transition 활성화 |
 
 ---
 

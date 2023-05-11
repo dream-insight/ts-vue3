@@ -92,6 +92,7 @@ for (let value: number = 1; value <= 10; value++) {
 | validate? | Function[] | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열여 입력 |
 | errorMessage? | string | <code>''</code> | 강제로 에러 메시지를 출력, 유효성 검사에서 통과 하지 못 함 |
 | button? | boolean | <code>false</code> | checkbox, radio 폼이 버튼 형식으로 디자인 변경 |
+| color? | [CheckButtonColors](#133-checkbuttoncolors-with-enum) | <code>primary</code> | checkbox, radio 색상 |
 
 ### 1.3. Types
 
@@ -111,6 +112,21 @@ export interface CheckButtonItem {
   text: string
   value: string
 }
+```
+
+### 1.3.3. CheckButtonColors with Enum
+```typescript
+export const checkButtonColors = {
+  primary: 'primary',
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  danger: 'danger',
+  secondary: 'secondary',
+  dark: 'dark',
+} as const
+
+export type CheckButtonColors = typeof checkButtonColors[keyof typeof checkButtonColors]
 ```
 
 :arrow_up: [목차](#form-validation-components)
@@ -177,6 +193,8 @@ const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 | required? | boolean | <code>false</code> | 아스트로피(*) 표시 (필수 여부 표시) validate 여부와 상관없이 표시 가능 |
 | disabled? | boolean | <code>false</code> | 사용 불가 처리 |
 | hideMessage? | boolean | <code>false</code> | 하단에 표시되는 메시지를 표시 안함 |
+| icon? | string | <code>none</code> | 오른쪽에 아이콘 표시 Google Material Icon, multiline 적용 안됨 |
+| iconLeft? | boolean | <code>false</code> | 아이콘의 위치를 왼쪽으로 변경, multiline 적용 안됨 |
 | pattern? | [TextPatternCase](#232-textpatterncase) | <code>none</code> | value 값에 대해 정규식 검사 실행 후 매칭되지 않을 경우 validation 오류 처리 |
 | | | eng | 영문만 입력 가능 |
 | | | engnum | 영문, 숫자만 입력 가능 |
@@ -373,6 +391,7 @@ let label = ref<string[]>(['동의 안함', '동의'])
       validate
       true-value="T"
       false-value="F"
+      color="success"
       :label="label"
       v-model="boolValue"
     />
@@ -392,6 +411,25 @@ let label = ref<string[]>(['동의 안함', '동의'])
 | falseValue? | string | <code>''</code> | 버튼을 OFF 상태의 값을 지정합니다. |
 | readonly? | boolean | <code>false</code> | 버튼 수정 불가 옵션 |
 | checkbox? | boolean | <code>false</code> | 스위치 버튼을 checkbox 형태로 변경한다 |
+| color? | [SwitchButtonColors](#631-swtichbuttoncolors-with-enum) | <code>primary</code> | 스위치 버튼을 색상 |
+
+### 6.3. Types
+
+#### 6.3.1. SwtichButtonColors with Enum
+
+```typescript
+export const switchButtonColors = {
+  primary: 'primary',
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  danger: 'danger',
+  secondary: 'secondary',
+  dark: 'dark',
+} as const
+
+export type SwitchButtonColors = typeof switchButtonColors[keyof typeof switchButtonColors]
+```
 
 :arrow_up: [목차](#form-validation-components)
 
@@ -691,3 +729,6 @@ export interface OptionItemGroup {
   - maxRange 옵션 추가
   - range 옵션 설정시 시작, 종료일 이전, 이후 선택 불가 기능 추가
 <br>: 2023.05.04 김종윤 수석매니저
+
+* TextField icon, iconLeft props 추가: 2023.05.09 김종윤 수석매니저
+* CheckButton, SwitchButton color props 추가: 2023.05.11 김종윤 수석매니저
