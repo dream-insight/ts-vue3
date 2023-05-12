@@ -1,4 +1,4 @@
-@import '../common.scss';
+@import '../../common.scss';
 
 .date-picker {
   position: relative;
@@ -9,10 +9,6 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-
-  &.with-label {
-    margin-top: 0.3em;
-  }
 
   .icon-cal {
     font-size: 20px;
@@ -47,10 +43,10 @@
         display: inline-block;
         text-decoration: none;
         border: 1px solid $gray-300;
-        font-size: 11px;
+        font-size: 14px;
         padding: 0 12px;
-        line-height: 24px;
-        color: rgba(0, 0, 0, 0.5);
+        line-height: 30px;
+        color: $gray-800;
         // border-radius: 3px;
 
         & + a {
@@ -222,14 +218,19 @@
           color: $gray-800;
           // border-radius: 3px;
 
-          & + a {
-            margin-left: 5px;
+          &:hover {
+            background-color: $gray-100;
           }
 
           &.okay {
             border: none;
             background-color: map-get($theme-colors, 'primary');
             color: #fff;
+            margin-left: 5px;
+
+            &:hover {
+              background-color: darken(map-get($theme-colors, 'primary'), 10);
+            }
           }
         }
       }
@@ -243,21 +244,6 @@
   &.show .picker-date-text:after {
     transform: rotate(-180deg);
     transition: all 0.5s;
-  }
-
-  .wrap label {
-    padding: 0 6px;
-    font-size: 13px;
-    font-weight: 400;
-    background-color: #fff;
-
-    &.error {
-      color: map-get($theme-colors, 'danger');
-    }
-
-    .required {
-      color: red;
-    }
   }
 
   .picker-date-text {
@@ -287,6 +273,7 @@
     }
 
     i {
+      margin-top: 2px;
       color: $gray-800;
 
       & + input {
@@ -294,7 +281,7 @@
       }
 
       &::before {
-        font-size: 22px;
+        font-size: 23px;
       }
     }
 
@@ -321,8 +308,9 @@
 
   .select-calendar-wrap {
     width: 300px;
+    height: 240px;
     min-height: 210px !important;
-    padding: 0 30px 30px 30px;
+    padding: 0 30px;
   }
 }
 
@@ -439,16 +427,17 @@
       padding: 0;
       margin: 0;
       list-style: none;
+
       &::-webkit-scrollbar {
         width: 4px
       }
       &::-webkit-scrollbar-thumb {
         background-color: rgb(7, 78, 158);
-        // border-radius: 2px;
+        border-radius: 2px;
       }
       &::-webkit-scrollbar-track {
         background-color: #888;
-        // border-radius: 2px;
+        border-radius: 2px;
       }
 
       li {

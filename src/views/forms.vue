@@ -24,11 +24,14 @@ let date2 = ref<string>('')
 let rangeDate = ref<string[]>(['', ''])
 let checked = ref<string[]>([])
 let radio = ref<string>('')
+let checked2 = ref<string[]>(['1', '3', '5'])
+let radio2 = ref<string>('3')
 let btnChecked = ref<string[]>([])
+let btnChecked2 = ref<string[]>(['1', '3', '4'])
 let switchYN = ref<string>('N')
 let switchBool = ref<boolean>(false)
 
-const buttonColors: string[] = ['primary', 'success', 'info', 'warning', 'danger', 'dark', 'secondary', 'light'];
+const buttonColors: string[] = ['primary', 'success', 'info', 'warning', 'danger', 'dark', 'secondary'];
 
 const opt: OptionItem[] = [
   { text: '딸기', value: '1' },
@@ -64,24 +67,48 @@ const rule: Rules = {
 }
 
 const dropMenuItem: DropMenuItem[] = [
-  { text: '원신', action: () => {
-    console.log('메뉴 1 click')
-  } },
-  { text: '바이오하자드', action: () => {
-    console.log('메뉴 2 click')
-  } },
-  { text: '갓 오브 워', action: () => {
-    console.log('메뉴 3 click')
-  } },
-  { text: '스파이더맨', action: () => {
-    console.log('메뉴 4 click')
-  } },
-  { text: '호라이즌: 포비든 웨스트', action: () => {
-    console.log('메뉴 5 click')
-  } },
-  { text: '레대 데드 리댐션', action: () => {
-    console.log('메뉴 6 click')
-  } },
+  {
+    text: '원신',
+    icon: 'circle-slice-3',
+    action: () => {
+      console.log('메뉴 1 click')
+    }
+  },
+  {
+    text: '바이오하자드',
+    icon: 'medication',
+    action: () => {
+      console.log('메뉴 2 click')
+    }
+  },
+  {
+    text: '갓 오브 워',
+    icon: 'account-alert',
+    action: () => {
+      console.log('메뉴 3 click')
+    }
+  },
+  {
+    text: '스파이더맨',
+    icon: 'spider',
+    action: () => {
+      console.log('메뉴 4 click')
+    }
+  },
+  {
+    text: '호라이즌: 포비든 웨스트',
+    icon: 'horizontal-rotate-clockwise',
+    action: () => {
+      console.log('메뉴 5 click')
+    }
+  },
+  {
+    text: '레대 데드 리댐션',
+    icon: 'coffin',
+    action: () => {
+      console.log('메뉴 6 click')
+    }
+  },
 ]
 
 const MessageBoxAlert = (flag?: string): void => {
@@ -312,6 +339,7 @@ getData()
             <div class="col">
               <TextField
                 block
+                disabled
                 icon="mdi-magnify"
                 label="오른쪽 아이콘 표시"
                 placeholder="오른쪽에 아이콘이 표시 됩니다."
@@ -479,8 +507,20 @@ getData()
               <SelectBox
                 block
                 disabled
+                in-label
                 label="사용불가 처리"
                 placeholder="이 컴포넌트는 disabled 상태입니다."
+                :options="opt"
+                v-model="selectMulti"
+              />
+            </div>
+            <div class="col">
+              <SelectBox
+                block
+                multiple
+                in-label
+                label="안쪽에 라벨 표시"
+                placeholder="inline label 표시"
                 :options="opt"
                 v-model="selectMulti"
               />
@@ -587,6 +627,7 @@ getData()
             </div>
             <div class="col">
               <CheckButton
+                block
                 type="radio"
                 color="success"
                 name="checkbutton2"
@@ -596,15 +637,50 @@ getData()
               />
             </div>
           </div>
+          <div class="row mt-4">
+            <div class="col">
+              <CheckButton
+                disabled
+                name="checkbutton3"
+                color="info"
+                :max-length="3"
+                :validate="rule.check"
+                :items="items"
+                v-model="checked2"
+              />
+            </div>
+            <div class="col">
+              <CheckButton
+                disabled
+                type="radio"
+                color="secondary"
+                name="checkbutton4"
+                :validate="rule.select"
+                :items="items"
+                v-model="radio2"
+              />
+            </div>
+          </div>
           <div class="row mt-3">
             <div class="col">
               <CheckButton
                 button
                 color="warning"
-                name="checkbutton3"
+                name="checkbutton5"
                 :validate="rule.check"
                 :items="items"
                 v-model="btnChecked"
+              />
+            </div>
+            <div class="col">
+              <CheckButton
+                button
+                disabled
+                color="danger"
+                name="checkbutton6"
+                :validate="rule.check"
+                :items="items"
+                v-model="btnChecked2"
               />
             </div>
           </div>
@@ -668,20 +744,29 @@ getData()
           <div class="col" v-for="color in buttonColors">
             <Button block :color="color">color: {{ color }}</Button>
           </div>
+          <div class="col">
+            <Button block outline>outline</Button>
+          </div>
         </div>
         <div class="row mt-3">
           <div class="col" v-for="color in buttonColors">
             <Button block disabled :color="color">color: {{ color }}</Button>
           </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col" v-for="color in buttonColors">
-            <Button block outline :color="color">color: {{ color }}</Button>
+          <div class="col">
+            <Button block disabled outline>outline</Button>
           </div>
         </div>
         <div class="row mt-3">
           <div class="col" v-for="color in buttonColors">
             <Button small :color="color">color: {{ color }}</Button>
+          </div>
+          <div class="col">
+            <Button small outline>outline</Button>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col" v-for="(color, index) in buttonColors">
+            <Button text :icon-right="index % 2 !== 0" icon="mdi-pencil" :color="color">color: {{ color }}</Button>
           </div>
         </div>
         <div class="row mt-3">
@@ -692,18 +777,31 @@ getData()
             <Button block icon-right color="success" icon="mdi-upload">with icon (right)</Button>
           </div>
           <div class="col">
-            <Button block :disabled="isLoading" :loading="isLoading" icon-right color="warning" @click="showLoading">클릭하면 5초간 스피너가 보이고 disabled 됩니다.</Button>
+            <Button block :disabled="isLoading" :loading="isLoading" color="warning" @click="showLoading">클릭하면 5초간 스피너가 보이고 disabled 됩니다.</Button>
           </div>
         </div>
         <div class="row mt-3">
           <div class="col flex justify-around">
-            <Button only-icon color="primary" icon="file_download"></Button>
-            <Button only-icon color="success" icon="reply"></Button>
-            <Button only-icon color="info" icon="east"></Button>
-            <Button only-icon color="warning" icon="restart_alt"></Button>
-            <Button only-icon color="danger" icon="open_in_new"></Button>
-            <Button only-icon color="dark" icon="ios_share"></Button>
-            <Button only-icon color="secondary" icon="save_alt"></Button>
+            <Button only-icon color="primary" icon="mdi-upload"></Button>
+            <Button only-icon color="success" icon="mdi-reply"></Button>
+            <Button only-icon color="info" icon="mdi-power"></Button>
+            <Button only-icon color="warning" icon="mdi-restart"></Button>
+            <Button only-icon color="danger" icon="mdi-open-in-new"></Button>
+            <Button only-icon color="dark" icon="mdi-export-variant"></Button>
+            <Button only-icon color="secondary" icon="mdi-content-save"></Button>
+            <Button only-icon outline color="secondary" icon="mdi-content-save"></Button>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col flex justify-around">
+            <Button only-icon small color="primary" icon="mdi-upload"></Button>
+            <Button only-icon small color="success" icon="mdi-reply"></Button>
+            <Button only-icon small color="info" icon="mdi-power"></Button>
+            <Button only-icon small color="warning" icon="mdi-restart"></Button>
+            <Button only-icon small color="danger" icon="mdi-open-in-new"></Button>
+            <Button only-icon small color="dark" icon="mdi-export-variant"></Button>
+            <Button only-icon small color="secondary" icon="mdi-content-save"></Button>
+            <Button only-icon small outline color="secondary" icon="mdi-content-save"></Button>
           </div>
         </div>
       </div>
@@ -716,7 +814,11 @@ getData()
       <div class="card-body">
         <div class="row mt-2">
           <div class="col">
-            <DropMenu :width="300" :items="dropMenuItem" #default="{ toggle }">
+            <DropMenu
+              color="primary"
+              :width="300"
+              :items="dropMenuItem"
+              #default="{ toggle }">
               <Button
                 icon-right
                 icon="mdi-chevron-down"
@@ -727,18 +829,49 @@ getData()
             </DropMenu>
           </div>
           <div class="col">
-            <DropMenu :position="dropMenuPosition.left" :transition="dropMenuTransition.scale" :items="dropMenuItem" #default="{ toggle }">
-              <Button icon="mdi-chevron-down" color="info" :drop-menu-toggle="toggle">메뉴 왼쪽(scale) 보기</Button>
+            <DropMenu
+              color="success"
+              :position="dropMenuPosition.left"
+              :transition="dropMenuTransition.scale"
+              :items="dropMenuItem"
+              #default="{ toggle }">
+              <Button
+                icon="mdi-chevron-down"
+                color="info"
+                :drop-menu-toggle="toggle">
+                메뉴 왼쪽(scale) 보기
+              </Button>
             </DropMenu>
           </div>
           <div class="col">
-            <DropMenu :position="dropMenuPosition.right" :transition="dropMenuTransition.fade" :items="dropMenuItem" #default="{ toggle }">
-              <Button icon-right icon="mdi-chevron-down" color="success" :drop-menu-toggle="toggle">메뉴 오른쪽(fade) 보기</Button>
+            <DropMenu
+              color="info"
+              :position="dropMenuPosition.right"
+              :transition="dropMenuTransition.fade"
+              :items="dropMenuItem"
+              #default="{ toggle }">
+              <Button
+                icon-right
+                icon="mdi-chevron-down"
+                color="success"
+                :drop-menu-toggle="toggle">
+                메뉴 오른쪽(fade) 보기
+              </Button>
             </DropMenu>
           </div>
           <div class="col">
-            <DropMenu :position="dropMenuPosition.top" :items="dropMenuItem" #default="{ toggle }">
-              <Button icon-right icon="mdi-chevron-up" color="secondary" :drop-menu-toggle="toggle">메뉴 위쪽 보기</Button>
+            <DropMenu
+              color="secondary"
+              :position="dropMenuPosition.top"
+              :items="dropMenuItem"
+              #default="{ toggle }">
+              <Button
+                icon-right
+                icon="mdi-chevron-up"
+                color="secondary"
+                :drop-menu-toggle="toggle">
+                메뉴 위쪽 보기
+              </Button>
             </DropMenu>
           </div>
         </div>

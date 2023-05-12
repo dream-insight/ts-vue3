@@ -12,6 +12,7 @@ export interface SelectBoxProps {
   modelValue: string | string[]
   options: SelectBoxItem[]
   label?: string
+  inLabel?: boolean
   placeholder?: string
   block?: boolean
   validate?: RuleFunc[]
@@ -34,6 +35,7 @@ const emit = defineEmits<SelectBoxEmits>()
 const props = withDefaults(defineProps<SelectBoxProps>(), {
   block: false,
   label: '',
+  inLabel: false,
   placeholder: '',
   errorMessage: '',
   validate: (): RuleFunc[] => [],
@@ -369,7 +371,7 @@ defineExpose({
     :style="{ width: styleWidth }"
     :class="['select-box', wrapperStyle]">
 
-    <div class="options-wrap">
+    <div class="options-wrap" v-if="!props.inLabel">
       <label
         :class="['input-label', { error: !isValidate }]"
         v-if="props.label">
@@ -390,10 +392,11 @@ defineExpose({
           <template v-if="props.labelText">
             <template v-if="!props.isShort">
               <span
+                class="item"
                 :key="`selectedItem${i}`"
                 v-for="(txt, i) in selectedText">
                 {{ txt }}
-                <i class="remove-icon material-icons" @click.stop="removeSelected(i)">close</i>
+                <i class="remove-icon mdi mdi-window-close" @click.stop="removeSelected(i)"></i>
               </span>
             </template>
             <template v-else>
@@ -406,9 +409,13 @@ defineExpose({
           </template>
           <template v-else>
             <template v-if="!props.isShort">
+              <span class="label" v-if="props.inLabel">{{ props.label }}: </span>
+
               {{ selectedText.join(', ') }}
             </template>
             <template v-else>
+              <span class="label" v-if="props.inLabel">{{ props.label }}: </span>
+
               {{ selectedText[0] }}
               <template v-if="selectedText.length > 1">
                 + {{ selectedText.length - 1 }}
@@ -417,14 +424,20 @@ defineExpose({
           </template>
         </div>
         <div class="text ph" v-else>
+          <span class="label" v-if="props.inLabel">{{ props.label }}: </span>
+
           {{ props.placeholder }}
         </div>
       </template>
       <template v-else>
         <div class="text" v-if="selectedText">
+          <span class="label" v-if="props.inLabel">{{ props.label }}: </span>
+
           {{ selectedText }}
         </div>
         <div class="text ph" v-else>
+          <span class="label" v-if="props.inLabel">{{ props.label }}: </span>
+
           {{ props.placeholder }}
         </div>
       </template>
@@ -434,18 +447,20 @@ defineExpose({
       </div>
 
       <Transition :name="showBottom ? 'options-view-bottom' : 'options-view'">
-        <div :class="['option-list', showBottom ? 'show-bottom' : 'show-top']" v-show="showOption">
+        <div
+          :class="['option-list', showBottom ? 'show-bottom' : 'show-top']"
+          v-show="showOption">
           <div class="search" @click.stop v-if="props.searchable">
             <div class="search-wrap">
               <input ref="searchInput" placeholder="검색어 입력" type="text" @keydown="searchText">
               <span class="mdi mdi-magnify"></span>
             </div>
           </div>
-          <ul>
+          <ul class="scrollbar">
             <li
               @click.stop="selectAll"
               v-if="props.multiple && !props.maxLength">
-              <span :class="['checkbox mdi', isSelectAll ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline']"></span>
+              <span :class="['checkbox', isSelectAll && 'checked', 'mdi', isSelectAll ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline']"></span>
               {{ isSelectAll ? '전체 해제' : '전체 선택' }}
             </li>
             <template v-if="optionList.length">

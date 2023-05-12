@@ -26,6 +26,7 @@ const props = withDefaults(defineProps<{
   button?: boolean
   block?: boolean
   color?: CheckButtonColors
+  disabled?: boolean
 }>(), {
   type: 'checkbox',
   all: false,
@@ -95,9 +96,9 @@ const checkValue = (index: number, v: string): void => {
  * @return { Boolean }
 */
 const check = (): boolean => {
-  if (!props.errorMessage) {
-    // validate check
-    if (props.validate.length) {
+  // validate check
+  if (!props.disabled) {
+    if (!props.errorMessage && props.validate.length) {
       for (let i = 0; i < props.validate.length; i++) {
         let result: string | boolean = (props.type === 'checkbox')
           ? props.validate[i](Array.from(val.value))
@@ -115,10 +116,10 @@ const check = (): boolean => {
         }
       }
     }
-  }
 
-  message.value = ''
-  isValidate.value = true
+    message.value = ''
+    isValidate.value = true
+  }
 
   return true
 }
@@ -163,14 +164,15 @@ defineExpose({
 <template>
   <div :class="['check-button', { button, error: message }]">
     <template v-if="button">
-      <div :class="['check-button-group', props.color]">
+      <div :class="['check-button-group', props.color, { disabled: props.disabled }]">
         <template
           :key="`keyword${i}`"
           v-for="({ text, value }, i) in list">
           <input
             type="checkbox"
-            :id="`btnCheck${i}`"
+            :id="`${name}${i}`"
             :name="name"
+            :disabled="props.disabled"
             :value="value"
             @change="checkValue(i, value)"
             v-model="val"
@@ -178,7 +180,7 @@ defineExpose({
 
           <label
             :class="{ last: list.length - 1 === i }"
-            :for="`btnCheck${i}`">
+            :for="`${name}${i}`">
             {{ text }}
           </label>
         </template>
@@ -189,9 +191,12 @@ defineExpose({
         :class="['origin-check-button', { block: props.block }]"
         :key="'check-button-' + i"
         v-for="({ text, value }, i) in list">
-        <label :class="[props.color]" :for="`${name}${i}`">
+        <label
+          :class="[props.color]"
+          :for="`${name}${i}`">
           <input
             type="radio"
+            :disabled="props.disabled"
             :id="`${name}${i}`"
             :name="name"
             :value="value"
@@ -204,6 +209,7 @@ defineExpose({
             type="checkbox"
             :id="`${name}${i}`"
             :name="name"
+            :disabled="props.disabled"
             :value="value"
             @change="checkValue(i, value)"
             v-model="val"
@@ -213,13 +219,13 @@ defineExpose({
           <template v-if="type === 'radio'">
             <Transition name="check-scale" mode="out-in">
               <i class="mdi mdi-radiobox-marked" v-if="props.modelValue === value"></i>
-              <i class="mdi mdi-radiobox-blank" v-else></i>
+              <i :class="['mdi', props.disabled ? 'mdi-circle' : 'mdi-radiobox-blank']" v-else></i>
             </Transition>
           </template>
           <template v-else>
             <Transition name="check-scale" mode="out-in">
               <i class="mdi mdi-checkbox-marked" v-if="props.modelValue?.includes(value)"></i>
-              <i class="mdi mdi-checkbox-blank-outline" v-else></i>
+              <i :class="['mdi', props.disabled ? 'mdi-checkbox-blank' : 'mdi-checkbox-blank-outline']" v-else></i>
             </Transition>
           </template>
 

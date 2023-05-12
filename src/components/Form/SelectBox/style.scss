@@ -1,12 +1,8 @@
-@import '../common.scss';
+@import '../../common.scss';
 
 .select-box {
   display: inline-block;
   position: relative;
-
-  &.with-label {
-    margin-top: 0.3em;
-  }
 
   .control-wrap {
     position: relative;
@@ -20,14 +16,6 @@
     height: 40px;
     padding: 10px 15px;
     margin: 0;
-
-    &.disabled {
-      background-color: $gray-100;
-    }
-
-    &.active {
-      border-color: map-get($theme-colors, 'primary');
-    }
 
     .text {
       flex: 1;
@@ -47,17 +35,22 @@
         font-weight: 400;
       }
 
-      span {
+      span.label {
+        color: $gray-800;
+        margin-right: 5px;
+      }
+
+      .item {
         display: flex;
         align-items: center;
-        background-color: #717171;
-        padding: 3px 7px;
+        background-color: $gray-600;
+        padding: 1px 7px;
         color: #fff;
-        font-size: 0.7em;
+        font-size: 11px;
         font-weight: 400;
-        border-radius: 5px;
+        // border-radius: 5px;
 
-        & + span {
+        & + .item {
           margin-left: 3px;
         }
       }
@@ -75,9 +68,10 @@
     }
 
     .arrow {
-      width: 25px;
-      height: 25px;
-      margin-right: -0.5em;
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      right: 14px;
       transform-origin: center;
       transition: transform 0.3s;
       display: flex;
@@ -90,8 +84,39 @@
       }
 
       span::before {
-        font-size: 22px;
+        font-size: 16px;
         cursor: pointer;
+      }
+    }
+
+    &.disabled {
+      background-color: $gray-100;
+
+      .text {
+        color: $gray-400;
+
+        span.label {
+          color: $gray-400;
+          margin-right: 5px;
+        }
+      }
+
+      .arrow {
+        color: $gray-400;
+      }
+    }
+
+    &.active {
+      border-color: map-get($theme-colors, 'primary');
+    }
+
+    &.error {
+      border: 1px solid map-get($theme-colors, 'danger');
+
+      .arrow {
+        span {
+          color: map-get($theme-colors, 'danger');
+        }
       }
     }
 
@@ -184,29 +209,26 @@
             background-color: $gray-100;
           }
 
-          &.selected {
-            background-color: rgba(0, 0, 0, 0.1);
-          }
-
           .checkbox {
             margin-right: 10px;
-            // color: rgb(53, 138, 235);
 
             &::before {
+              color: $gray-400;
+              font-size: 16px;
+            }
+
+            &.checked::before {
               color: map-get($theme-colors, 'primary');
-              font-size: 20px;
             }
           }
-        }
-      }
-    }
 
-    &.error {
-      border: 1px solid map-get($theme-colors, 'danger');
+          &.selected {
+            color: map-get($theme-colors, 'primary');
 
-      .arrow {
-        i {
-          color: map-get($theme-colors, 'danger');
+            .checkbox::before {
+              color: map-get($theme-colors, 'primary');
+            }
+          }
         }
       }
     }

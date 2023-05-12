@@ -58,6 +58,7 @@ app.component('DropMenu', DropMenu)
 | position? | [DropMenuPosition](#42-DropMenuPosition-with-enum) | <code>bottom</code> | 메뉴가 보여질 위치 |
 | transition? | [DropMenuTransition](#43-DropMenuTransition-with-enum) | <code>slide</code> | 애이메이션 종류 |
 | width? | number | <code>none</code> | 드롭 메뉴의 넓이를 강제로 지정 |
+| color? | [DropMenuColors](#44-dropmenucolors-with-enum) | <code>none</code> | 드롭 메뉴의 넓이를 강제로 지정 |
 
 
 ---
@@ -84,10 +85,11 @@ app.component('DropMenu', DropMenu)
 interface DropMenuItem {
   text: string
   action: Function
+  icon?: string
 }
 ```
 
-## 4.2. DropMenuPosition with enum
+## 4.2. DropMenuPosition with Enum
 ```js
 export const dropMenuPosition = {
   top: 'top',
@@ -99,7 +101,7 @@ export const dropMenuPosition = {
 export type DropMenuPosition = typeof dropMenuPosition[keyof typeof dropMenuPosition]
 ```
 
-## 4.3. DropMenuTransition with enum
+## 4.3. DropMenuTransition with Enum
 ```js
 export const dropMenuTransition = {
   slide: 'drop-menu-slide',
@@ -108,6 +110,21 @@ export const dropMenuTransition = {
 } as const
 
 export type DropMenuTransition = typeof dropMenuTransition[keyof typeof dropMenuTransition]
+```
+
+## 4.4. DropMenuColors with Enum
+```js
+export const dropMenuColors = {
+  primary: 'primary',
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  danger: 'danger',
+  secondary: 'secondary',
+  dark: 'dark',
+} as const
+
+export type DropMenuColors = typeof dropMenuColors[keyof typeof dropMenuColors]
 ```
 
 :arrow_up: [항목](#항목)

@@ -9,9 +9,7 @@ const emit = defineEmits<{
 const props = withDefaults(defineProps<{
   modelValue: string | boolean
   small?: boolean
-  // [0 => false label, 1 => true label]
-  label?: string[]
-  // form check validate
+  label?: string[]    // [0 => false label, 1 => true label]
   validate?: string | boolean
   trueValue?: string | boolean
   falseValue?: string | boolean
@@ -19,15 +17,12 @@ const props = withDefaults(defineProps<{
   readonly?: boolean
   checkbox?: boolean
   color?: SwitchButtonColors
+  disabled?: boolean
 }>(), {
-  small: false,
   label: (): string[] => ['미설정', '설정'],
-  // form check validate
   validate: false,
   trueValue: true,
   falseValue: false,
-  readonly: false,
-  checkbox: false,
   color: switchButtonColors.primary,
 })
 
@@ -51,9 +46,9 @@ watch(errorTransition, (v) => {
 const labelText = computed<string>(() => {
   if (props.checkbox) {
     return props.placeholder ?? ''
-  } else {
-    return props.modelValue === props.trueValue ? props.label[1] : props.label[0]
   }
+
+  return props.modelValue === props.trueValue ? props.label[1] : props.label[0]
 })
 
 const check = (): boolean => {
@@ -120,6 +115,7 @@ defineExpose({
       :class="['switch', { small, checkbox: props.checkbox, error: onError }]">
       <input
         type="checkbox"
+        :disabled="props.disabled"
         :readonly="props.readonly"
         :checked="props.modelValue == props.trueValue"
         @change="updateValue"
@@ -127,12 +123,12 @@ defineExpose({
 
       <template v-if="props.checkbox">
         <Transition name="check-scale" mode="out-in">
-          <i class="material-icons" v-if="props.modelValue == props.trueValue">check_box</i>
-          <i class="material-icons" v-else>check_box_outline_blank</i>
+          <i class="mdi mdi-checkbox-marked" v-if="props.modelValue == props.trueValue"></i>
+          <i class="mdi mdi-checkbox-blank-outline" v-else></i>
         </Transition>
       </template>
       <template v-else>
-        <span></span>
+        <span><i></i></span>
       </template>
 
       {{ labelText }}

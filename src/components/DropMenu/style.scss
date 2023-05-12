@@ -1,3 +1,5 @@
+@import '../common.scss';
+
 $transitionList: slide, scale, fade;
 $transitionDirection: top, right, bottom, left;
 
@@ -37,12 +39,13 @@ $transitionDirection: top, right, bottom, left;
     min-width: 100%;
     z-index: 30;
     position: absolute;
-    border: 1px solid rgba(0, 0, 0, 0.2);
     background-color: #fff;
     padding: 0;
     margin: 0;
     list-style: none;
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.15);
+    border-width: 1px;
+    border-style: solid;
     // border-radius: 5px;
 
     &.top {
@@ -69,18 +72,32 @@ $transitionDirection: top, right, bottom, left;
     }
 
     li {
-      margin: 2px;
-
       a {
         // border-radius: 5px;
-        color: rgba(0, 0, 0, 0.7);
-        display: block;
+        color: $white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         padding: 10px;
+        font-size: 15px;
+        font-weight: 400;
         transition: background-color 0.2s ease;
 
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.1);
+        i {
+          font-size: 21px;
+          margin-left: 5px;
         }
+      }
+    }
+  }
+
+  @each $key, $value in $theme-colors {
+    &.#{$key} .drop-menu-wrap {
+      border-color: darken($value, 5);
+      background-color: $value;
+
+      li a:hover {
+          background-color: darken($value, 10);
       }
     }
   }

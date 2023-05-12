@@ -82,14 +82,14 @@ app.component('Button', Button)
 | class? | string | <code>none</code> | 추가되는 style sheet class |
 | href? | string | <code>#</code> | 연결 링크 |
 | icon? | string | <code>none</code> | 아이콘으로 사용될 Google Material Icon |
-| text? | boolean | <code>false</code> | 텍스트로만 보이는 버튼 |
+| text? | boolean | <code>false</code> | 텍스트로만 보이는 버튼 (margin, padding 등 기본 css 적용 안됨) |
 | iconRight? | boolean | <code>false</code> | 상입된 아이콘의 위치가 오른쪽일때 설정 |
 | iconOnly? | boolean | <code>false</code> | 아이콘으로만 이루어진 버튼을 사용 |
 | block? | boolean | <code>false</code> | 버튼을 전체 라인으로 지정 |
 | disabled? | boolean | <code>false</code> | 버튼 사용 불가 처리 |
 | small? | boolean | <code>false</code> | 버튼 최소 크기 block 옵션 무시 |
 | loading? | boolean | <code>false</code> | 버튼에 스피너를 표시하고 사용 불가 상태로 변경 |
-| outline? | boolean | <code>false</code> | 배경색을 제거하고 외곽선을 표시 |
+| outline? | boolean | <code>false</code> | 배경색을 제거하고 외곽선을 표시 (gray only) |
 | tag? | string | <code>a</code> | 버튼 태그 설정 |
 | dropMenuToggle? | boolean | <code>false</code> | 드롭메뉴에서 전달된 toggle 상태를 기반으로 icon의 transition 활성화 |
 
@@ -106,7 +106,6 @@ export const btnColors = {
   danger: 'danger',
   secondary: 'secondary',
   dark: 'dark',
-  light: 'light'
 } as const
 
 export type BtnColors = typeof btnColors[keyof typeof btnColors]
@@ -122,6 +121,7 @@ export type BtnColors = typeof btnColors[keyof typeof btnColors]
 
 ### UPDATE HISTORY
 
-* 최초 작성: 2023.04.20 김종윤 수석 매니저
-* disabled props 추가: 2023.04.25 김종윤 수석 매니저
-* outline type 추가: 2023.04.28 김종윤 수석 매니저
+* 최초 작성: 2023.04.20 김종윤 수석매니저
+* disabled props 추가: 2023.04.25 김종윤 수석매니저
+* outline type 추가: 2023.04.28 김종윤 수석매니저
+* outline type 디자인 적용 방식 변경 및 light color type 제거, text 옵션에 대한 구현 방식 변경: 2023.05.11 김종윤 수석매니저

@@ -1,11 +1,11 @@
-@import '../common.scss';
+@import '../../common.scss';
 
 .check-button {
   .origin-check-button {
     position: relative;
     display: inline-block;
 
-    & .block {
+    &.block {
       display: block !important;
     }
 
@@ -16,22 +16,43 @@
     label {
       display: flex;
       align-items: center;
-      font-size: 1em;
-
-      i {
-        font-size: 1.2em;
-        margin-right: 3px;
-      }
-
-      @each $color in $colors {
-        &.#{$color} i {
-          color: map-get($theme-colors, $color);
-        }
-      }
+      font-size: 16px;
 
       input {
         position: absolute;
         clip: rect(0, 0, 0, 0);
+      }
+
+      i {
+        font-size: 24px;
+        margin-right: 3px;
+        color: $gray-400;
+      }
+
+      &:hover {
+        i {
+          color: $gray-600;
+        }
+      }
+
+      &:has(input:disabled) {
+        color: $gray-400;
+      }
+
+      input:disabled + i {
+        color: $gray-300;
+      }
+
+      @each $color in $colors {
+        &.#{$color} {
+          input:checked + i {
+            color: map-get($theme-colors, $color);
+          }
+
+          input:checked:disabled + i {
+            color: lighten(map-get($theme-colors, $color), 25);
+          }
+        }
       }
     }
   }
@@ -68,6 +89,24 @@
 
         input:checked + label {
           background-color: map-get($theme-colors, $color);
+        }
+
+        &.disabled {
+          border: 1px solid lighten(map-get($theme-colors, $color), 25);
+
+          label {
+            border-right: 1px solid lighten(map-get($theme-colors, $color), 35);
+            color: lighten(map-get($theme-colors, $color), 25);
+
+            &:hover {
+              background-color: transparent;
+            }
+          }
+
+          input:checked + label {
+            color: $white;
+            background-color: lighten(map-get($theme-colors, $color), 25);
+          }
         }
       }
     }
@@ -112,6 +151,7 @@
 
   .check-scale-enter-from,
   .check-scale-leave-to {
+    opacity: 0;
     transform: scale(0);
   }
   .check-scale-enter-active,

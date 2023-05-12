@@ -783,10 +783,15 @@ defineExpose({
 <template>
   <div ref="el" :class="['date-picker', { 'with-label': props.label, error: onError, block }]">
     <div class="wrap" @click="toggleCalendar">
-      <label :class="{ error: onError }" v-if="props.label">
-        {{ props.label }}
-        <span class="required" v-if="props.required">*</span>
-      </label>
+      <div class="options-wrap">
+        <label
+          :class="['input-label', { error: !isValidate }]"
+          v-if="props.label">
+          {{ props.label }}
+
+          <span class="required" v-if="props.required">*</span>
+        </label>
+      </div>
 
       <div :class="['picker-date-text', { error: message, disabled: props.disabled }]">
         <template v-if="range">

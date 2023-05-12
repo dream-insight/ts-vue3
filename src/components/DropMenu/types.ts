@@ -1,6 +1,7 @@
 export interface DropMenuItem {
   text: string
   action: Function
+  icon?: string
 }
 
 export const dropMenuPosition = {
@@ -19,3 +20,16 @@ export const dropMenuTransition = {
 } as const
 
 export type DropMenuTransition = typeof dropMenuTransition[keyof typeof dropMenuTransition]
+
+
+export const dropMenuColors = {
+  primary: 'primary',
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  danger: 'danger',
+  secondary: 'secondary',
+  dark: 'dark',
+} as const
+
+export type DropMenuColors = typeof dropMenuColors[keyof typeof dropMenuColors]

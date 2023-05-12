@@ -1,29 +1,27 @@
-@import '../common.scss';
+@import '../../common.scss';
 
 .switch-wrap {
   display: inline-block;
 
   @each $color in $colors {
     &.#{$color} {
-      i {
-        color: map-get($theme-colors, $color);
-      }
+      input[type=checkbox]:checked {
+        & + span {
+          background-color: map-get($theme-colors, $color);
+        }
 
-      input[type=checkbox]:checked + span {
-        border: 2px solid map-get($theme-colors, $color);
-        background: map-get($theme-colors, $color);
-      }
+        & + span:hover {
+          background-color: map-get($theme-colors, $color);
+        }
 
-      input[type=checkbox]:checked + span:hover {
-        border: 2px solid map-get($theme-colors, $color);
-        background: map-get($theme-colors, $color);
+        & + i {
+          color: map-get($theme-colors, $color);
+        }
       }
     }
   }
 
   .switch {
-    position: relative;
-    line-height: 31px;
     cursor: pointer;
     font-size: 14px;
     margin: 0;
@@ -33,71 +31,49 @@
       align-items: center;
 
       i {
+        font-size: 21px;
         margin-right: 3px;
+        color: $gray-400;
+      }
+
+      &:hover i {
+        color: $gray-600;
       }
     }
 
     input[type=checkbox] {
       position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-    }
+      clip: rect(0, 0, 0, 0);
 
-    input[type=checkbox] + span {
-      position: relative;
-      display: inline-block;
-      width: 57px;
-      height: 31px;
-      box-sizing: border-box;
-      border: 2px solid #ccc;
-      background: #ccc;
-      border-radius: 25px;
-      vertical-align: top;
-      margin-right: 5px;
-      transition: all 0.3s;
-    }
+      & + span {
+        display: inline-block;
+        width: 41px;
+        height: 20px;
+        background: $gray-300;
+        border-radius: 10px;
+        margin-right: 5px;
+        transition: all 0.2s;
 
-    input[type=checkbox] + span:hover {
-      border: 2px solid rgb(158, 158, 158);
-      background: rgb(158, 158, 158);
-    }
+        i {
+          display: inline-block;
+          margin: 0 4px;
+          width: 12px;
+          height: 12px;
+          background: $white;
+          border-radius: 50%;
+          transition: all 0.2s;
+        }
 
-    input[type=checkbox] + span:after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 27px;
-      height: 27px;
-      background: $white;
-      border-radius: 100%;
-      content: '';
-      transition: all 0.3s;
-    }
+        &:hover {
+          background-color: $gray-400;
+        }
+      }
 
-    input[type=checkbox]:checked + span:after {
-      left: 26px;
-    }
-
-    &.small {
-      line-height: 22px;
-      font-size: 12px
-    }
-
-    &.small input[type=checkbox] + span {
-      width: 38px;
-      height: 22px;
-      border-radius: 11px;
-      margin-right: 5px;
-    }
-
-    &.small input[type=checkbox] + span:after {
-      width: 18px;
-      height: 18px;
-    }
-
-    &.small input[type=checkbox]:checked + span:after {
-      left: 16px;
+      &:checked + span {
+        i {
+          transform: translateX(41px - 12px - 8px);
+        }
+      }
     }
   }
 
@@ -117,6 +93,7 @@
 
   .check-scale-enter-from,
   .check-scale-leave-to {
+    opacity: 0;
     transform: scale(0);
   }
   .check-scale-enter-active,

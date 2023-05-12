@@ -4,134 +4,157 @@
 $btn-box-shadow: none;
 
 .btn {
-  display: inline-block;
-  box-shadow: $btn-box-shadow;
-  border-radius: $border-radius;
-  border: 0;
-  padding: 0 1.5em;
-  height: 40px;
-  transition: background-color 0.2s ease;
   font-size: 15px;
 
-  &.small {
-    padding: 0 12px;
-    height: 32px !important;
-    font-size: 14px;
-  }
+  &:not(.text) {
+    display: inline-block;
+    box-shadow: $btn-box-shadow;
+    border-radius: $border-radius;
+    border: 0;
+    padding: 0 16px;
+    height: 40px;
+    transition: background-color 0.2s ease;
 
-  &.block {
-    display: block !important;
-    width: 100%;
-  }
+    &.small {
+      padding: 0 12px;
+      height: 32px !important;
+      font-size: 14px;
+    }
 
-  .btn-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
+    &.block {
+      display: block !important;
+      width: 100%;
+    }
 
-  @each $key, $value in $theme-colors {
-    &.#{$key} {
-      background-color: $value;
+    .btn-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
 
-      @if $key == light {
-        color: $gray-800;
-      } @else {
-        color: white;
+    @each $key, $value in $theme-colors {
+      &.#{$key} {
+        background-color: $value;
+
+        @if $key == light {
+          color: $gray-800;
+        } @else {
+          color: white;
+        }
+
+        &.disabled {
+          background-color: lighten($value, 25);
+          color: white;
+        }
+
+        &:not(.disabled):hover {
+          background-color: darken($value, 10);
+        }
+
+        &:not(.disabled):active {
+          background-color: $value !important;
+        }
+      }
+    }
+
+    &.outline {
+      color: $gray-800;
+      background-color: $white;
+      border: 1px solid $gray-300;
+
+      &:hover {
+        background-color: $gray-100;
       }
 
       &.disabled {
-        background-color: lighten($value, 40);
-        color: white;
+        color: $gray-300;
+        border-color: $gray-300;
       }
+    }
 
-      &:not(.disabled):hover {
-        @if $key == dark {
-          background-color: lighten($value, 20);
-        } @else {
-          background-color: darken($value, 8);
+    &.icon {
+      width: 40px;
+
+      &.small {
+        width: 32px;
+
+        i::before {
+          font-size: 16px;
         }
       }
 
-      &:not(.disabled):active {
-        background-color: $value !important;
-      }
+      @each $key, $value in $theme-colors {
+        @if $key != light {
+          &.#{$key} {
+            background-color: $value;
+            color: $white;
 
-      &.outline {
-        background-color: transparent;
-
-        @if $key == light {
-          border: 1px solid #606060;
-          color: #606060;
-        } @else {
-          border: 1px solid $value;
-          color: $value;
-        }
-
-        &:active {
-          background-color: white !important;
-        }
-
-        &:hover {
-          @if $key == light {
-            background-color: rgba($gray-800, 0.15);
-          } @else {
-            background-color: rgba($value, 0.15);
+            &:hover {
+              background-color: darken($value, 10);
+            }
           }
         }
       }
     }
+
+    // DropMenu 연동
+    i {
+      transition: transform 0.2s;
+      font-size: 20px;
+
+      &.rotate {
+        transform: rotate(180deg);
+      }
+    }
+
+    &:not(.icon) {
+      &.right {
+        i {
+          font-size: 20px;
+          margin-left: 8px;
+        }
+      }
+
+      &.left {
+        i {
+          font-size: 20px;
+          margin-right: 8px;
+        }
+      }
+    }
+
+    .loading {
+      transform-origin: center center;
+      animation: spinner 1s infinite;
+    }
   }
 
-  &.icon {
-    box-shadow: none !important;
-    padding: 0 !important;
-    width: 2em !important;
-    height: 2em !important;
-    border-radius: 50% !important;
+  &.text {
+    i {
+      color: $gray-400;
+      margin-right: 7px;
+    }
+
+    &.right i {
+      margin-left: 7px;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
 
     @each $key, $value in $theme-colors {
-      @if $key != light {
-        &.#{$key} {
-          background-color: transparent;
-          color: $value !important;
+      &.#{$key} {
+        color: $value;
 
-          &:hover {
-            background-color: rgba($value, 0.15);
+        &:hover {
+          i {
+            color: $value;
           }
         }
       }
     }
-  }
-
-  i {
-    transition: transform 0.2s;
-    font-size: 20px;
-
-    &.rotate {
-      transform: rotate(180deg);
-    }
-  }
-
-  &:not(.icon) {
-    &.right {
-      i {
-        font-size: 20px;
-        margin-left: 3px;
-      }
-    }
-
-    &.left {
-      i {
-        font-size: 20px;
-        margin-right: 3px;
-      }
-    }
-  }
-
-  .loading {
-    animation: spinner 1s infinite;
   }
 }
 

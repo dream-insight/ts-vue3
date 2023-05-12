@@ -93,6 +93,7 @@ for (let value: number = 1; value <= 10; value++) {
 | errorMessage? | string | <code>''</code> | 강제로 에러 메시지를 출력, 유효성 검사에서 통과 하지 못 함 |
 | button? | boolean | <code>false</code> | checkbox, radio 폼이 버튼 형식으로 디자인 변경 |
 | color? | [CheckButtonColors](#133-checkbuttoncolors-with-enum) | <code>primary</code> | checkbox, radio 색상 |
+| disabled? | boolean | <code>false</code> | 사용 불가 처리 |
 
 ### 1.3. Types
 
