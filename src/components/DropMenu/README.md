@@ -4,8 +4,8 @@
 
 1. [사용방법](#1-사용방법)
 2. [Props](#2-props)
-3. [Slots](#3-그-외)
-4. [그 외](#4-그-외)
+3. [Slots](#3-slots)
+4. [Types](#4-types)
 
 ---
 
@@ -137,4 +137,5 @@ export type DropMenuColors = typeof dropMenuColors[keyof typeof dropMenuColors]
 
 ### UPDATE HISTORY
 
-* 최초 작성: 2023.04.24 김종윤 수석 매니저
+* 최초 작성: 2023.04.24 김종윤 수석매니저
+* props color 추가, 메뉴 icon 옵션 추가: 2023.05.12 김종윤 수석매니저

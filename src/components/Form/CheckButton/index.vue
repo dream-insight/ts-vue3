@@ -27,6 +27,8 @@ const props = withDefaults(defineProps<{
   block?: boolean
   color?: CheckButtonColors
   disabled?: boolean
+  label?: string
+  required?: boolean
 }>(), {
   type: 'checkbox',
   all: false,
@@ -163,6 +165,13 @@ defineExpose({
 
 <template>
   <div :class="['check-button', { button, error: message }]">
+    <div class="options-wrap">
+      <label class="input-label" v-if="props.label">
+        {{ props.label }}
+        <span class="required" v-if="props.required">*</span>
+      </label>
+    </div>
+
     <template v-if="button">
       <div :class="['check-button-group', props.color, { disabled: props.disabled }]">
         <template

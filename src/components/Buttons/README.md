@@ -81,6 +81,7 @@ app.component('Button', Button)
 | color | [BtnColors](#31-BtnColors) | <code>none</code> | 툴팁 메시지, 배열입력시 리스트 형태로 출력 |
 | class? | string | <code>none</code> | 추가되는 style sheet class |
 | href? | string | <code>#</code> | 연결 링크 |
+| target? | string | <code>_blank</code> | 링크 오픈 방식 (a tag target과 같음) |
 | icon? | string | <code>none</code> | 아이콘으로 사용될 Google Material Icon |
 | text? | boolean | <code>false</code> | 텍스트로만 보이는 버튼 (margin, padding 등 기본 css 적용 안됨) |
 | iconRight? | boolean | <code>false</code> | 상입된 아이콘의 위치가 오른쪽일때 설정 |

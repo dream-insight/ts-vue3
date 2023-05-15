@@ -94,6 +94,8 @@ for (let value: number = 1; value <= 10; value++) {
 | button? | boolean | <code>false</code> | checkbox, radio 폼이 버튼 형식으로 디자인 변경 |
 | color? | [CheckButtonColors](#133-checkbuttoncolors-with-enum) | <code>primary</code> | checkbox, radio 색상 |
 | disabled? | boolean | <code>false</code> | 사용 불가 처리 |
+| label? | string | <code>''</code> | 상단 라벨 표시 |
+| required? | boolean | <code>''</code> | 필수 입력 표시 |
 
 ### 1.3. Types
 
@@ -632,6 +634,8 @@ const fileSelected = (evt: Event): void => {
 | checkValue | any | <code>none</code> | 유효성 검사를 할 model 변수 설정 |
 | validate | [RuleFunc[]](#2-rulefunc) | <code>[]</code> | 폼 유효성 검사에 필요한 callback 함수를 배열에 나열 입력 |
 | errorMessage? | string | <code>''</code> | 강제로 오류 메시지를 표시 |
+| required? | boolean | <code>false</code> | 필수 입력 표시 |
+| label? | string | <code>''</code> | 상단 라벨 표시 |
 
 :arrow_up: [목차](#form-validation-components)
 

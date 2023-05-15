@@ -34,19 +34,20 @@ $danger: map-get($theme-colors, 'danger');
   .msg-box {
     background-color: #fff;
     box-sizing: border-box;
-    // border-radius: 7px;
+    border-radius: 4px;
     max-height: 95vh;
     max-width: 95vw;
     box-shadow: $box-shadow;
+    padding: 30px 20px;
 
     .title {
       box-sizing: border-box;
-      // border-radius: 7px 7px 0 0;
-      padding: 0.7em;
-      font-size: 1.2em;
-      font-weight: 700;
-      color: rgb(92, 92, 92);
+      border-radius: 4px 4px 0 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: $gray-800;
       margin: 0;
+      padding-bottom: 8px;
 
       .close-popup {
         display: block;
@@ -54,29 +55,27 @@ $danger: map-get($theme-colors, 'danger');
     }
 
     .contents {
-      padding: 0.7em;
-      font-size: 1em;
-      color: rgb(130, 130, 130);
+      font-size: 14px;
+      font-weight: 400;
+      color: $gray-800;
       box-sizing: border-box;
       overflow-y: auto;
-      max-height: 70vh;
       display: block;
+      padding-bottom: 20px;
     }
 
     .actions {
-      padding: 10px;
+      border-radius: 0 0 4px 4px;
 
       a {
-        font-size: 1em;
+        font-size: 15px;
+        font-weight: 400;
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        line-height: 33px;
-        // border-radius: 5px;
         box-sizing: border-box;
         text-align: center;
-        padding: 0.2em 0;
         transition: all 0.2s;
       }
 
@@ -84,18 +83,20 @@ $danger: map-get($theme-colors, 'danger');
         color: #fff;
         background-color: $primary;
         border: none;
+        height: 42px;
 
         &:hover {
-          background-color: lighten($primary, 8);
+          background-color: darken($primary, 10);
         }
       }
 
       .btn-cancel {
-        font-weight: 300;
-        color: gray;
-        text-decoration: underline;
+        padding-top: 8px;
+        font-weight: 500;
+        color: $gray-800;
 
         &:hover {
+          text-decoration: underline;
           color: $danger;
         }
       }

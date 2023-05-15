@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<{
   escClose: false,
   position: modalPosition.popup,
   screenCover: false,
+  width: '320px',
 })
 
 const emit = defineEmits<{
@@ -114,14 +115,14 @@ const setEvents = (): void => {
         v-show="isShow">
         <Transition appear :name="transitionName">
           <div
-            :style="{ width: props.width }"
+            :style="{ width: props.width, maxWidth: props.width }"
             :class="boxStyle"
             v-show="isShow">
             <div class="modal-header">
               <span>{{ props.title }}</span>
 
               <a href="#" class="close" @click.prevent="close()">
-                <span class="mdi mdi-window-close"></span>
+                <span class="mdi mdi-close"></span>
               </a>
             </div>
             <div class="modal-body">

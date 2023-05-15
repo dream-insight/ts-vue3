@@ -274,7 +274,7 @@ defineExpose({
           <th width="50" v-if="checkAll">
             <label class="checkbox-wrap">
               <input type="checkbox" @click="checkAllEvent" />
-              <span class="material-icons"></span>
+              <span class="checkbox mdi"></span>
             </label>
           </th>
           <th
@@ -289,8 +289,8 @@ defineExpose({
               <div class="sort-cell-text">{{ item.text }}</div>
 
               <span :class="['sorting rotate', item.order]">
-                <i class="material-icons" v-if="item.order">expand_more</i>
-                <i class="material-icons"  v-else>unfold_more</i>
+                <i class="mdi mdi-chevron-down" v-if="item.order"></i>
+                <i class="mdi mdi-unfold-more-horizontal"  v-else></i>
               </span>
             </div>
             <span v-else>{{ item.text }}</span>

@@ -17,7 +17,7 @@ export interface MessageBoxOptions {
 }
 
 const props = withDefaults(defineProps<MessageBoxOptions>(), {
-  width: 400,
+  width: 320,
   btnOkayText: '확인',
   btnCancelText: '취소'
 })

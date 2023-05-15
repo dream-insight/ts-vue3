@@ -6,6 +6,8 @@ export interface ValidateWrapProps {
   checkValue: any
   validate?: RuleFunc[]
   errorMessage?: string
+  label?: string
+  required?: boolean
 }
 
 const props = withDefaults(defineProps<ValidateWrapProps>(), {
@@ -87,7 +89,19 @@ defineExpose({
 
 <template>
   <div class="validate-wrap">
-    <slot></slot>
+    <div class="options-wrap" v-if="props.label">
+      <label class="input-label" v-if="props.label">
+        {{ props.label }}
+        <span class="required" v-if="props.required">*</span>
+      </label>
+      <div class="add-option">
+        <slot name="add-on"></slot>
+      </div>
+    </div>
+
+    <div class="input-wrap">
+      <slot></slot>
+    </div>
 
     <div
       ref="feedback"

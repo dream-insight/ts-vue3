@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<{
   color?: BtnColors
   class?: string
   href?: string
+  target?: string
   text?: boolean
   icon?: string
   iconRight?: boolean
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<{
   dropMenuToggle?: boolean
 }>(), {
   href: '#',
+  target: '_blank',
   text: false,
   right: false,
   block: false,
@@ -67,16 +69,19 @@ const hrefState = computed<string>(() => {
 const options = reactive<any>({
   class: buttonStyle.value,
   onClick: (event: MouseEvent): void => {
-    event.preventDefault()
+    if (!props.href) {
+      event.preventDefault()
 
-    if (!props.disabled) {
-      emit('click', event)
+      if (!props.disabled) {
+        emit('click', event)
+      }
     }
   }
 })
 
 if (props.tag.toLowerCase() === 'a') {
   options.href = hrefState.value
+  options.target = props.target
 } else if (props.tag.toLowerCase() == 'button') {
   options.type = 'button'
 }

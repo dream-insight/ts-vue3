@@ -793,7 +793,7 @@ defineExpose({
         </label>
       </div>
 
-      <div :class="['picker-date-text', { error: message, disabled: props.disabled }]">
+      <div :class="['picker-date-text', { error: message, disabled: props.disabled, active: isShow }]">
         <template v-if="range">
           <input
             readonly

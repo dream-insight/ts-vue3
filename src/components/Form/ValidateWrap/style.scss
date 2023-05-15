@@ -11,6 +11,11 @@
   &.error {
     animation: shaking 0.2s;
   }
+
+  .input-wrap {
+    display: flex;
+    align-items: flex-start;
+  }
 }
 
 /* error message shaking */

@@ -1,3 +1,5 @@
+@import '../common.scss';
+
 .list-table {
   overflow: auto;
   position: relative;
@@ -11,40 +13,39 @@
     top: 0;
     left: 0;
     min-width: 100%;
-    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.15);
+    // box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.15);
     border-spacing: 0;
 
     &.no-box-shadow {
       box-shadow: none !important;
     }
 
-    th {
-      border-width: 1px 1px 0 1px;
-      border-style: solid;
-      border-color: #000;
+    // th {
+    //   border-width: 1px 0 0 0;
+    //   border-style: solid;
 
-      & + th {
-        border-left: 0;
-      }
-    }
+    //   & + th {
+    //     border-left: 0;
+    //   }
+    // }
 
-    td {
-      border-width: 1px 1px 0 1px;
-      border-style: solid;
-      border-color: #000;
+    // td {
+    //   border-width: 1px 0 0 0;
+    //   border-style: solid;
+    //   border-color: $gray-300;
 
-      & + td {
-        border-left: 0;
-      }
-    }
+    //   & + td {
+    //     border-left: 0;
+    //   }
+    // }
 
-    tbody {
-      tr:last-child {
-        td, th {
-          border-bottom: 1px solid #000;
-        }
-      }
-    }
+    // tbody {
+    //   tr:last-child {
+    //     td, th {
+    //       border-bottom: 1px solid $gray-300;
+    //     }
+    //   }
+    // }
 
     .columns {
       cursor: pointer;
@@ -65,17 +66,14 @@
     .sorting {
       transition: all .2s;
       transform-origin: center;
-      color: #fff;
+      color: $gray-400;
       display: flex;
       align-items: center;
       justify-content: center;
-
-      i {
-        font-size: 1.6em;
-      }
+      font-size: 24px;
 
       &:hover {
-        color: rgba(198, 220, 255, 0.5);
+        color: $gray-800;
       }
 
       &.desc {
@@ -98,21 +96,32 @@
       z-index: 10;
 
       th {
-        background-color: #4e4e4e;
-        color: #fff;
-        padding: 10px 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: $gray-800;
+        padding: 18px 16px;
         text-align: left;
+        background-color: $white;
+
+        border-width: 1px 0 1px 0;
+        border-style: solid;
+        border-color: $gray-300;
       }
     }
 
     tbody  {
       tr {
         &:hover {
-          background-color: rgb(240, 240, 240);
+          background-color: $gray-100;
         }
 
         td {
-          padding: 10px 8px;
+          padding: 18px 16px;
+          border-style: solid;
+          border-color: $gray-300;
+          border-width: 0 0 1px 0;
+          font-size: 14px;
+          font-weight: 400;
         }
       }
     }
@@ -138,12 +147,22 @@
       clip: rect(0, 0, 0, 0);
     }
 
-    input[type=checkbox] + .material-icons::after {
-      content: "\e835";
+    input[type=checkbox] + .checkbox::before {
+      color: $gray-400;
+      content: "\f0131";
+      font-size: 24px;
     }
 
-    input[type=checkbox]:checked + .material-icons::after {
-      content: "\e834";
+    input[type=checkbox]:checked + .checkbox::before {
+      color: $primary;
+      content: "\f0132";
+      font-size: 24px;
+    }
+
+    input[type=checkbox]:disabled + .checkbox::before {
+      color: $gray-300;
+      content: "\f012e";
+      font-size: 24px;
     }
   }
 }

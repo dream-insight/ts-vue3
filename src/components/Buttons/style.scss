@@ -34,26 +34,23 @@ $btn-box-shadow: none;
     }
 
     @each $key, $value in $theme-colors {
-      &.#{$key} {
-        background-color: $value;
-
-        @if $key == light {
-          color: $gray-800;
-        } @else {
+      @if $key != light {
+        &.#{$key} {
+          background-color: $value;
           color: white;
-        }
 
-        &.disabled {
-          background-color: lighten($value, 25);
-          color: white;
-        }
+          &.disabled {
+            background-color: lighten($value, 25);
+            color: white;
+          }
 
-        &:not(.disabled):hover {
-          background-color: darken($value, 10);
-        }
+          &:not(.disabled):hover {
+            background-color: darken($value, 10);
+          }
 
-        &:not(.disabled):active {
-          background-color: $value !important;
+          &:not(.disabled):active {
+            background-color: $value !important;
+          }
         }
       }
     }
@@ -63,7 +60,7 @@ $btn-box-shadow: none;
       background-color: $white;
       border: 1px solid $gray-300;
 
-      &:hover {
+      &:not(.disabled):hover {
         background-color: $gray-100;
       }
 

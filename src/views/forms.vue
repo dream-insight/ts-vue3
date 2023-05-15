@@ -16,6 +16,9 @@ const Spinner = inject('Spinner') as Spinner
 
 let text = ref<string>('')
 let textarea = ref<string>('')
+let multiinput1 = ref<string>('')
+let multiinput2 = ref<string>('')
+let multiinput3 = ref<boolean>(false)
 let num = ref<number>(0)
 let select = ref<string>('')
 let selectMulti = ref<any[]>([])
@@ -244,6 +247,13 @@ const getData = async (): Promise<void> => {
   }
 }
 
+const modal = reactive({
+  text1: '',
+  text2: '',
+  text3: '',
+  radio: '0',
+})
+
 getData()
 </script>
 
@@ -346,6 +356,18 @@ getData()
                 :validate="rule.input"
                 v-model="text">
               </TextField>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col">
+              <ValidateWrap required label="다중입력 폼">
+                <template #default>
+                  <TextField hide-message class="mr-1" :validate="rule.input" v-model="multiinput1" />
+                  <TextField hide-message :validate="rule.input" v-model="multiinput2">
+                    <Button color="success">button</Button>
+                  </TextField>
+                </template>
+              </ValidateWrap>
             </div>
           </div>
           <div class="row mt-3">
@@ -1019,21 +1041,22 @@ getData()
           <tr :key="`list-${props.db_idx}`">
             <td>
               <label class="checkbox-wrap">
-                <input type="checkbox" name="checklist" :value="props.db_idx" v-model="checkList" />
-                <span class="material-icons"></span>
+                <input :disabled="index % 3 == 0" type="checkbox" name="checklist" :value="props.db_idx" v-model="checkList" />
+                <span class="checkbox mdi"></span>
               </label>
             </td>
             <td>{{ props.db_idx }}</td>
             <td>{{ props.mb_name }}</td>
             <td>{{ props.mda_name }}</td>
-            <td>{{ props.referer }}</td>
+            <td>
+              <Button text :href="props.referer" color="primary" icon="mdi-pencil">{{ props.referer }}</Button>
+            </td>
             <td>{{ props.ip }}</td>
             <td class="right">{{ props.reg_date }}</td>
             <td class="center">
-              <Button small color="danger">삭제</Button>
-              <Button small class="ml-2" color="info">수정</Button>
-              <Button only-icon class="ml-2" icon="create" color="primary">수정</Button>
-              <Button only-icon icon="delete_outline" color="warning">수정</Button>
+              <Button only-icon small icon="mdi-pencil" color="primary">수정</Button>
+              &nbsp;
+              <Button only-icon small icon="mdi-trash-can" color="warning">삭제</Button>
             </td>
           </tr>
         </template>
@@ -1044,12 +1067,78 @@ getData()
   <Modal
     ref="modalPopup"
     title="기본 형태 모달 팝업"
+    width="800px"
     v-model="isShow.popup">
     <template #body>
-      무궁화 꽃이 피었습니다.
+      <div class="section-title mb-5">Section title</div>
+
+      <div class="modal-section">
+        <TextField block required label="input1" placeholder="textfield 1" v-model="modal.text1" />
+      </div>
+      <div class="modal-section">
+        <TextField block required label="input2" placeholder="textfield 2" v-model="modal.text2" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="mdoal-section">
+        <CheckButton
+          required
+          label="checkbox 1"
+          color="warning"
+          name="checkbutton5"
+          :validate="rule.check"
+          :items="items"
+          v-model="btnChecked"
+        />
+      </div>
+      <div class="section-title mb-5">Section title</div>
+
+      <div class="modal-section">
+        <TextField block required label="input1" placeholder="textfield 1" v-model="modal.text1" />
+      </div>
+      <div class="modal-section">
+        <TextField block required label="input2" placeholder="textfield 2" v-model="modal.text2" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="mdoal-section">
+        <CheckButton
+          required
+          label="checkbox 1"
+          color="warning"
+          name="checkbutton5"
+          :validate="rule.check"
+          :items="items"
+          v-model="btnChecked"
+        />
+      </div>
+      <div class="section-title mb-5">Section title</div>
+
+      <div class="modal-section">
+        <TextField block required label="input1" placeholder="textfield 1" v-model="modal.text1" />
+      </div>
+      <div class="modal-section">
+        <TextField block required label="input2" placeholder="textfield 2" v-model="modal.text2" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="mdoal-section">
+        <CheckButton
+          required
+          label="checkbox 1"
+          color="warning"
+          name="checkbutton5"
+          :validate="rule.check"
+          :items="items"
+          v-model="btnChecked"
+        />
+      </div>
     </template>
     <template #action="{ close }">
-      <Button color="light" @click="close()">닫기</Button>
+      <Button outline @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
@@ -1066,7 +1155,7 @@ getData()
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
     <template #action="{ close }">
-      <Button color="light" @click="close()">닫기</Button>
+      <Button outline @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
@@ -1082,7 +1171,7 @@ getData()
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
     <template #action="{ close }">
-      <Button color="light" @click="close()">닫기</Button>
+      <Button outline @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
@@ -1098,7 +1187,7 @@ getData()
       무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.무궁화 꽃이 피었습니다.
     </template>
     <template #action="{ close }">
-      <Button color="light" @click="close()">닫기</Button>
+      <Button outline @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
@@ -1130,7 +1219,7 @@ getData()
       </Modal>
     </template>
     <template #action="{ close }">
-      <Button color="light" @click="close()">닫기</Button>
+      <Button outline @click="close()">닫기</Button>
       &nbsp;&nbsp;
       <Button color="primary">확인</Button>
     </template>
