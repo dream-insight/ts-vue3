@@ -131,7 +131,7 @@ defineExpose({
         <span><i></i></span>
       </template>
 
-      {{ labelText }}
+      <div>{{ labelText }}</div>
     </label>
 
     <div

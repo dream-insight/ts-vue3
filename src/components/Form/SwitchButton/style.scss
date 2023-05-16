@@ -2,6 +2,7 @@
 
 .switch-wrap {
   display: inline-block;
+  position: relative;
 
   @each $color in $colors {
     &.#{$color} {
@@ -25,6 +26,9 @@
     cursor: pointer;
     font-size: 14px;
     margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &.checkbox {
       display: flex;

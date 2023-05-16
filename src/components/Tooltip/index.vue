@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<{
   width: 300,
   hovering: false,
   btnClose: false,
-  icon: 'help',
+  icon: 'mdi-help-circle',
   iconSize: '',
 })
 
@@ -66,10 +66,9 @@ if (props.top) {
     <div class="icon-wrap">
       <slot v-if="showIcon" class="pointer" @click="toggle"></slot>
       <span
-        class="icon material-icons"
+        :class="`icon mdi ${props.icon}`"
         :style="{ fontSize: props.iconSize }"
         @click="toggle" v-else>
-        {{ props.icon }}
       </span>
     </div>
 
