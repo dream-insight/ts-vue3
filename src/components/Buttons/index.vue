@@ -69,7 +69,7 @@ const hrefState = computed<string>(() => {
 const options = reactive<any>({
   class: buttonStyle.value,
   onClick: (event: MouseEvent): void => {
-    if (!props.href) {
+    if (props.href == '#') {
       event.preventDefault()
 
       if (!props.disabled) {

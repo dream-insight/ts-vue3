@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted, withDefaults, useSlots } from 'vue'
+import { ref, watch, computed, onMounted, withDefaults } from 'vue'
 import type { StyleValue } from 'vue'
 import type { TextFieldType, TextPatternCase } from './types'
 import type { KeyIndex, RuleFunc } from '../types'
@@ -45,8 +45,6 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   errorMessage: '',
   maxLength: 0,
 })
-
-const slots = useSlots()
 
 let isValidate = ref<boolean>(true)
 let checkPass = ref<boolean>(false)
@@ -288,7 +286,7 @@ defineExpose({
       v-if="multiline">
     </textarea>
 
-    <div class="with-slot" v-else-if="slots.default">
+    <div class="with-slot" v-else>
       <input
         ref="input"
         :type="props.type"
@@ -307,20 +305,6 @@ defineExpose({
       </template>
       <slot></slot>
     </div>
-    <input
-      ref="input"
-      :type="props.type"
-      :class="inputStyleClass"
-      :style="[{ width: width ? `${props.width}px` : '' }]"
-      :placeholder="props.placeholder"
-      :value="props.disabled ? '' : props.modelValue"
-      :disabled="props.disabled"
-      :readonly="props.readonly"
-      :maxlength="props.maxLength > 0 ? props.maxLength : ''"
-      @blur="blurCheck"
-      @input="updateValue"
-      v-else
-    />
 
     <div
       ref="feedback"

@@ -42,6 +42,15 @@ let tableHeader = ref<ListTableItem[]>([])
 let dataList = ref<ListTableItem[]>([])
 
 watch(() => props.header, () => setHeader())
+watchEffect(() => {
+  if (props.items.length) {
+    dataList.value = [...props.items]
+
+    if (props.observer) {
+      setTimeout(() => observerStart(), 1)
+    }
+  }
+})
 
 const tableWidth = computed<StyleValue>(() => {
   if (typeof props.width === 'number') {
@@ -145,28 +154,6 @@ const observerStop = (): void => {
 
 // ==================================== Sorting ====================================
 // 원본 데이터 보존을 위한 데이터 복사
-dataList.value = [...props.items]
-
-const setSort = (t: string, o: string): void => {
-  listTableWrap.value!.scrollTop = 0
-
-  target = t
-
-  if (o === 'desc') {
-    order = 'asc'
-  } else if (o === 'asc') {
-    order = ''
-  } else {
-    order = 'desc'
-  }
-
-  if (order) {
-    observerStop()
-  }
-
-  sorting()
-}
-
 const sortLogic = (a: ListTableItem, b: ListTableItem, trg: any): number => {
   const before = b[trg]
   const after = a[trg]
@@ -227,17 +214,27 @@ const sorting = (): void => {
     })
   }
 }
-// ==================================== Sorting ====================================
 
-watchEffect(() => {
-  if (props.items.length) {
-    dataList.value = [...props.items]
+const setSort = (t: string, o: string): void => {
+  listTableWrap.value!.scrollTop = 0
 
-    if (props.observer) {
-      setTimeout(() => observerStart(), 1)
-    }
+  target = t
+
+  if (o === 'desc') {
+    order = 'asc'
+  } else if (o === 'asc') {
+    order = ''
+  } else {
+    order = 'desc'
   }
-})
+
+  if (order) {
+    observerStop()
+  }
+
+  // sorting()
+}
+// ==================================== Sorting ====================================
 
 setHeader()
 

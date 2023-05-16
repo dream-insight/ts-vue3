@@ -358,18 +358,6 @@ getData()
               </TextField>
             </div>
           </div>
-          <div class="row mt-2">
-            <div class="col">
-              <ValidateWrap required label="다중입력 폼">
-                <template #default>
-                  <TextField hide-message class="mr-1" :validate="rule.input" v-model="multiinput1" />
-                  <TextField hide-message :validate="rule.input" v-model="multiinput2">
-                    <Button color="success">button</Button>
-                  </TextField>
-                </template>
-              </ValidateWrap>
-            </div>
-          </div>
           <div class="row mt-3">
             <div class="col">
               <TextField

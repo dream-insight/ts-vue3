@@ -69,7 +69,7 @@ const tableHeader: ListTableHeader[] = [
 | Name | Type | Default | Description |
 |-------|---- |---------|-------------|
 | items | [ListTableItem[]](#43-listtableitem) | <code>[]</code> | 출력할 목록 배열 |
-| header | [ListTableHeader[], ListTableHeader[][]](#41-listtableheader) | <code>[]</code> | 테이블 최상단 컬럼 제목, 2차원배열로 지정할 경우 컬럼 제목을 2줄로 표시 |
+| header | [ListTableHeader[], ListTableHeader[][]](#41-listtablecellalign-with-enum) | <code>[]</code> | 테이블 최상단 컬럼 제목, 2차원배열로 지정할 경우 컬럼 제목을 2줄로 표시 |
 | footer? | [ListTableFooter[]](#42-listtablefooter) | <code>[]</code> | 출력할 목록 배열 |
 | multiHeader? | boolean | <code>false</code> | 여러줄의 컬럼 제목을 지정할때 필수 적용 옵션 |
 | emptyText? | string | <code>''</code> | 목록이 없을 경우 표시되는 텍스트 |
@@ -163,6 +163,7 @@ export interface ListTableHeader {
   rowspan?: number
 }
 ```
+> header sorting 기능은 랜더링 문제로 인하여, 개선 완료 전까지 사용을 중지합니다.
 
 ## 4.4. ListTableFooter
 ```typescript
