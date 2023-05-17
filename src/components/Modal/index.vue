@@ -119,7 +119,10 @@ const setEvents = (): void => {
             :class="boxStyle"
             v-show="isShow">
             <div class="modal-header">
-              <span>{{ props.title }}</span>
+              <div class="title-text">
+                <span class="text">{{ props.title }}</span>
+                <slot name="title"></slot>
+              </div>
 
               <a href="#" class="close" @click.prevent="close()">
                 <span class="mdi mdi-close"></span>

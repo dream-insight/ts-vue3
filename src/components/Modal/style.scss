@@ -1,4 +1,4 @@
-@import '@/assets/style/const.scss';
+@import '@/assets/scss/abstracts/_variables.scss';
 
 .no-scroll {
   overflow: hidden;
@@ -61,7 +61,7 @@ $transition: (left, right, bottom);
     background-color: #fff;
 
     &.popup {
-      box-shadow: $box-shadow;
+      // box-shadow: $box-shadow;
       border-radius: 4px;
       min-width: 380px;
       max-height: 95vh;
@@ -120,16 +120,27 @@ $transition: (left, right, bottom);
 
   .modal-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     border-radius: 4px 4px 0 0;
     border-bottom: 1px solid $gray-300;
     padding: 15px 20px;
-    font-size: 20px;
-    font-weight: 500;
-    color: $gray-800;
 
-    a {
+    .title-text {
+      display: flex;
+      align-items: center;
+
+      & > .text {
+        font-size: 20px;
+        font-weight: 500;
+        color: $gray-800;
+
+        & + * {
+          margin-left: 10px;
+        }
+      }
+    }
+
+    .close {
       color: $gray-800;
       font-size: 28px;
 

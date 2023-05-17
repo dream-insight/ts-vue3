@@ -70,6 +70,10 @@ let isShow = ref<boolean>(false)
 
 * 버튼 등을 나열하여 각종 기능을 수행 할 수 있도록 나눠 놓은 섹션
 
+## 3.3. title
+
+* 제목 표시 부분 오른 쪽에 표시됨 (flex 정렬)
+
 ### 3.2.1. Props
 
 | Name | Type | Default | Description |
