@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, withDefaults, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import type { RuleFunc } from '../types'
 
 export interface ValidateWrapProps {

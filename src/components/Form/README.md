@@ -198,16 +198,7 @@ const rule: RuleFunc[] = [v => !!v || '필수 입력 항목입니다.']
 | hideMessage? | boolean | <code>false</code> | 하단에 표시되는 메시지를 표시 안함 |
 | icon? | string | <code>none</code> | 오른쪽에 아이콘 표시 Google Material Icon, multiline 적용 안됨 |
 | iconLeft? | boolean | <code>false</code> | 아이콘의 위치를 왼쪽으로 변경, multiline 적용 안됨 |
-| pattern? | [TextPatternCase](#232-textpatterncase) | <code>none</code> | value 값에 대해 정규식 검사 실행 후 매칭되지 않을 경우 validation 오류 처리 |
-| | | eng | 영문만 입력 가능 |
-| | | engnum | 영문, 숫자만 입력 가능 |
-| | | id | 영문, 숫자, underbar(_) 입력가능 |
-| | | num | 숫자만 입력 가능 |
-| | | wordnum | 영문, 숫자 혼합 입력 |
-| | | password | 영문, 숫자, 특수문자 2가지 이상 조합 입력 |
-| | | doamin | 도메인 형식 입력 |
-| | | email | 이메일 형식 입력 |
-| | | tel | 전화번호 형식 입력 (10~11자리) |
+| pattern? | [RegExp, string?] | <code>[]</code> | 패턴을 지정하여 유효성 검사를 진행 [정규식, 오류시 메시지] 형태로 전달, 메시지 미 입력시 기본 메시지 표시 |
 
 ### 2.3. Types
 
@@ -220,26 +211,6 @@ export const textFieldType = {
 
 export type TextFieldType = typeof textFieldType[keyof typeof textFieldType]
 ```
-
-#### 2.3.2. TextPatternCase
-```typescript
-export const textPatternCase = {
-  eng: 'eng',
-  engnum: 'engnum',
-  id: 'id',
-  num: 'num',
-  wordnum: 'wordnum',
-  password: 'password',
-  domain: 'domain',
-  email: 'email',
-  tel: 'tel',
-} as const
-
-export type TextPatternCase = typeof textPatternCase[keyof typeof textPatternCase]
-
-```
-
-
 
 :arrow_up: [목차](#form-validation-components)
 
@@ -656,6 +627,24 @@ const fileSelected = (evt: Event): void => {
 
 ---
 
+## 9. 공통 Method (ValidateForm 제외)
+* 모든 컴포넌트에는 공통 메서드가 존재 합니다.
+* 해당 메서드는 ref 참조를 통해 접근 가능 합니다.
+
+### 9.1 Ref.check()
+* 해당 폼의 pattern 또는 validate 옵션에 의거하여 폼의 유효성을 검사합니다.
+
+### 9.2. Ref.resetForm()
+* 해당 폼의 유효성 검사 및 modelValue 값을 초기화 합니다.
+
+### 9.3. Ref.resetValidate()
+* 해당 폼의 유효성 감사를 초기화 합니다.
+
+
+:arrow_up: [목차](#form-validation-components)
+
+---
+
 # 공통 Types
 
 ## 1. KeyIndex
@@ -737,3 +726,4 @@ export interface OptionItemGroup {
 
 * TextField icon, iconLeft props 추가: 2023.05.09 김종윤 수석매니저
 * CheckButton, SwitchButton color props 추가: 2023.05.11 김종윤 수석매니저
+* 모든 Form Component Method type 추가: 2023.05.18 김종윤 수석매니저

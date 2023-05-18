@@ -9,3 +9,9 @@ export const switchButtonColors = {
 } as const
 
 export type SwitchButtonColors = typeof switchButtonColors[keyof typeof switchButtonColors]
+
+export interface SwitchButton {
+  check: Function
+  resetForm: Function
+  resetValidate: Function
+}

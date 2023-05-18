@@ -13,11 +13,11 @@
     }
 
     label {
+      position: relative;
       display: flex;
       align-items: center;
       font-size: 13px;
       font-weight: 400;
-      position: relative;
 
       input {
         position: absolute;
@@ -73,7 +73,7 @@
     position: relative;
     overflow: hidden;
     // border-radius: 5px;
-    box-shadow: $box-shadow;
+    // box-shadow: $box-shadow;
 
     @each $color in $colors {
       &.#{$color} {

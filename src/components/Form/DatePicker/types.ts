@@ -56,3 +56,10 @@ export interface TimeStateType extends KeyIndex<number> {
   start: number
   end: number
 }
+
+
+export interface DatePicker {
+  check: Function
+  resetForm: Function
+  resetValidate: Function
+}

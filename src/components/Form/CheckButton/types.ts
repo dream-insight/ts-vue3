@@ -22,3 +22,9 @@ export interface CheckButtonItem {
   text: string
   value: string
 }
+
+export interface CheckButton {
+  check: Function
+  resetForm: Function
+  resetValidate: Function
+}

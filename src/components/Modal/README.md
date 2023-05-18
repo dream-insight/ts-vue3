@@ -54,6 +54,7 @@ let isShow = ref<boolean>(false)
 | escClose? | boolean | <code>false</code> | ESC 키로 모달창을 닫을지 여부 |
 | width? | string | <code>none</code> | 모달의 고정 넓이를 지정합니다, css 크기 단위 필수 |
 | screenCover? | boolean | <code>false</code> | 모달이 전체 화면을 덮을지 여부, ModalPosition.popup일때 사용 불가 |
+| accessBack? | boolean | <code>false</code> | 모달에 대한 url을 부여 했을때 뒤로가기 등을 제어 하기 위한 옵션 |
 
 
 :arrow_up: [항목](#항목)

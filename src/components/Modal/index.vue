@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watchEffect, computed, defineProps, defineEmits, defineExpose, useSlots } from 'vue'
+import { ref, watchEffect, computed, useSlots } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { modalPosition, modalTransition } from './types'
 import type { ModalPosition, ModalTransition } from './types'
 
@@ -12,6 +13,7 @@ const props = withDefaults(defineProps<{
   width?: string
   position?: ModalPosition
   screenCover?: boolean
+  accessBack?: boolean
 }>(), {
   modelValue: false,
   escClose: false,
@@ -99,6 +101,16 @@ const setEvents = (): void => {
   modal.value!.addEventListener('keyup', keyUpEvent)
   modal.value!.focus()
 }
+
+if (props.accessBack) {
+  onBeforeRouteLeave(() => {
+    if (isShow.value) {
+      return false
+    }
+
+    return true
+  })
+}
 </script>
 
 <template>
@@ -112,6 +124,7 @@ const setEvents = (): void => {
         ref="modal"
         :class="['modal-bg', !isShow && 'hide']"
         tabindex="0"
+        v-bind="$attrs"
         v-show="isShow">
         <Transition appear :name="transitionName">
           <div

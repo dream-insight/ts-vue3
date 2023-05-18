@@ -58,7 +58,7 @@ const check = (): boolean => {
       resetForm()
       return true
     } else {
-      message.value = (typeof props.validate == 'string')
+      message.value = (typeof props.validate === 'string')
         ? props.validate
         : `${props.label[1]}을(를) 선택해주세요.`
       onError.value = true

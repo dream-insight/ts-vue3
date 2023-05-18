@@ -78,8 +78,30 @@ watch(() => props.validate, () => {
 })
 
 watch(() => props.modelValue, () => {
-  // 초기 modelValue 바로 대입할시 selectedValue의 값이 modelValue 메모리를 참조
-  // 다중선택(btnAccept) 적용 버튼을 만족 시키기 위해 구조분해 할당 적용
+  setDefaultModelValue()
+})
+
+watch(() => props.options, () => {
+  optionList.value = [...props.options]
+})
+
+const styleWidth = computed<string>(() => {
+  if (typeof props.width === 'string') {
+    return props.width
+  } else if (typeof props.width === 'number') {
+    return `${props.width}px`
+  }
+
+  return ''
+})
+
+const wrapperStyle = computed<StyleValue>(() => ({ 'with-label': props.label, error: !isValidate.value, block: props.block }))
+
+/**
+ * 초기 modelValue 바로 대입할시 selectedValue의 값이 modelValue 메모리를 참조
+ * 다중선택(btnAccept) 적용 버튼을 만족 시키기 위해 구조분해 할당 적용
+ */
+const setDefaultModelValue = () => {
   if (Array.isArray(props.modelValue)) {
     selectedValue.value = [...props.modelValue]
   }
@@ -99,23 +121,7 @@ watch(() => props.modelValue, () => {
       }
     }
   })
-})
-
-watch(() => props.options, () => {
-  optionList.value = [...props.options]
-})
-
-const styleWidth = computed<string>(() => {
-  if (typeof props.width === 'string') {
-    return props.width
-  } else if (typeof props.width === 'number') {
-    return `${props.width}px`
-  }
-
-  return ''
-})
-
-const wrapperStyle = computed<StyleValue>(() => ({ 'with-label': props.label, error: !isValidate.value, block: props.block }))
+}
 
 const updateValue = (v: string | string[]): void => {
   emit('update:modelValue', v)
@@ -358,6 +364,8 @@ onMounted(() => {
     errorTransition.value = false
   })
 })
+
+setDefaultModelValue()
 
 defineExpose({
   check,
