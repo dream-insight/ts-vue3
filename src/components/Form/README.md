@@ -726,4 +726,7 @@ export interface OptionItemGroup {
 
 * TextField icon, iconLeft props 추가: 2023.05.09 김종윤 수석매니저
 * CheckButton, SwitchButton color props 추가: 2023.05.11 김종윤 수석매니저
-* 모든 Form Component Method type 추가: 2023.05.18 김종윤 수석매니저
+* Form Component update
+  - TextField pattern props 변경
+  - 모든 form component Ref method type 추가
+  : 2023.05.18 김종윤 수석매니저
