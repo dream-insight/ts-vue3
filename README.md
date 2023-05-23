@@ -2399,6 +2399,56 @@ const where: Direction = direction.R     // RIGHT
 :arrow_up: [목차](#TypeScript-목차)
 
 ---
+
+## 6. Model 정의
+* API를 통해 전달 받은 데이터(JSON), 또는 API에 전달할 Parameters는 아래와 같이 정의 합니다.
+
+### 6.1. Parameters
+* 전달 방식에 상관없이 {Method}{Name}Params 형식으로 정의 합니다.
+```typescript
+interface GetMemberListParams {
+  page: number
+  uid: string
+  searchTarget: string
+  searchText: string
+}
+
+interface PostMemberRegistParams { ... }
+
+interface PutMemberEditParams { ... }
+
+const data: PostMemberRegistParams = { ... }
+
+axios.post('/where/url', data)
+```
+> 가급적 API 기능과 유사하게 명명합니다.
+
+
+### 6.2. API Response Data Model
+* API Response JSON 데이터는 아래와 같은 형식으로 정의 합니다.
+```typescript
+interface ResultMessage {
+  result: ApiResult
+}
+
+interface MemberListModel {
+  memUid: string
+  name: string
+  gender: GenderType
+  birthday: string
+  company: string
+}
+
+interface MemberListRes extends ResultMessage {
+  data: MemberListModel[]
+}
+
+const json: MemberListRes = await axios.get('/where/url', params)
+```
+
+:arrow_up: [목차](#TypeScript-목차)
+
+---
 ### UPDATE HISTORY
 
 * 초안 작성 - 2022.10.07 (작성자: 김종윤 수석매니저)
